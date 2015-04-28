@@ -1,0 +1,1873 @@
+C51 COMPILER V9.03   MAIN                                                                  04/28/2015 04:57:45 PAGE 1   
+
+
+C51 COMPILER V9.03, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\DP8051_Keil_903\Debug\main.obj
+COMPILER INVOKED BY: C:\Program Files (x86)\Cypress\PSoC Creator\2.1\PSoC Creator\import\keil\pk51\9.03\C51\BIN\c51.exe 
+                    -.\main.c NOIV LARGE MODDP2 OMF2 VB(1) PR(.\DP8051_Keil_903\Debug\main.lst) CD DB NOIP OT(2,SIZE) INCDIR(Generated_Source
+                    -\PSoC3) OJ(.\DP8051_Keil_903\Debug\main.obj)
+
+line level    source
+
+   1          /* ====================================================================================
+   2           * 
+   3           *  ELE 302
+   4           *  Jean Juang and Emmily Kent
+   5           *  Speed Control PSoC Implementation
+   6           * 
+   7           *  Contained is the the PWM motor controller/Hall Effects Sensor/PSoC interface code.
+   8           *  PSoC receives the "ticks" from the Hall Effects Sensor. Converts ticks into speed.
+   9           *  Outputs pulse width modulated signal to the gate of the transistor.
+  10           *  Used PI control.
+  11           *
+  12           * =================================================================================== */
+  13            
+  14          #include <device.h>
+  15          #include <stdio.h>
+  16          
+  17          #define M_PI 3.14159265358979323846 //y u no work, math.h
+  18          
+  19          typedef enum { false = 0u, true = 1u } bool;
+  20          
+  21          /* Constants and variables defined for Hall Effect processing*/
+  22          
+  23          static const float clock_freq = 100000; // Component clock frequency - 100kHz
+  24          static const float clock_period = 1000; // Period of the PWM. Tradeoff between resolution and speed of res
+             -ponse. Should be updating every 0.01 seconds
+  25          static const float convert = 60/(2.459*M_PI); // Conversion factor for ticks per feet 
+  26          static float speed = 0; // current speed in feet per second
+  27          static float ticks = 0; // calculated 23.3004 ticks per second for speed = 3 feet/sec
+  28          static float ticks_per_sec = 0;
+  29          static float prevticks = 0;
+  30          static uint8 overflow = 0; // overflow counter. shouldn't update
+  31          
+  32          /* PID helper variables */
+  33          static const float target = 3; // target speed in ft/sec
+  34          static float error = 0; // difference between desired speed and actual speed
+  35          static float var = 0; // affects current speed
+  36          static float sum = 0; // integral
+  37          static float dt = 0; // time interval. used in integral term.
+  38          
+  39          /* PID constants */
+  40          static const float kp = 1200; // proportional
+  41          static const float ki = 30; // integral
+  42          
+  43          static float open_loop_guess = 110; // initialize duty cycle to 11%
+  44          static uint16 duty = 110;
+  45          static uint16 number_of_ticks = 0;
+  46          
+  47          /* FSM State Initializations */
+  48          
+  49          // Define states
+  50          static uint16 wait_for_elevator = 0;
+  51          static uint16 move_forward = 1;
+  52          static uint16 waiting = 2;
+C51 COMPILER V9.03   MAIN                                                                  04/28/2015 04:57:45 PAGE 2   
+
+  53          static uint16 in_elevator = 3;
+  54          static uint16 move_backward = 4;
+  55          static uint16 turning = 5;
+  56          static uint16 follow_line = 6;
+  57          
+  58          static uint16 testing = 33;
+  59          
+  60          // Set initial state
+  61          static uint16 state = 33;
+  62          
+  63          // are you going into the Elevator?
+  64          static bool isGoingElevator = false;
+  65          
+  66          /*================================
+  67          // End Variable Initializations
+  68          // Interrupts Begin Here
+  69          //================================*/
+  70          
+  71          // triggered with each "tick" from the Hall Effect sensor.
+  72          // monitors current speed and adjusts PWM duty cycle
+  73          CY_ISR(tock)
+  74          { 
+  75   1          /* debugging LCD display strings */
+  76   1          // convert values to string for higher precision when displaying speed & ticks per second
+  77   1          // char speedstr[16];
+  78   1          // char errorstr[16];
+  79   1          // char varstr[8];
+  80   1          float prev;
+  81   1          
+  82   1          // counts the number of ticks to determine how far the car has traveled, to stop at 2 laps
+  83   1          number_of_ticks = number_of_ticks + 1;  
+  84   1                 
+  85   1          // update ticks
+  86   1          ticks = (float) Hall_Counter_ReadCapture();  // elapsed time in between each tick 
+  87   1          
+  88   1          // change in time
+  89   1          dt = (ticks)/clock_freq; //
+  90   1          
+  91   1          ticks_per_sec = clock_freq/ticks; // ticks per second
+  92   1          
+  93   1          speed = ticks_per_sec/convert; // convert ticks/sec to speed. Calculations to get convert in lab noteb
+             -ook.
+  94   1            
+  95   1          prev = error; // holds value for previous error
+  96   1          error = target - speed; // current error
+  97   1          sum += error*dt; // running sum of error. Integration process.
+  98   1          
+  99   1          var = (kp * error)+ (ki * sum);
+ 100   1                  
+ 101   1          // initialize the duty cycle to the open-loop guess
+ 102   1          if (speed == 0) {
+ 103   2              duty = (uint16) open_loop_guess;
+ 104   2              sum = 0;
+ 105   2          }
+ 106   1          // limit the PWM duty cycle to 100%
+ 107   1          else if (open_loop_guess + var > (clock_period - 1.0)) 
+ 108   1          {
+ 109   2              duty = (uint16) (clock_period - 1.0);
+ 110   2          }
+ 111   1          
+ 112   1          // limit the PWM duty cycle to 0%
+ 113   1          else if (open_loop_guess + var < 0.0)
+C51 COMPILER V9.03   MAIN                                                                  04/28/2015 04:57:45 PAGE 3   
+
+ 114   1          {
+ 115   2              duty = 0;
+ 116   2          }
+ 117   1          // Adjust the duty cycle by the amount calculated through the PI process
+ 118   1          else 
+ 119   1          {
+ 120   2              duty = (uint16) (open_loop_guess + var);
+ 121   2          }
+ 122   1          
+ 123   1          // Display the error and PI correction value
+ 124   1       //   LCD_Position(0,0);
+ 125   1      //    sprintf(errorstr, "E:%+1.3f D:%1.2f", error, (float) (duty)*100/clock_period); // * 100 to convert t
+             -o percentage
+ 126   1      //    LCD_PrintString(errorstr);
+ 127   1      //    LCD_Position(1,0);
+ 128   1      //    sprintf(varstr, "V:%+1.1f", var);
+ 129   1      //    LCD_PrintString(varstr);
+ 130   1      
+ 131   1          LCD_Position(0,6);
+ 132   1          LCD_PrintNumber(state);
+ 133   1              
+ 134   1         // LCD_Position(0,5);
+ 135   1         // LCD_PrintNumber(duty);
+ 136   1          
+ 137   1          LCD_Position(0,10);
+ 138   1          if(isGoingElevator) {
+ 139   2              LCD_PrintString("true");
+ 140   2          } else {
+ 141   2              LCD_PrintString("false");
+ 142   2          }
+ 143   1      
+ 144   1          // 1 tick is ~1.545 inches traveled!
+ 145   1          if (number_of_ticks >= 50 && state == move_forward) {
+ 146   2              // stop car!
+ 147   2              
+ 148   2              uint8 control = 0; 
+ 149   2              uint32 wait_milliseconds = 1000;
+ 150   2              
+ 151   2              Drive_Control_Reg_Write(control);        
+ 152   2              
+ 153   2              number_of_ticks = 0;
+ 154   2              // wait for elevator door to close so the rangefinder in the back doesnt get confused
+ 155   2              // CyDelay(wait_milliseconds); // idk... breaks things... must be bad to wait in an interrupt
+ 156   2              
+ 157   2              //LCD_Position(1,0);
+ 158   2              //LCD_PrintString("wait over");
+ 159   2              
+ 160   2              Wait_Counter_Start();
+ 161   2              state = waiting;
+ 162   2          }
+ 163   1              
+ 164   1          if (number_of_ticks >= 50 && state == move_backward) {
+ 165   2              // stop car because back EMF
+ 166   2              uint8 control = 0;
+ 167   2              Drive_Control_Reg_Write(control);
+ 168   2              
+ 169   2              // sleep        
+ 170   2              LCD_Position(1,0);
+ 171   2              LCD_PrintString("s");
+ 172   2              LCD_Position(1,1);
+ 173   2              LCD_PrintString("leep"); // this is ridiculous i am sorry
+ 174   2              
+C51 COMPILER V9.03   MAIN                                                                  04/28/2015 04:57:45 PAGE 4   
+
+ 175   2              // turn left [as far as the wheels can go]
+ 176   2              PWM_Steering_WriteCompare(100);
+ 177   2              
+ 178   2              // start car again
+ 179   2              control = 2;
+ 180   2              Drive_Control_Reg_Write(control);
+ 181   2      
+ 182   2              number_of_ticks = 0;
+ 183   2              state = turning;
+ 184   2          }
+ 185   1          
+ 186   1          if (number_of_ticks >= 40 && state == turning) {
+ 187   2              uint8 control = 0;
+ 188   2              
+ 189   2              PWM_Steering_WriteCompare(152);
+ 190   2                      
+ 191   2              Drive_Control_Reg_Write(control);
+ 192   2              
+ 193   2              state = 5; // 5 is turning. staying in state.
+ 194   2          }
+ 195   1          
+ 196   1          // duty cycle is (compare value / period val) * 100. Duty cycle is defined by compare value.
+ 197   1          PWM_WriteCompare(duty); // for CMP (LED input) to be true, counted value needs to be less than the com
+             -pare value
+ 198   1          
+ 199   1          // clear interrupt
+ 200   1          Hall_Counter_ReadStatusRegister();
+ 201   1      }
+ 202          
+ 203          // it has been 3 minutes with no input. what did you do wrong. this should not trigger.
+ 204          CY_ISR(flow)
+ 205          {
+ 206   1         overflow++;
+ 207   1         /*LCD_Position(0,0);
+ 208   1         LCD_PrintString("Overflow        "); 
+ 209   1         */
+ 210   1         // clear interrupt
+ 211   1          Hall_Counter_ReadStatusRegister();
+ 212   1      }
+ 213          
+ 214          /* variables for steering control */
+ 215          // uses PD control!
+ 216          static uint8 signal_low_seen = 0;
+ 217          static uint16 clock_start_time = 0;
+ 218          static uint16 line_start_time = 0;
+ 219          static uint16 clock_end_time = 0;
+ 220          static double clock_diff_time = 0;
+ 221          static double steering_error = 0;
+ 222          static double steering_error_sum = 0;
+ 223          static double prev_steering_error = 0;
+ 224          static double derivative = 0;
+ 225          static uint16 steering_value = 152; // PWM width 1.52 ms to be straight
+ 226          
+ 227          // do something once 50th line  is read
+ 228          CY_ISR(fifty)
+ 229          {   clock_start_time = Line_Timer_ReadCapture();
+ 230   1          line_start_time = Line_Timer_ReadCapture();
+ 231   1          //clock_end_time = Line_Timer_ReadCapture();
+ 232   1          clock_diff_time = clock_start_time - line_start_time;
+ 233   1          steering_error = clock_diff_time - 768; // 768 = time at the middle of the line 
+ 234   1          steering_error_sum = steering_error_sum + steering_error;
+ 235   1          derivative = steering_error - prev_steering_error;
+C51 COMPILER V9.03   MAIN                                                                  04/28/2015 04:57:45 PAGE 5   
+
+ 236   1          prev_steering_error = steering_error;
+ 237   1          
+ 238   1          if (clock_diff_time > 10000) {
+ 239   2              // do nothing
+ 240   2          } else {
+ 241   2              /*LCD_Position(1,0);
+ 242   2              LCD_PrintNumber(clock_diff_time);
+ 243   2              
+ 244   2              LCD_Position(1,8); */
+ 245   2              
+ 246   2              steering_value = 152 + 0.1 * steering_error; //+ 0.4 * derivative; //+ 0.00001 * steering_error_su
+             -m;
+ 247   2             // LCD_Position(1,0);
+ 248   2             // LCD_PrintNumber(clock_diff_time);
+ 249   2              
+ 250   2              // bang-bang control
+ 251   2              
+ 252   2              /*
+ 253   2              if(steering_error < 999 && steering_error > 0) {
+ 254   2                  LCD_Position(1,0);
+ 255   2                  LCD_PrintNumber(steering_error);
+ 256   2              }
+ 257   2              else {
+ 258   2                  LCD_Position(1,0);
+ 259   2                  LCD_PrintNumber(999);
+ 260   2              }
+ 261   2              */
+ 262   2              
+ 263   2              // if you are line follwing, pay attention to the camera input / changes needed in wheels.
+ 264   2              if (state == follow_line) 
+ 265   2              { 
+ 266   3              PWM_Steering_WriteCompare(steering_value);
+ 267   3              }
+ 268   2              
+ 269   2              if (clock_diff_time - 400 > 0) {
+ 270   3              //    LCD_Position(0,5);
+ 271   3                //  LCD_PrintString("left");
+ 272   3               //   PWM_Steering_WriteCompare(100);    
+ 273   3              }
+ 274   2              else if (clock_diff_time - 400 < 0) {
+ 275   3              //    LCD_Position(0,5);
+ 276   3              //    LCD_PrintString("right");
+ 277   3              //    PWM_Steering_WriteCompare(200);
+ 278   3              }
+ 279   2              
+ 280   2          }
+ 281   1               
+ 282   1          // clear interrupt
+ 283   1          Line_Timer_ReadStatusRegister();
+ 284   1          
+ 285   1      }
+ 286          
+ 287          // do something once 100 lines are read
+ 288          // count how many lines have been read for each frame!
+ 289          CY_ISR(hundred)
+ 290          {
+ 291   1        // counter value holds lines
+ 292   1          float lines;
+ 293   1          char linestr[16];
+ 294   1          
+ 295   1          //lines = (float) Lines_Per_Frame_Counter_ReadCounter();  // lines per frame
+ 296   1          
+C51 COMPILER V9.03   MAIN                                                                  04/28/2015 04:57:45 PAGE 6   
+
+ 297   1          // Display the lines per frame
+ 298   1         // LCD_Position(0,0);
+ 299   1          //sprintf(linestr, "Lines/frame:%+1.3f  ", lines); // ugly
+ 300   1          //LCD_PrintString(linestr);
+ 301   1          //LCD_PrintNumber(Lines_Per_Frame_Counter_ReadCounter());
+ 302   1          
+ 303   1        // clear interrupt
+ 304   1           Lines_Per_Frame_Counter_ReadStatusRegister();
+ 305   1      }
+*** WARNING C280 IN LINE 292 OF .\main.c: 'lines': unreferenced local variable
+*** WARNING C280 IN LINE 293 OF .\main.c: 'linestr': unreferenced local variable
+ 306          
+ 307          // thrown when doors are detected to be open by front rangefinder
+ 308          CY_ISR(elevator_entering)
+ 309          {
+ 310   1          if (state == wait_for_elevator) {
+ 311   2              uint8 control = 2;  // enable h-bridge, move forward
+ 312   2      
+ 313   2              Drive_Control_Reg_Write(control);
+ 314   2              state = move_forward;
+ 315   2          }
+ 316   1      }
+ 317          
+ 318          // thrown when doors are detected to be open by back rangefinder
+ 319          CY_ISR(elevator_leaving) {
+ 320   1          if (state == in_elevator) {
+ 321   2              uint8 control = 3; //enable h-bridge, move backward
+ 322   2      
+ 323   2              Drive_Control_Reg_Write(control);
+ 324   2              state = move_backward;
+ 325   2          }
+ 326   1      }
+ 327          // thrown once 1.1 seconds have passed when in wait stage
+ 328          CY_ISR(isr_waiting) {
+ 329   1          if (state == waiting) {
+ 330   2          
+ 331   2              state = in_elevator;
+ 332   2              
+ 333   2              LCD_Position(0,0);
+ 334   2              LCD_PrintNumber(state);
+ 335   2          }
+ 336   1      }
+ 337          
+ 338              /*============================
+ 339              // Testing code. Delete later.
+ 340              //===========================*/
+ 341          CY_ISR(getVolts){
+ 342   1      
+ 343   1          if (state == 33) {
+ 344   2          
+ 345   2          int32 result;
+ 346   2          float resultInVolts;    
+ 347   2          char resultstr[16];
+ 348   2              
+ 349   2          // write value to LCD screen
+ 350   2              
+ 351   2          result = ADC_DelSig_GetResult32();  
+ 352   2          resultInVolts = ADC_DelSig_CountsTo_Volts(result);
+ 353   2          
+ 354   2          // Display the lines per frame
+ 355   2          LCD_Position(1,0);
+ 356   2          sprintf(resultstr, "DC: %+1.4f", resultInVolts); // ugly
+C51 COMPILER V9.03   MAIN                                                                  04/28/2015 04:57:45 PAGE 7   
+
+ 357   2             // LCD_Position(1,0);
+ 358   2              //LCD_PrintNumber();
+ 359   2          }
+ 360   1      }
+ 361             
+ 362              /*============================
+ 363              // Testing code. Delete later.
+ 364              //===========================*/
+ 365              
+ 366          void main()
+ 367          {
+ 368   1      /* Place your initialization/startup code here (e.g. MyInst_Start()) */
+ 369   1      
+ 370   1      // temp
+ 371   1          uint8 start_control = 0; // start by not moving    
+ 372   1          
+ 373   1          uint16 counter_print = 0;
+ 374   1                       
+ 375   1          // Enable interrupts
+ 376   1          CyGlobalIntEnable;
+ 377   1          
+ 378   1          // start speed control/Hall Effect components
+ 379   1          Hall_Counter_Start();
+ 380   1          Clock_Hall_Start();    
+ 381   1          
+ 382   1          // start steering control components
+ 383   1          Clock_Steering_Start();
+ 384   1          Lines_Per_Frame_Counter_Start(); // monitors how many lines have been traversed per frame
+ 385   1          Camera_Comp_Start(); // initializes the comparator -- is the camera receiving black or white?
+ 386   1          Camera_Threshold_Start(); // Voltage that decides whether signal is black or white    
+ 387   1          
+ 388   1          // start PWM components  
+ 389   1          PWM_Start(); 
+ 390   1          PWM_Steering_Start(); 
+ 391   1                
+ 392   1          // start display LCD screen  
+ 393   1          LCD_Start();
+ 394   1          LCD_Position(0,0);    
+ 395   1          LCD_PrintString("State:");
+ 396   1          
+ 397   1          // start interrupt service routines
+ 398   1          ISR_Hall_Start();
+ 399   1          ISR_Hall_SetVector(tock); // convert Hall sensor "ticks" to speed, control PWM output
+ 400   1          ISR_Overflow_Start();
+ 401   1          ISR_Overflow_SetVector(flow); // monitor overflow in Hall Effects sensor. Should not trigger.
+ 402   1          
+ 403   1          ISR_50_Lines_Start(); // process image data on the 50th line
+ 404   1          ISR_50_Lines_SetVector(fifty);
+ 405   1          ISR_100_Lines_Start(); // process image data on the 100th line
+ 406   1          ISR_100_Lines_SetVector(hundred);
+ 407   1          
+ 408   1          Line_Timer_Start(); // DONT MOVE THIS. Timer needs to start AFTER the ISR.
+ 409   1         
+ 410   1          // Elevator
+ 411   1          Elevator_Threshold_Start();
+ 412   1          Elevator_Comparator_Start();
+ 413   1          ISR_Elevator_Start();
+ 414   1          ISR_Elevator_SetVector(elevator_entering);
+ 415   1          
+ 416   1          Elevator_Comparator_1_Start();
+ 417   1          ISR_Elevator_2_Start();
+ 418   1          ISR_Elevator_2_SetVector(elevator_leaving);
+C51 COMPILER V9.03   MAIN                                                                  04/28/2015 04:57:45 PAGE 8   
+
+ 419   1          
+ 420   1          //Waiting
+ 421   1          Wait_Clock_Start();
+ 422   1          ISR_Wait_Start();
+ 423   1          ISR_Wait_SetVector(isr_waiting);    
+ 424   1          
+ 425   1          // sets the initial speed
+ 426   1          PWM_WriteCompare((uint16) open_loop_guess);
+ 427   1          
+ 428   1          // enables h-bridge, forward direction
+ 429   1          Drive_Control_Reg_Write(start_control);
+ 430   1          // interrupt driven. no code here.
+ 431   1          
+ 432   1          /*============================
+ 433   1          // Testing code. Delete later.
+ 434   1          //===========================*/
+ 435   1          
+ 436   1          ADC_DelSig_StartConvert();
+ 437   1          
+ 438   1          LCD_Position(1,0);    
+ 439   1          LCD_PrintString("A");
+ 440   1          
+ 441   1          
+ 442   1          // start ADC
+ 443   1          ADC_DelSig_Start();
+ 444   1          ADC_DelSig_StartConvert(); 
+ 445   1             
+ 446   1          // start ADC ISR 
+ 447   1          ISR_getVolts_Start();
+ 448   1          ISR_getVolts_SetVector(getVolts);     
+ 449   1          /*============================
+ 450   1          // Testing code. Delete later.
+ 451   1          //===========================*/
+ 452   1             
+ 453   1          for(;;)
+ 454   1          {             
+ 455   2              //counter_print++;
+ 456   2              
+ 457   2              if (counter_print == 10000) {
+ 458   3                  //LCD_ClearDisplay();
+ 459   3                  
+ 460   3                  //LCD_Position(0,5);
+ 461   3                  //LCD_PrintNumber(duty);
+ 462   3      
+ 463   3                  
+ 464   3                  /*LCD_Position(0,10);
+ 465   3                  if(isGoingElevator) {
+ 466   3                      LCD_PrintString("true");
+ 467   3                  } else {
+ 468   3                   LCD_PrintString("false");
+ 469   3                  }*/
+ 470   3                  counter_print = 0;
+ 471   3              }
+ 472   2          }
+ 473   1      }
+ 474          
+ 475          /* [] END OF FILE */
+C51 COMPILER V9.03   MAIN                                                                  04/28/2015 04:57:45 PAGE 9   
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+
+             ; FUNCTION tock (BEGIN)
+0000 C0E0              PUSH    ACC
+0002 C0F0              PUSH    B
+0004 C083              PUSH    DPH
+0006 C082              PUSH    DPL
+0008 C085              PUSH    DPH1
+000A C084              PUSH    DPL1
+000C C086              PUSH    DPS
+000E 758600            MOV     DPS,#00H
+0011 C000        E     PUSH    ?C?XPAGE1SFR
+0013 750000      E     MOV     ?C?XPAGE1SFR,#?C?XPAGE1RST
+0016 C0D0              PUSH    PSW
+0018 75D000            MOV     PSW,#00H
+001B C000              PUSH    AR0
+001D C001              PUSH    AR1
+001F C002              PUSH    AR2
+0021 C003              PUSH    AR3
+0023 C004              PUSH    AR4
+0025 C005              PUSH    AR5
+0027 C006              PUSH    AR6
+0029 C007              PUSH    AR7
+                                           ; SOURCE LINE # 73
+                                           ; SOURCE LINE # 83
+002B 900000      R     MOV     DPTR,#number_of_ticks
+002E E4                CLR     A
+002F 75F001            MOV     B,#01H
+0032 120000      E     LCALL   ?C?IILDX
+                                           ; SOURCE LINE # 86
+0035 120000      E     LCALL   Hall_Counter_ReadCapture
+0038 E4                CLR     A
+0039 120000      E     LCALL   ?C?FCASTL
+003C 900000      R     MOV     DPTR,#ticks
+003F 120000      E     LCALL   ?C?LSTXDATA
+                                           ; SOURCE LINE # 89
+0042 900000      R     MOV     DPTR,#clock_freq
+0045 120000      E     LCALL   ?C?LLDXDATA0
+0048 900000      R     MOV     DPTR,#ticks
+004B 120000      E     LCALL   ?C?LLDXDATA
+004E 120000      E     LCALL   ?C?FPDIV
+0051 900000      R     MOV     DPTR,#dt
+0054 120000      E     LCALL   ?C?LSTXDATA
+                                           ; SOURCE LINE # 91
+0057 900000      R     MOV     DPTR,#ticks
+005A 120000      E     LCALL   ?C?LLDXDATA0
+005D 900000      R     MOV     DPTR,#clock_freq
+0060 120000      E     LCALL   ?C?LLDXDATA
+0063 120000      E     LCALL   ?C?FPDIV
+0066 900000      R     MOV     DPTR,#ticks_per_sec
+0069 120000      E     LCALL   ?C?LSTXDATA
+                                           ; SOURCE LINE # 93
+006C 900000      R     MOV     DPTR,#convert
+006F 120000      E     LCALL   ?C?LLDXDATA0
+0072 900000      R     MOV     DPTR,#ticks_per_sec
+0075 120000      E     LCALL   ?C?LLDXDATA
+0078 120000      E     LCALL   ?C?FPDIV
+007B 900000      R     MOV     DPTR,#speed
+007E 120000      E     LCALL   ?C?LSTXDATA
+                                           ; SOURCE LINE # 95
+0081 900000      R     MOV     DPTR,#error
+C51 COMPILER V9.03   MAIN                                                                  04/28/2015 04:57:45 PAGE 10  
+
+0084 120000      E     LCALL   ?C?LLDXDATA
+0087 900000      R     MOV     DPTR,#prev
+008A 120000      E     LCALL   ?C?LSTXDATA
+                                           ; SOURCE LINE # 96
+008D 900000      R     MOV     DPTR,#speed
+0090 120000      E     LCALL   ?C?LLDXDATA0
+0093 900000      R     MOV     DPTR,#target
+0096 120000      E     LCALL   ?C?LLDXDATA
+0099 120000      E     LCALL   ?C?FPSUB
+009C 900000      R     MOV     DPTR,#error
+009F 120000      E     LCALL   ?C?LSTXDATA
+                                           ; SOURCE LINE # 97
+00A2 900000      R     MOV     DPTR,#sum
+00A5 120000      E     LCALL   ?C?LLDXDATA
+00A8 C004              PUSH    AR4
+00AA C005              PUSH    AR5
+00AC C006              PUSH    AR6
+00AE C007              PUSH    AR7
+00B0 900000      R     MOV     DPTR,#dt
+00B3 120000      E     LCALL   ?C?LLDXDATA
+00B6 900000      R     MOV     DPTR,#error
+00B9 120000      E     LCALL   ?C?LLDXDATA0
+00BC 120000      E     LCALL   ?C?FPMUL
+00BF A804              MOV     R0,AR4
+00C1 A905              MOV     R1,AR5
+00C3 AA06              MOV     R2,AR6
+00C5 AB07              MOV     R3,AR7
+00C7 D007              POP     AR7
+00C9 D006              POP     AR6
+00CB D005              POP     AR5
+00CD D004              POP     AR4
+00CF 120000      E     LCALL   ?C?FPADD
+00D2 900000      R     MOV     DPTR,#sum
+00D5 120000      E     LCALL   ?C?LSTXDATA
+                                           ; SOURCE LINE # 99
+00D8 900000      R     MOV     DPTR,#sum
+00DB 120000      E     LCALL   ?C?LLDXDATA
+00DE 900000      R     MOV     DPTR,#ki
+00E1 120000      E     LCALL   ?C?LLDXDATA0
+00E4 120000      E     LCALL   ?C?FPMUL
+00E7 C004              PUSH    AR4
+00E9 C005              PUSH    AR5
+00EB C006              PUSH    AR6
+00ED C007              PUSH    AR7
+00EF 900000      R     MOV     DPTR,#error
+00F2 120000      E     LCALL   ?C?LLDXDATA
+00F5 900000      R     MOV     DPTR,#kp
+00F8 120000      E     LCALL   ?C?LLDXDATA0
+00FB 120000      E     LCALL   ?C?FPMUL
+00FE A804              MOV     R0,AR4
+0100 A905              MOV     R1,AR5
+0102 AA06              MOV     R2,AR6
+0104 AB07              MOV     R3,AR7
+0106 D007              POP     AR7
+0108 D006              POP     AR6
+010A D005              POP     AR5
+010C D004              POP     AR4
+010E 120000      E     LCALL   ?C?FPADD
+0111 900000      R     MOV     DPTR,#var
+0114 120000      E     LCALL   ?C?LSTXDATA
+                                           ; SOURCE LINE # 102
+0117 7F00              MOV     R7,#00H
+C51 COMPILER V9.03   MAIN                                                                  04/28/2015 04:57:45 PAGE 11  
+
+0119 7E00              MOV     R6,#00H
+011B 7D00              MOV     R5,#00H
+011D 7C00              MOV     R4,#00H
+011F 900000      R     MOV     DPTR,#speed
+0122 120000      E     LCALL   ?C?LLDXDATA0
+0125 120000      E     LCALL   ?C?FPCMP3
+0128 7022              JNZ     ?C0001
+                                           ; SOURCE LINE # 103
+012A 900000      R     MOV     DPTR,#open_loop_guess
+012D 120000      E     LCALL   ?C?LLDXDATA
+0130 120000      E     LCALL   ?C?CASTF
+0133 900000      R     MOV     DPTR,#duty
+0136 EE                MOV     A,R6
+0137 F0                MOVX    @DPTR,A
+0138 A3                INC     DPTR
+0139 EF                MOV     A,R7
+013A F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 104
+013B 7F00              MOV     R7,#00H
+013D 7E00              MOV     R6,#00H
+013F 7D00              MOV     R5,#00H
+0141 7C00              MOV     R4,#00H
+0143 900000      R     MOV     DPTR,#sum
+0146 120000      E     LCALL   ?C?LSTXDATA
+                                           ; SOURCE LINE # 105
+0149 020000      R     LJMP    ?C0002
+014C         ?C0001:
+                                           ; SOURCE LINE # 107
+014C 7F00              MOV     R7,#00H
+014E 7E00              MOV     R6,#00H
+0150 7D80              MOV     R5,#080H
+0152 7CBF              MOV     R4,#0BFH
+0154 900000      R     MOV     DPTR,#clock_period
+0157 120000      E     LCALL   ?C?LLDXDATA0
+015A 120000      E     LCALL   ?C?FPADD
+015D C004              PUSH    AR4
+015F C005              PUSH    AR5
+0161 C006              PUSH    AR6
+0163 C007              PUSH    AR7
+0165 900000      R     MOV     DPTR,#var
+0168 120000      E     LCALL   ?C?LLDXDATA
+016B 900000      R     MOV     DPTR,#open_loop_guess
+016E 120000      E     LCALL   ?C?LLDXDATA0
+0171 120000      E     LCALL   ?C?FPADD
+0174 A804              MOV     R0,AR4
+0176 A905              MOV     R1,AR5
+0178 AA06              MOV     R2,AR6
+017A AB07              MOV     R3,AR7
+017C D007              POP     AR7
+017E D006              POP     AR6
+0180 D005              POP     AR5
+0182 D004              POP     AR4
+0184 120000      E     LCALL   ?C?FPCMP3
+0187 6020              JZ      ?C0003
+0189 401E              JC      ?C0003
+                                           ; SOURCE LINE # 108
+                                           ; SOURCE LINE # 109
+018B 7F00              MOV     R7,#00H
+018D 7E00              MOV     R6,#00H
+018F 7D80              MOV     R5,#080H
+0191 7CBF              MOV     R4,#0BFH
+0193 900000      R     MOV     DPTR,#clock_period
+C51 COMPILER V9.03   MAIN                                                                  04/28/2015 04:57:45 PAGE 12  
+
+0196 120000      E     LCALL   ?C?LLDXDATA0
+0199 120000      E     LCALL   ?C?FPADD
+019C 120000      E     LCALL   ?C?CASTF
+019F 900000      R     MOV     DPTR,#duty
+01A2 EE                MOV     A,R6
+01A3 F0                MOVX    @DPTR,A
+01A4 A3                INC     DPTR
+01A5 EF                MOV     A,R7
+01A6 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 110
+01A7 8042              SJMP    ?C0002
+01A9         ?C0003:
+                                           ; SOURCE LINE # 113
+01A9 900000      R     MOV     DPTR,#var
+01AC 120000      E     LCALL   ?C?LLDXDATA
+01AF 900000      R     MOV     DPTR,#open_loop_guess
+01B2 120000      E     LCALL   ?C?LLDXDATA0
+01B5 120000      E     LCALL   ?C?FPADD
+01B8 7B00              MOV     R3,#00H
+01BA 7A00              MOV     R2,#00H
+01BC 7900              MOV     R1,#00H
+01BE 7800              MOV     R0,#00H
+01C0 120000      E     LCALL   ?C?FPCMP3
+01C3 600C              JZ      ?C0005
+01C5 400A              JC      ?C0005
+                                           ; SOURCE LINE # 114
+                                           ; SOURCE LINE # 115
+01C7 900000      R     MOV     DPTR,#duty
+01CA E4                CLR     A
+01CB F0                MOVX    @DPTR,A
+01CC A3                INC     DPTR
+01CD E4                CLR     A
+01CE F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 116
+01CF 801A              SJMP    ?C0002
+01D1         ?C0005:
+                                           ; SOURCE LINE # 119
+                                           ; SOURCE LINE # 120
+01D1 900000      R     MOV     DPTR,#var
+01D4 120000      E     LCALL   ?C?LLDXDATA
+01D7 900000      R     MOV     DPTR,#open_loop_guess
+01DA 120000      E     LCALL   ?C?LLDXDATA0
+01DD 120000      E     LCALL   ?C?FPADD
+01E0 120000      E     LCALL   ?C?CASTF
+01E3 900000      R     MOV     DPTR,#duty
+01E6 EE                MOV     A,R6
+01E7 F0                MOVX    @DPTR,A
+01E8 A3                INC     DPTR
+01E9 EF                MOV     A,R7
+01EA F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 121
+01EB         ?C0002:
+                                           ; SOURCE LINE # 131
+01EB 7D06              MOV     R5,#06H
+01ED 7F00              MOV     R7,#00H
+01EF 120000      E     LCALL   _LCD_Position
+                                           ; SOURCE LINE # 132
+01F2 900000      R     MOV     DPTR,#state
+01F5 E0                MOVX    A,@DPTR
+01F6 FE                MOV     R6,A
+01F7 A3                INC     DPTR
+01F8 E0                MOVX    A,@DPTR
+C51 COMPILER V9.03   MAIN                                                                  04/28/2015 04:57:45 PAGE 13  
+
+01F9 FF                MOV     R7,A
+01FA 120000      E     LCALL   _LCD_PrintDecUint16
+                                           ; SOURCE LINE # 137
+01FD 7D0A              MOV     R5,#0AH
+01FF 7F00              MOV     R7,#00H
+0201 120000      E     LCALL   _LCD_Position
+                                           ; SOURCE LINE # 138
+0204 900000      R     MOV     DPTR,#isGoingElevator
+0207 E0                MOVX    A,@DPTR
+0208 FF                MOV     R7,A
+0209 EF                MOV     A,R7
+020A 600B              JZ      ?C0007
+                                           ; SOURCE LINE # 139
+020C 7BFF              MOV     R3,#0FFH
+020E 7A00        R     MOV     R2,#HIGH ?SC_0
+0210 7900        R     MOV     R1,#LOW ?SC_0
+0212 120000      E     LCALL   _LCD_PrintString
+                                           ; SOURCE LINE # 140
+0215 8009              SJMP    ?C0008
+0217         ?C0007:
+                                           ; SOURCE LINE # 141
+0217 7BFF              MOV     R3,#0FFH
+0219 7A00        R     MOV     R2,#HIGH ?SC_5
+021B 7900        R     MOV     R1,#LOW ?SC_5
+021D 120000      E     LCALL   _LCD_PrintString
+                                           ; SOURCE LINE # 142
+0220         ?C0008:
+                                           ; SOURCE LINE # 145
+0220 900000      R     MOV     DPTR,#number_of_ticks
+0223 E0                MOVX    A,@DPTR
+0224 FE                MOV     R6,A
+0225 A3                INC     DPTR
+0226 E0                MOVX    A,@DPTR
+0227 FF                MOV     R7,A
+0228 C3                CLR     C
+0229 EF                MOV     A,R7
+022A 9432              SUBB    A,#032H
+022C EE                MOV     A,R6
+022D 9400              SUBB    A,#00H
+022F 404E              JC      ?C0009
+0231 900000      R     MOV     DPTR,#move_forward
+0234 E0                MOVX    A,@DPTR
+0235 FE                MOV     R6,A
+0236 A3                INC     DPTR
+0237 E0                MOVX    A,@DPTR
+0238 FF                MOV     R7,A
+0239 900000      R     MOV     DPTR,#state
+023C E0                MOVX    A,@DPTR
+023D FC                MOV     R4,A
+023E A3                INC     DPTR
+023F E0                MOVX    A,@DPTR
+0240 FD                MOV     R5,A
+0241 ED                MOV     A,R5
+0242 B5073A            CJNE    A,AR7,?C0009
+0245 EC                MOV     A,R4
+0246 B50636            CJNE    A,AR6,?C0009
+                                           ; SOURCE LINE # 148
+0249 900000      R     MOV     DPTR,#control
+024C E4                CLR     A
+024D F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 149
+024E 7FE8              MOV     R7,#0E8H
+C51 COMPILER V9.03   MAIN                                                                  04/28/2015 04:57:45 PAGE 14  
+
+0250 7E03              MOV     R6,#03H
+0252 7D00              MOV     R5,#00H
+0254 7C00              MOV     R4,#00H
+0256 900000      R     MOV     DPTR,#wait_milliseconds
+0259 120000      E     LCALL   ?C?LSTXDATA
+                                           ; SOURCE LINE # 151
+025C 900000      R     MOV     DPTR,#control
+025F E0                MOVX    A,@DPTR
+0260 FF                MOV     R7,A
+0261 120000      E     LCALL   _Drive_Control_Reg_Write
+                                           ; SOURCE LINE # 153
+0264 900000      R     MOV     DPTR,#number_of_ticks
+0267 E4                CLR     A
+0268 F0                MOVX    @DPTR,A
+0269 A3                INC     DPTR
+026A E4                CLR     A
+026B F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 160
+026C 120000      E     LCALL   Wait_Counter_Start
+                                           ; SOURCE LINE # 161
+026F 900000      R     MOV     DPTR,#waiting
+0272 E0                MOVX    A,@DPTR
+0273 FE                MOV     R6,A
+0274 A3                INC     DPTR
+0275 E0                MOVX    A,@DPTR
+0276 FF                MOV     R7,A
+0277 900000      R     MOV     DPTR,#state
+027A EE                MOV     A,R6
+027B F0                MOVX    @DPTR,A
+027C A3                INC     DPTR
+027D EF                MOV     A,R7
+027E F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 162
+027F         ?C0009:
+                                           ; SOURCE LINE # 164
+027F 900000      R     MOV     DPTR,#number_of_ticks
+0282 E0                MOVX    A,@DPTR
+0283 FE                MOV     R6,A
+0284 A3                INC     DPTR
+0285 E0                MOVX    A,@DPTR
+0286 FF                MOV     R7,A
+0287 C3                CLR     C
+0288 EF                MOV     A,R7
+0289 9432              SUBB    A,#032H
+028B EE                MOV     A,R6
+028C 9400              SUBB    A,#00H
+028E 4072              JC      ?C0010
+0290 900000      R     MOV     DPTR,#move_backward
+0293 E0                MOVX    A,@DPTR
+0294 FE                MOV     R6,A
+0295 A3                INC     DPTR
+0296 E0                MOVX    A,@DPTR
+0297 FF                MOV     R7,A
+0298 900000      R     MOV     DPTR,#state
+029B E0                MOVX    A,@DPTR
+029C FC                MOV     R4,A
+029D A3                INC     DPTR
+029E E0                MOVX    A,@DPTR
+029F FD                MOV     R5,A
+02A0 ED                MOV     A,R5
+02A1 6F                XRL     A,R7
+02A2 7002              JNZ     ?C0035
+C51 COMPILER V9.03   MAIN                                                                  04/28/2015 04:57:45 PAGE 15  
+
+02A4 EC                MOV     A,R4
+02A5 6E                XRL     A,R6
+02A6         ?C0035:
+02A6 705A              JNZ     ?C0010
+                                           ; SOURCE LINE # 166
+02A8 900000      R     MOV     DPTR,#control
+02AB E4                CLR     A
+02AC F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 167
+02AD 900000      R     MOV     DPTR,#control
+02B0 E0                MOVX    A,@DPTR
+02B1 FF                MOV     R7,A
+02B2 120000      E     LCALL   _Drive_Control_Reg_Write
+                                           ; SOURCE LINE # 170
+02B5 7D00              MOV     R5,#00H
+02B7 7F01              MOV     R7,#01H
+02B9 120000      E     LCALL   _LCD_Position
+                                           ; SOURCE LINE # 171
+02BC 7BFF              MOV     R3,#0FFH
+02BE 7A00        R     MOV     R2,#HIGH ?SC_11
+02C0 7900        R     MOV     R1,#LOW ?SC_11
+02C2 120000      E     LCALL   _LCD_PrintString
+                                           ; SOURCE LINE # 172
+02C5 7D01              MOV     R5,#01H
+02C7 7F01              MOV     R7,#01H
+02C9 120000      E     LCALL   _LCD_Position
+                                           ; SOURCE LINE # 173
+02CC 7BFF              MOV     R3,#0FFH
+02CE 7A00        R     MOV     R2,#HIGH ?SC_13
+02D0 7900        R     MOV     R1,#LOW ?SC_13
+02D2 120000      E     LCALL   _LCD_PrintString
+                                           ; SOURCE LINE # 176
+02D5 7F64              MOV     R7,#064H
+02D7 7E00              MOV     R6,#00H
+02D9 120000      E     LCALL   _PWM_Steering_WriteCompare
+                                           ; SOURCE LINE # 179
+02DC 900000      R     MOV     DPTR,#control
+02DF 7402              MOV     A,#02H
+02E1 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 180
+02E2 900000      R     MOV     DPTR,#control
+02E5 E0                MOVX    A,@DPTR
+02E6 FF                MOV     R7,A
+02E7 120000      E     LCALL   _Drive_Control_Reg_Write
+                                           ; SOURCE LINE # 182
+02EA 900000      R     MOV     DPTR,#number_of_ticks
+02ED E4                CLR     A
+02EE F0                MOVX    @DPTR,A
+02EF A3                INC     DPTR
+02F0 E4                CLR     A
+02F1 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 183
+02F2 900000      R     MOV     DPTR,#turning
+02F5 E0                MOVX    A,@DPTR
+02F6 FE                MOV     R6,A
+02F7 A3                INC     DPTR
+02F8 E0                MOVX    A,@DPTR
+02F9 FF                MOV     R7,A
+02FA 900000      R     MOV     DPTR,#state
+02FD EE                MOV     A,R6
+02FE F0                MOVX    @DPTR,A
+02FF A3                INC     DPTR
+C51 COMPILER V9.03   MAIN                                                                  04/28/2015 04:57:45 PAGE 16  
+
+0300 EF                MOV     A,R7
+0301 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 184
+0302         ?C0010:
+                                           ; SOURCE LINE # 186
+0302 900000      R     MOV     DPTR,#number_of_ticks
+0305 E0                MOVX    A,@DPTR
+0306 FE                MOV     R6,A
+0307 A3                INC     DPTR
+0308 E0                MOVX    A,@DPTR
+0309 FF                MOV     R7,A
+030A C3                CLR     C
+030B EF                MOV     A,R7
+030C 9428              SUBB    A,#028H
+030E EE                MOV     A,R6
+030F 9400              SUBB    A,#00H
+0311 4035              JC      ?C0011
+0313 900000      R     MOV     DPTR,#turning
+0316 E0                MOVX    A,@DPTR
+0317 FE                MOV     R6,A
+0318 A3                INC     DPTR
+0319 E0                MOVX    A,@DPTR
+031A FF                MOV     R7,A
+031B 900000      R     MOV     DPTR,#state
+031E E0                MOVX    A,@DPTR
+031F FC                MOV     R4,A
+0320 A3                INC     DPTR
+0321 E0                MOVX    A,@DPTR
+0322 FD                MOV     R5,A
+0323 ED                MOV     A,R5
+0324 B50721            CJNE    A,AR7,?C0011
+0327 EC                MOV     A,R4
+0328 B5061D            CJNE    A,AR6,?C0011
+                                           ; SOURCE LINE # 187
+032B 900000      R     MOV     DPTR,#control
+032E E4                CLR     A
+032F F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 189
+0330 7F98              MOV     R7,#098H
+0332 7E00              MOV     R6,#00H
+0334 120000      E     LCALL   _PWM_Steering_WriteCompare
+                                           ; SOURCE LINE # 191
+0337 900000      R     MOV     DPTR,#control
+033A E0                MOVX    A,@DPTR
+033B FF                MOV     R7,A
+033C 120000      E     LCALL   _Drive_Control_Reg_Write
+                                           ; SOURCE LINE # 193
+033F 900000      R     MOV     DPTR,#state
+0342 E4                CLR     A
+0343 F0                MOVX    @DPTR,A
+0344 A3                INC     DPTR
+0345 7405              MOV     A,#05H
+0347 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 194
+0348         ?C0011:
+                                           ; SOURCE LINE # 197
+0348 900000      R     MOV     DPTR,#duty
+034B E0                MOVX    A,@DPTR
+034C FE                MOV     R6,A
+034D A3                INC     DPTR
+034E E0                MOVX    A,@DPTR
+034F FF                MOV     R7,A
+C51 COMPILER V9.03   MAIN                                                                  04/28/2015 04:57:45 PAGE 17  
+
+0350 120000      E     LCALL   _PWM_WriteCompare
+                                           ; SOURCE LINE # 200
+0353 120000      E     LCALL   Hall_Counter_ReadStatusRegister
+                                           ; SOURCE LINE # 201
+0356 D007              POP     AR7
+0358 D006              POP     AR6
+035A D005              POP     AR5
+035C D004              POP     AR4
+035E D003              POP     AR3
+0360 D002              POP     AR2
+0362 D001              POP     AR1
+0364 D000              POP     AR0
+0366 D0D0              POP     PSW
+0368 D000        E     POP     ?C?XPAGE1SFR
+036A D086              POP     DPS
+036C D084              POP     DPL1
+036E D085              POP     DPH1
+0370 D082              POP     DPL
+0372 D083              POP     DPH
+0374 D0F0              POP     B
+0376 D0E0              POP     ACC
+0378 32                RETI    
+             ; FUNCTION tock (END)
+
+             ; FUNCTION flow (BEGIN)
+0000 C0E0              PUSH    ACC
+0002 C0F0              PUSH    B
+0004 C083              PUSH    DPH
+0006 C082              PUSH    DPL
+0008 C085              PUSH    DPH1
+000A C084              PUSH    DPL1
+000C C086              PUSH    DPS
+000E 758600            MOV     DPS,#00H
+0011 C000        E     PUSH    ?C?XPAGE1SFR
+0013 750000      E     MOV     ?C?XPAGE1SFR,#?C?XPAGE1RST
+0016 C0D0              PUSH    PSW
+0018 75D000            MOV     PSW,#00H
+001B C000              PUSH    AR0
+001D C001              PUSH    AR1
+001F C002              PUSH    AR2
+0021 C003              PUSH    AR3
+0023 C004              PUSH    AR4
+0025 C005              PUSH    AR5
+0027 C006              PUSH    AR6
+0029 C007              PUSH    AR7
+                                           ; SOURCE LINE # 204
+                                           ; SOURCE LINE # 206
+002B 900000      R     MOV     DPTR,#overflow
+002E E0                MOVX    A,@DPTR
+002F 04                INC     A
+0030 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 211
+0031 120000      E     LCALL   Hall_Counter_ReadStatusRegister
+                                           ; SOURCE LINE # 212
+0034 D007              POP     AR7
+0036 D006              POP     AR6
+0038 D005              POP     AR5
+003A D004              POP     AR4
+003C D003              POP     AR3
+003E D002              POP     AR2
+0040 D001              POP     AR1
+0042 D000              POP     AR0
+C51 COMPILER V9.03   MAIN                                                                  04/28/2015 04:57:45 PAGE 18  
+
+0044 D0D0              POP     PSW
+0046 D000        E     POP     ?C?XPAGE1SFR
+0048 D086              POP     DPS
+004A D084              POP     DPL1
+004C D085              POP     DPH1
+004E D082              POP     DPL
+0050 D083              POP     DPH
+0052 D0F0              POP     B
+0054 D0E0              POP     ACC
+0056 32                RETI    
+             ; FUNCTION flow (END)
+
+             ; FUNCTION fifty (BEGIN)
+0000 C0E0              PUSH    ACC
+0002 C0F0              PUSH    B
+0004 C083              PUSH    DPH
+0006 C082              PUSH    DPL
+0008 C085              PUSH    DPH1
+000A C084              PUSH    DPL1
+000C C086              PUSH    DPS
+000E 758600            MOV     DPS,#00H
+0011 C000        E     PUSH    ?C?XPAGE1SFR
+0013 750000      E     MOV     ?C?XPAGE1SFR,#?C?XPAGE1RST
+0016 C0D0              PUSH    PSW
+0018 75D000            MOV     PSW,#00H
+001B C000              PUSH    AR0
+001D C001              PUSH    AR1
+001F C002              PUSH    AR2
+0021 C003              PUSH    AR3
+0023 C004              PUSH    AR4
+0025 C005              PUSH    AR5
+0027 C006              PUSH    AR6
+0029 C007              PUSH    AR7
+                                           ; SOURCE LINE # 228
+                                           ; SOURCE LINE # 229
+002B 120000      E     LCALL   Line_Timer_ReadCapture
+002E 900000      R     MOV     DPTR,#clock_start_time
+0031 EE                MOV     A,R6
+0032 F0                MOVX    @DPTR,A
+0033 A3                INC     DPTR
+0034 EF                MOV     A,R7
+0035 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 230
+0036 120000      E     LCALL   Line_Timer_ReadCapture
+0039 900000      R     MOV     DPTR,#line_start_time
+003C EE                MOV     A,R6
+003D F0                MOVX    @DPTR,A
+003E A3                INC     DPTR
+003F EF                MOV     A,R7
+0040 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 232
+0041 900000      R     MOV     DPTR,#line_start_time
+0044 E0                MOVX    A,@DPTR
+0045 FE                MOV     R6,A
+0046 A3                INC     DPTR
+0047 E0                MOVX    A,@DPTR
+0048 FF                MOV     R7,A
+0049 900000      R     MOV     DPTR,#clock_start_time
+004C E0                MOVX    A,@DPTR
+004D FC                MOV     R4,A
+004E A3                INC     DPTR
+004F E0                MOVX    A,@DPTR
+C51 COMPILER V9.03   MAIN                                                                  04/28/2015 04:57:45 PAGE 19  
+
+0050 FD                MOV     R5,A
+0051 C3                CLR     C
+0052 ED                MOV     A,R5
+0053 9F                SUBB    A,R7
+0054 FD                MOV     R5,A
+0055 EC                MOV     A,R4
+0056 9E                SUBB    A,R6
+0057 FC                MOV     R4,A
+0058 E4                CLR     A
+0059 120000      E     LCALL   ?C?FCASTI
+005C 900000      R     MOV     DPTR,#clock_diff_time
+005F 120000      E     LCALL   ?C?LSTXDATA
+                                           ; SOURCE LINE # 233
+0062 7F00              MOV     R7,#00H
+0064 7E00              MOV     R6,#00H
+0066 7D40              MOV     R5,#040H
+0068 7CC4              MOV     R4,#0C4H
+006A 900000      R     MOV     DPTR,#clock_diff_time
+006D 120000      E     LCALL   ?C?LLDXDATA0
+0070 120000      E     LCALL   ?C?FPADD
+0073 900000      R     MOV     DPTR,#steering_error
+0076 120000      E     LCALL   ?C?LSTXDATA
+                                           ; SOURCE LINE # 234
+0079 900000      R     MOV     DPTR,#steering_error_sum
+007C 120000      E     LCALL   ?C?LLDXDATA
+007F 900000      R     MOV     DPTR,#steering_error
+0082 120000      E     LCALL   ?C?LLDXDATA0
+0085 120000      E     LCALL   ?C?FPADD
+0088 900000      R     MOV     DPTR,#steering_error_sum
+008B 120000      E     LCALL   ?C?LSTXDATA
+                                           ; SOURCE LINE # 235
+008E 900000      R     MOV     DPTR,#prev_steering_error
+0091 120000      E     LCALL   ?C?LLDXDATA0
+0094 900000      R     MOV     DPTR,#steering_error
+0097 120000      E     LCALL   ?C?LLDXDATA
+009A 120000      E     LCALL   ?C?FPSUB
+009D 900000      R     MOV     DPTR,#derivative
+00A0 120000      E     LCALL   ?C?LSTXDATA
+                                           ; SOURCE LINE # 236
+00A3 900000      R     MOV     DPTR,#steering_error
+00A6 120000      E     LCALL   ?C?LLDXDATA
+00A9 900000      R     MOV     DPTR,#prev_steering_error
+00AC 120000      E     LCALL   ?C?LSTXDATA
+                                           ; SOURCE LINE # 238
+00AF 7F00              MOV     R7,#00H
+00B1 7E40              MOV     R6,#040H
+00B3 7D1C              MOV     R5,#01CH
+00B5 7C46              MOV     R4,#046H
+00B7 900000      R     MOV     DPTR,#clock_diff_time
+00BA 120000      E     LCALL   ?C?LLDXDATA0
+00BD 120000      E     LCALL   ?C?FPCMP3
+00C0 6002              JZ      $ + 4H
+00C2 504A              JNC     ?C0015
+                                           ; SOURCE LINE # 240
+00C4         ?C0014:
+                                           ; SOURCE LINE # 246
+00C4 7FCD              MOV     R7,#0CDH
+00C6 7ECC              MOV     R6,#0CCH
+00C8 7DCC              MOV     R5,#0CCH
+00CA 7C3D              MOV     R4,#03DH
+00CC 900000      R     MOV     DPTR,#steering_error
+00CF 120000      E     LCALL   ?C?LLDXDATA0
+C51 COMPILER V9.03   MAIN                                                                  04/28/2015 04:57:45 PAGE 20  
+
+00D2 120000      E     LCALL   ?C?FPMUL
+00D5 7B00              MOV     R3,#00H
+00D7 7A00              MOV     R2,#00H
+00D9 7918              MOV     R1,#018H
+00DB 7843              MOV     R0,#043H
+00DD 120000      E     LCALL   ?C?FPADD
+00E0 120000      E     LCALL   ?C?CASTF
+00E3 900000      R     MOV     DPTR,#steering_value
+00E6 EE                MOV     A,R6
+00E7 F0                MOVX    @DPTR,A
+00E8 A3                INC     DPTR
+00E9 EF                MOV     A,R7
+00EA F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 264
+00EB 900000      R     MOV     DPTR,#follow_line
+00EE E0                MOVX    A,@DPTR
+00EF FE                MOV     R6,A
+00F0 A3                INC     DPTR
+00F1 E0                MOVX    A,@DPTR
+00F2 FF                MOV     R7,A
+00F3 900000      R     MOV     DPTR,#state
+00F6 E0                MOVX    A,@DPTR
+00F7 FC                MOV     R4,A
+00F8 A3                INC     DPTR
+00F9 E0                MOVX    A,@DPTR
+00FA FD                MOV     R5,A
+00FB ED                MOV     A,R5
+00FC B5070F            CJNE    A,AR7,?C0016
+00FF EC                MOV     A,R4
+0100 B5060B            CJNE    A,AR6,?C0016
+                                           ; SOURCE LINE # 265
+                                           ; SOURCE LINE # 266
+0103 900000      R     MOV     DPTR,#steering_value
+0106 E0                MOVX    A,@DPTR
+0107 FE                MOV     R6,A
+0108 A3                INC     DPTR
+0109 E0                MOVX    A,@DPTR
+010A FF                MOV     R7,A
+010B 120000      E     LCALL   _PWM_Steering_WriteCompare
+                                           ; SOURCE LINE # 267
+010E         ?C0016:
+                                           ; SOURCE LINE # 269
+                                           ; SOURCE LINE # 273
+010E         ?C0017:
+                                           ; SOURCE LINE # 274
+                                           ; SOURCE LINE # 278
+                                           ; SOURCE LINE # 280
+010E         ?C0015:
+                                           ; SOURCE LINE # 283
+010E 120000      E     LCALL   Line_Timer_ReadStatusRegister
+                                           ; SOURCE LINE # 285
+0111 D007              POP     AR7
+0113 D006              POP     AR6
+0115 D005              POP     AR5
+0117 D004              POP     AR4
+0119 D003              POP     AR3
+011B D002              POP     AR2
+011D D001              POP     AR1
+011F D000              POP     AR0
+0121 D0D0              POP     PSW
+0123 D000        E     POP     ?C?XPAGE1SFR
+0125 D086              POP     DPS
+C51 COMPILER V9.03   MAIN                                                                  04/28/2015 04:57:45 PAGE 21  
+
+0127 D084              POP     DPL1
+0129 D085              POP     DPH1
+012B D082              POP     DPL
+012D D083              POP     DPH
+012F D0F0              POP     B
+0131 D0E0              POP     ACC
+0133 32                RETI    
+             ; FUNCTION fifty (END)
+
+             ; FUNCTION hundred (BEGIN)
+0000 C0E0              PUSH    ACC
+0002 C0F0              PUSH    B
+0004 C083              PUSH    DPH
+0006 C082              PUSH    DPL
+0008 C085              PUSH    DPH1
+000A C084              PUSH    DPL1
+000C C086              PUSH    DPS
+000E 758600            MOV     DPS,#00H
+0011 C000        E     PUSH    ?C?XPAGE1SFR
+0013 750000      E     MOV     ?C?XPAGE1SFR,#?C?XPAGE1RST
+0016 C0D0              PUSH    PSW
+0018 75D000            MOV     PSW,#00H
+001B C000              PUSH    AR0
+001D C001              PUSH    AR1
+001F C002              PUSH    AR2
+0021 C003              PUSH    AR3
+0023 C004              PUSH    AR4
+0025 C005              PUSH    AR5
+0027 C006              PUSH    AR6
+0029 C007              PUSH    AR7
+                                           ; SOURCE LINE # 289
+                                           ; SOURCE LINE # 304
+002B 120000      E     LCALL   Lines_Per_Frame_Counter_ReadStatusRegister
+                                           ; SOURCE LINE # 305
+002E D007              POP     AR7
+0030 D006              POP     AR6
+0032 D005              POP     AR5
+0034 D004              POP     AR4
+0036 D003              POP     AR3
+0038 D002              POP     AR2
+003A D001              POP     AR1
+003C D000              POP     AR0
+003E D0D0              POP     PSW
+0040 D000        E     POP     ?C?XPAGE1SFR
+0042 D086              POP     DPS
+0044 D084              POP     DPL1
+0046 D085              POP     DPH1
+0048 D082              POP     DPL
+004A D083              POP     DPH
+004C D0F0              POP     B
+004E D0E0              POP     ACC
+0050 32                RETI    
+             ; FUNCTION hundred (END)
+
+             ; FUNCTION elevator_entering (BEGIN)
+0000 C0E0              PUSH    ACC
+0002 C0F0              PUSH    B
+0004 C083              PUSH    DPH
+0006 C082              PUSH    DPL
+0008 C085              PUSH    DPH1
+000A C084              PUSH    DPL1
+000C C086              PUSH    DPS
+C51 COMPILER V9.03   MAIN                                                                  04/28/2015 04:57:45 PAGE 22  
+
+000E 758600            MOV     DPS,#00H
+0011 C000        E     PUSH    ?C?XPAGE1SFR
+0013 750000      E     MOV     ?C?XPAGE1SFR,#?C?XPAGE1RST
+0016 C0D0              PUSH    PSW
+0018 75D000            MOV     PSW,#00H
+001B C000              PUSH    AR0
+001D C001              PUSH    AR1
+001F C002              PUSH    AR2
+0021 C003              PUSH    AR3
+0023 C004              PUSH    AR4
+0025 C005              PUSH    AR5
+0027 C006              PUSH    AR6
+0029 C007              PUSH    AR7
+                                           ; SOURCE LINE # 308
+                                           ; SOURCE LINE # 310
+002B 900000      R     MOV     DPTR,#wait_for_elevator
+002E E0                MOVX    A,@DPTR
+002F FE                MOV     R6,A
+0030 A3                INC     DPTR
+0031 E0                MOVX    A,@DPTR
+0032 FF                MOV     R7,A
+0033 900000      R     MOV     DPTR,#state
+0036 E0                MOVX    A,@DPTR
+0037 FC                MOV     R4,A
+0038 A3                INC     DPTR
+0039 E0                MOVX    A,@DPTR
+003A FD                MOV     R5,A
+003B ED                MOV     A,R5
+003C B50722            CJNE    A,AR7,?C0023
+003F EC                MOV     A,R4
+0040 B5061E            CJNE    A,AR6,?C0023
+                                           ; SOURCE LINE # 311
+0043 900000      R     MOV     DPTR,#control
+0046 7402              MOV     A,#02H
+0048 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 313
+0049 900000      R     MOV     DPTR,#control
+004C E0                MOVX    A,@DPTR
+004D FF                MOV     R7,A
+004E 120000      E     LCALL   _Drive_Control_Reg_Write
+                                           ; SOURCE LINE # 314
+0051 900000      R     MOV     DPTR,#move_forward
+0054 E0                MOVX    A,@DPTR
+0055 FE                MOV     R6,A
+0056 A3                INC     DPTR
+0057 E0                MOVX    A,@DPTR
+0058 FF                MOV     R7,A
+0059 900000      R     MOV     DPTR,#state
+005C EE                MOV     A,R6
+005D F0                MOVX    @DPTR,A
+005E A3                INC     DPTR
+005F EF                MOV     A,R7
+0060 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 315
+                                           ; SOURCE LINE # 316
+0061         ?C0023:
+0061 D007              POP     AR7
+0063 D006              POP     AR6
+0065 D005              POP     AR5
+0067 D004              POP     AR4
+0069 D003              POP     AR3
+006B D002              POP     AR2
+C51 COMPILER V9.03   MAIN                                                                  04/28/2015 04:57:45 PAGE 23  
+
+006D D001              POP     AR1
+006F D000              POP     AR0
+0071 D0D0              POP     PSW
+0073 D000        E     POP     ?C?XPAGE1SFR
+0075 D086              POP     DPS
+0077 D084              POP     DPL1
+0079 D085              POP     DPH1
+007B D082              POP     DPL
+007D D083              POP     DPH
+007F D0F0              POP     B
+0081 D0E0              POP     ACC
+0083 32                RETI    
+             ; FUNCTION elevator_entering (END)
+
+             ; FUNCTION elevator_leaving (BEGIN)
+0000 C0E0              PUSH    ACC
+0002 C0F0              PUSH    B
+0004 C083              PUSH    DPH
+0006 C082              PUSH    DPL
+0008 C085              PUSH    DPH1
+000A C084              PUSH    DPL1
+000C C086              PUSH    DPS
+000E 758600            MOV     DPS,#00H
+0011 C000        E     PUSH    ?C?XPAGE1SFR
+0013 750000      E     MOV     ?C?XPAGE1SFR,#?C?XPAGE1RST
+0016 C0D0              PUSH    PSW
+0018 75D000            MOV     PSW,#00H
+001B C000              PUSH    AR0
+001D C001              PUSH    AR1
+001F C002              PUSH    AR2
+0021 C003              PUSH    AR3
+0023 C004              PUSH    AR4
+0025 C005              PUSH    AR5
+0027 C006              PUSH    AR6
+0029 C007              PUSH    AR7
+                                           ; SOURCE LINE # 319
+                                           ; SOURCE LINE # 320
+002B 900000      R     MOV     DPTR,#in_elevator
+002E E0                MOVX    A,@DPTR
+002F FE                MOV     R6,A
+0030 A3                INC     DPTR
+0031 E0                MOVX    A,@DPTR
+0032 FF                MOV     R7,A
+0033 900000      R     MOV     DPTR,#state
+0036 E0                MOVX    A,@DPTR
+0037 FC                MOV     R4,A
+0038 A3                INC     DPTR
+0039 E0                MOVX    A,@DPTR
+003A FD                MOV     R5,A
+003B ED                MOV     A,R5
+003C B50722            CJNE    A,AR7,?C0025
+003F EC                MOV     A,R4
+0040 B5061E            CJNE    A,AR6,?C0025
+                                           ; SOURCE LINE # 321
+0043 900000      R     MOV     DPTR,#control
+0046 7403              MOV     A,#03H
+0048 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 323
+0049 900000      R     MOV     DPTR,#control
+004C E0                MOVX    A,@DPTR
+004D FF                MOV     R7,A
+004E 120000      E     LCALL   _Drive_Control_Reg_Write
+C51 COMPILER V9.03   MAIN                                                                  04/28/2015 04:57:45 PAGE 24  
+
+                                           ; SOURCE LINE # 324
+0051 900000      R     MOV     DPTR,#move_backward
+0054 E0                MOVX    A,@DPTR
+0055 FE                MOV     R6,A
+0056 A3                INC     DPTR
+0057 E0                MOVX    A,@DPTR
+0058 FF                MOV     R7,A
+0059 900000      R     MOV     DPTR,#state
+005C EE                MOV     A,R6
+005D F0                MOVX    @DPTR,A
+005E A3                INC     DPTR
+005F EF                MOV     A,R7
+0060 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 325
+                                           ; SOURCE LINE # 326
+0061         ?C0025:
+0061 D007              POP     AR7
+0063 D006              POP     AR6
+0065 D005              POP     AR5
+0067 D004              POP     AR4
+0069 D003              POP     AR3
+006B D002              POP     AR2
+006D D001              POP     AR1
+006F D000              POP     AR0
+0071 D0D0              POP     PSW
+0073 D000        E     POP     ?C?XPAGE1SFR
+0075 D086              POP     DPS
+0077 D084              POP     DPL1
+0079 D085              POP     DPH1
+007B D082              POP     DPL
+007D D083              POP     DPH
+007F D0F0              POP     B
+0081 D0E0              POP     ACC
+0083 32                RETI    
+             ; FUNCTION elevator_leaving (END)
+
+             ; FUNCTION isr_waiting (BEGIN)
+0000 C0E0              PUSH    ACC
+0002 C0F0              PUSH    B
+0004 C083              PUSH    DPH
+0006 C082              PUSH    DPL
+0008 C085              PUSH    DPH1
+000A C084              PUSH    DPL1
+000C C086              PUSH    DPS
+000E 758600            MOV     DPS,#00H
+0011 C000        E     PUSH    ?C?XPAGE1SFR
+0013 750000      E     MOV     ?C?XPAGE1SFR,#?C?XPAGE1RST
+0016 C0D0              PUSH    PSW
+0018 75D000            MOV     PSW,#00H
+001B C000              PUSH    AR0
+001D C001              PUSH    AR1
+001F C002              PUSH    AR2
+0021 C003              PUSH    AR3
+0023 C004              PUSH    AR4
+0025 C005              PUSH    AR5
+0027 C006              PUSH    AR6
+0029 C007              PUSH    AR7
+                                           ; SOURCE LINE # 328
+                                           ; SOURCE LINE # 329
+002B 900000      R     MOV     DPTR,#waiting
+002E E0                MOVX    A,@DPTR
+002F FE                MOV     R6,A
+C51 COMPILER V9.03   MAIN                                                                  04/28/2015 04:57:45 PAGE 25  
+
+0030 A3                INC     DPTR
+0031 E0                MOVX    A,@DPTR
+0032 FF                MOV     R7,A
+0033 900000      R     MOV     DPTR,#state
+0036 E0                MOVX    A,@DPTR
+0037 FC                MOV     R4,A
+0038 A3                INC     DPTR
+0039 E0                MOVX    A,@DPTR
+003A FD                MOV     R5,A
+003B ED                MOV     A,R5
+003C B50726            CJNE    A,AR7,?C0027
+003F EC                MOV     A,R4
+0040 B50622            CJNE    A,AR6,?C0027
+                                           ; SOURCE LINE # 331
+0043 900000      R     MOV     DPTR,#in_elevator
+0046 E0                MOVX    A,@DPTR
+0047 FE                MOV     R6,A
+0048 A3                INC     DPTR
+0049 E0                MOVX    A,@DPTR
+004A FF                MOV     R7,A
+004B 900000      R     MOV     DPTR,#state
+004E EE                MOV     A,R6
+004F F0                MOVX    @DPTR,A
+0050 A3                INC     DPTR
+0051 EF                MOV     A,R7
+0052 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 333
+0053 7D00              MOV     R5,#00H
+0055 7F00              MOV     R7,#00H
+0057 120000      E     LCALL   _LCD_Position
+                                           ; SOURCE LINE # 334
+005A 900000      R     MOV     DPTR,#state
+005D E0                MOVX    A,@DPTR
+005E FE                MOV     R6,A
+005F A3                INC     DPTR
+0060 E0                MOVX    A,@DPTR
+0061 FF                MOV     R7,A
+0062 120000      E     LCALL   _LCD_PrintDecUint16
+                                           ; SOURCE LINE # 335
+                                           ; SOURCE LINE # 336
+0065         ?C0027:
+0065 D007              POP     AR7
+0067 D006              POP     AR6
+0069 D005              POP     AR5
+006B D004              POP     AR4
+006D D003              POP     AR3
+006F D002              POP     AR2
+0071 D001              POP     AR1
+0073 D000              POP     AR0
+0075 D0D0              POP     PSW
+0077 D000        E     POP     ?C?XPAGE1SFR
+0079 D086              POP     DPS
+007B D084              POP     DPL1
+007D D085              POP     DPH1
+007F D082              POP     DPL
+0081 D083              POP     DPH
+0083 D0F0              POP     B
+0085 D0E0              POP     ACC
+0087 32                RETI    
+             ; FUNCTION isr_waiting (END)
+
+             ; FUNCTION getVolts (BEGIN)
+C51 COMPILER V9.03   MAIN                                                                  04/28/2015 04:57:45 PAGE 26  
+
+0000 C0E0              PUSH    ACC
+0002 C0F0              PUSH    B
+0004 C083              PUSH    DPH
+0006 C082              PUSH    DPL
+0008 C085              PUSH    DPH1
+000A C084              PUSH    DPL1
+000C C086              PUSH    DPS
+000E 758600            MOV     DPS,#00H
+0011 C000        E     PUSH    ?C?XPAGE1SFR
+0013 750000      E     MOV     ?C?XPAGE1SFR,#?C?XPAGE1RST
+0016 C0D0              PUSH    PSW
+0018 75D000            MOV     PSW,#00H
+001B C000              PUSH    AR0
+001D C001              PUSH    AR1
+001F C002              PUSH    AR2
+0021 C003              PUSH    AR3
+0023 C004              PUSH    AR4
+0025 C005              PUSH    AR5
+0027 C006              PUSH    AR6
+0029 C007              PUSH    AR7
+                                           ; SOURCE LINE # 341
+                                           ; SOURCE LINE # 343
+002B 900000      R     MOV     DPTR,#state
+002E E0                MOVX    A,@DPTR
+002F FE                MOV     R6,A
+0030 A3                INC     DPTR
+0031 E0                MOVX    A,@DPTR
+0032 FF                MOV     R7,A
+0033 EF                MOV     A,R7
+0034 6421              XRL     A,#021H
+0036 4E                ORL     A,R6
+0037 704C              JNZ     ?C0029
+                                           ; SOURCE LINE # 351
+0039 120000      E     LCALL   ADC_DelSig_GetResult32
+003C 900000      R     MOV     DPTR,#result
+003F 120000      E     LCALL   ?C?LSTXDATA
+                                           ; SOURCE LINE # 352
+0042 900000      R     MOV     DPTR,#result
+0045 120000      E     LCALL   ?C?LLDXDATA
+0048 120000      E     LCALL   _ADC_DelSig_CountsTo_Volts
+004B 900000      R     MOV     DPTR,#resultInVolts
+004E 120000      E     LCALL   ?C?LSTXDATA
+                                           ; SOURCE LINE # 355
+0051 7D00              MOV     R5,#00H
+0053 7F01              MOV     R7,#01H
+0055 120000      E     LCALL   _LCD_Position
+                                           ; SOURCE LINE # 356
+0058 7B01              MOV     R3,#01H
+005A 7A00        R     MOV     R2,#HIGH resultstr
+005C 7900        R     MOV     R1,#LOW resultstr
+005E C003              PUSH    AR3
+0060 C002              PUSH    AR2
+0062 C001              PUSH    AR1
+0064 7BFF              MOV     R3,#0FFH
+0066 7A00        R     MOV     R2,#HIGH ?SC_18
+0068 7900        R     MOV     R1,#LOW ?SC_18
+006A 900000      E     MOV     DPTR,#?_sprintf?BYTE+03H
+006D 120000      E     LCALL   ?C?PSTXDATA
+0070 900000      R     MOV     DPTR,#resultInVolts
+0073 120000      E     LCALL   ?C?LLDXDATA
+0076 900000      E     MOV     DPTR,#?_sprintf?BYTE+06H
+0079 120000      E     LCALL   ?C?LSTXDATA
+C51 COMPILER V9.03   MAIN                                                                  04/28/2015 04:57:45 PAGE 27  
+
+007C D001              POP     AR1
+007E D002              POP     AR2
+0080 D003              POP     AR3
+0082 120000      E     LCALL   _sprintf
+                                           ; SOURCE LINE # 359
+                                           ; SOURCE LINE # 360
+0085         ?C0029:
+0085 D007              POP     AR7
+0087 D006              POP     AR6
+0089 D005              POP     AR5
+008B D004              POP     AR4
+008D D003              POP     AR3
+008F D002              POP     AR2
+0091 D001              POP     AR1
+0093 D000              POP     AR0
+0095 D0D0              POP     PSW
+0097 D000        E     POP     ?C?XPAGE1SFR
+0099 D086              POP     DPS
+009B D084              POP     DPL1
+009D D085              POP     DPH1
+009F D082              POP     DPL
+00A1 D083              POP     DPH
+00A3 D0F0              POP     B
+00A5 D0E0              POP     ACC
+00A7 32                RETI    
+             ; FUNCTION getVolts (END)
+
+             ; FUNCTION main (BEGIN)
+                                           ; SOURCE LINE # 366
+                                           ; SOURCE LINE # 367
+                                           ; SOURCE LINE # 371
+0000 900000      R     MOV     DPTR,#start_control
+0003 E4                CLR     A
+0004 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 373
+0005 900000      R     MOV     DPTR,#counter_print
+0008 E4                CLR     A
+0009 F0                MOVX    @DPTR,A
+000A A3                INC     DPTR
+000B E4                CLR     A
+000C F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 376
+000D D2AF              SETB    EA
+000F 9044F4            MOV     DPTR,#044F4H
+0012 E0                MOVX    A,@DPTR
+0013 FF                MOV     R7,A
+0014 EF                MOV     A,R7
+0015 54FD              ANL     A,#0FDH
+0017 FF                MOV     R7,A
+0018 EF                MOV     A,R7
+0019 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 379
+001A 120000      E     LCALL   Hall_Counter_Start
+                                           ; SOURCE LINE # 380
+001D 120000      E     LCALL   Clock_Hall_Start
+                                           ; SOURCE LINE # 383
+0020 120000      E     LCALL   Clock_Steering_Start
+                                           ; SOURCE LINE # 384
+0023 120000      E     LCALL   Lines_Per_Frame_Counter_Start
+                                           ; SOURCE LINE # 385
+0026 120000      E     LCALL   Camera_Comp_Start
+                                           ; SOURCE LINE # 386
+C51 COMPILER V9.03   MAIN                                                                  04/28/2015 04:57:45 PAGE 28  
+
+0029 120000      E     LCALL   Camera_Threshold_Start
+                                           ; SOURCE LINE # 389
+002C 120000      E     LCALL   PWM_Start
+                                           ; SOURCE LINE # 390
+002F 120000      E     LCALL   PWM_Steering_Start
+                                           ; SOURCE LINE # 393
+0032 120000      E     LCALL   LCD_Start
+                                           ; SOURCE LINE # 394
+0035 7D00              MOV     R5,#00H
+0037 7F00              MOV     R7,#00H
+0039 120000      E     LCALL   _LCD_Position
+                                           ; SOURCE LINE # 395
+003C 7BFF              MOV     R3,#0FFH
+003E 7A00        R     MOV     R2,#HIGH ?SC_29
+0040 7900        R     MOV     R1,#LOW ?SC_29
+0042 120000      E     LCALL   _LCD_PrintString
+                                           ; SOURCE LINE # 398
+0045 120000      E     LCALL   ISR_Hall_Start
+                                           ; SOURCE LINE # 399
+0048 7E00        R     MOV     R6,#HIGH tock
+004A 7F00        R     MOV     R7,#LOW tock
+004C 120000      E     LCALL   _ISR_Hall_SetVector
+                                           ; SOURCE LINE # 400
+004F 120000      E     LCALL   ISR_Overflow_Start
+                                           ; SOURCE LINE # 401
+0052 7E00        R     MOV     R6,#HIGH flow
+0054 7F00        R     MOV     R7,#LOW flow
+0056 120000      E     LCALL   _ISR_Overflow_SetVector
+                                           ; SOURCE LINE # 403
+0059 120000      E     LCALL   ISR_50_Lines_Start
+                                           ; SOURCE LINE # 404
+005C 7E00        R     MOV     R6,#HIGH fifty
+005E 7F00        R     MOV     R7,#LOW fifty
+0060 120000      E     LCALL   _ISR_50_Lines_SetVector
+                                           ; SOURCE LINE # 405
+0063 120000      E     LCALL   ISR_100_Lines_Start
+                                           ; SOURCE LINE # 406
+0066 7E00        R     MOV     R6,#HIGH hundred
+0068 7F00        R     MOV     R7,#LOW hundred
+006A 120000      E     LCALL   _ISR_100_Lines_SetVector
+                                           ; SOURCE LINE # 408
+006D 120000      E     LCALL   Line_Timer_Start
+                                           ; SOURCE LINE # 411
+0070 120000      E     LCALL   Elevator_Threshold_Start
+                                           ; SOURCE LINE # 412
+0073 120000      E     LCALL   Elevator_Comparator_Start
+                                           ; SOURCE LINE # 413
+0076 120000      E     LCALL   ISR_Elevator_Start
+                                           ; SOURCE LINE # 414
+0079 7E00        R     MOV     R6,#HIGH elevator_entering
+007B 7F00        R     MOV     R7,#LOW elevator_entering
+007D 120000      E     LCALL   _ISR_Elevator_SetVector
+                                           ; SOURCE LINE # 416
+0080 120000      E     LCALL   Elevator_Comparator_1_Start
+                                           ; SOURCE LINE # 417
+0083 120000      E     LCALL   ISR_Elevator_2_Start
+                                           ; SOURCE LINE # 418
+0086 7E00        R     MOV     R6,#HIGH elevator_leaving
+0088 7F00        R     MOV     R7,#LOW elevator_leaving
+008A 120000      E     LCALL   _ISR_Elevator_2_SetVector
+                                           ; SOURCE LINE # 421
+008D 120000      E     LCALL   Wait_Clock_Start
+C51 COMPILER V9.03   MAIN                                                                  04/28/2015 04:57:45 PAGE 29  
+
+                                           ; SOURCE LINE # 422
+0090 120000      E     LCALL   ISR_Wait_Start
+                                           ; SOURCE LINE # 423
+0093 7E00        R     MOV     R6,#HIGH isr_waiting
+0095 7F00        R     MOV     R7,#LOW isr_waiting
+0097 120000      E     LCALL   _ISR_Wait_SetVector
+                                           ; SOURCE LINE # 426
+009A 900000      R     MOV     DPTR,#open_loop_guess
+009D 120000      E     LCALL   ?C?LLDXDATA
+00A0 120000      E     LCALL   ?C?CASTF
+00A3 120000      E     LCALL   _PWM_WriteCompare
+                                           ; SOURCE LINE # 429
+00A6 900000      R     MOV     DPTR,#start_control
+00A9 E0                MOVX    A,@DPTR
+00AA FF                MOV     R7,A
+00AB 120000      E     LCALL   _Drive_Control_Reg_Write
+                                           ; SOURCE LINE # 436
+00AE 120000      E     LCALL   ADC_DelSig_StartConvert
+                                           ; SOURCE LINE # 438
+00B1 7D00              MOV     R5,#00H
+00B3 7F01              MOV     R7,#01H
+00B5 120000      E     LCALL   _LCD_Position
+                                           ; SOURCE LINE # 439
+00B8 7BFF              MOV     R3,#0FFH
+00BA 7A00        R     MOV     R2,#HIGH ?SC_36
+00BC 7900        R     MOV     R1,#LOW ?SC_36
+00BE 120000      E     LCALL   _LCD_PrintString
+                                           ; SOURCE LINE # 443
+00C1 120000      E     LCALL   ADC_DelSig_Start
+                                           ; SOURCE LINE # 444
+00C4 120000      E     LCALL   ADC_DelSig_StartConvert
+                                           ; SOURCE LINE # 447
+00C7 120000      E     LCALL   ISR_getVolts_Start
+                                           ; SOURCE LINE # 448
+00CA 7E00        R     MOV     R6,#HIGH getVolts
+00CC 7F00        R     MOV     R7,#LOW getVolts
+00CE 120000      E     LCALL   _ISR_getVolts_SetVector
+                                           ; SOURCE LINE # 453
+00D1         ?C0030:
+                                           ; SOURCE LINE # 454
+                                           ; SOURCE LINE # 457
+00D1 900000      R     MOV     DPTR,#counter_print
+00D4 E0                MOVX    A,@DPTR
+00D5 FE                MOV     R6,A
+00D6 A3                INC     DPTR
+00D7 E0                MOVX    A,@DPTR
+00D8 FF                MOV     R7,A
+00D9 EF                MOV     A,R7
+00DA B410F4            CJNE    A,#010H,?C0030
+00DD EE                MOV     A,R6
+00DE B427F0            CJNE    A,#027H,?C0030
+                                           ; SOURCE LINE # 470
+00E1 900000      R     MOV     DPTR,#counter_print
+00E4 E4                CLR     A
+00E5 F0                MOVX    @DPTR,A
+00E6 A3                INC     DPTR
+00E7 E4                CLR     A
+00E8 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 471
+                                           ; SOURCE LINE # 472
+00E9 80E6              SJMP    ?C0030
+00EB 22                RET     
+C51 COMPILER V9.03   MAIN                                                                  04/28/2015 04:57:45 PAGE 30  
+
+             ; FUNCTION main (END)
+
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   2169    ----
+   CONSTANT SIZE    =     38    ----
+   XDATA SIZE       =    113      58
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  2 WARNING(S),  0 ERROR(S)

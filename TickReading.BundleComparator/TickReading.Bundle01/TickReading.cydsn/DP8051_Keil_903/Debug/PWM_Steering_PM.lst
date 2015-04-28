@@ -1,0 +1,440 @@
+C51 COMPILER V9.03   PWM_STEERING_PM                                                       04/28/2015 04:56:11 PAGE 1   
+
+
+C51 COMPILER V9.03, COMPILATION OF MODULE PWM_STEERING_PM
+OBJECT MODULE PLACED IN .\DP8051_Keil_903\Debug\PWM_Steering_PM.obj
+COMPILER INVOKED BY: C:\Program Files (x86)\Cypress\PSoC Creator\2.1\PSoC Creator\import\keil\pk51\9.03\C51\BIN\c51.exe 
+                    -.\Generated_Source\PSoC3\PWM_Steering_PM.c NOIV LARGE MODDP2 OMF2 VB(1) PR(.\DP8051_Keil_903\Debug\PWM_Steering_PM.lst) 
+                    -CD DB NOIP OT(2,SIZE) INCDIR(Generated_Source\PSoC3) OJ(.\DP8051_Keil_903\Debug\PWM_Steering_PM.obj)
+
+line level    source
+
+   1          /*******************************************************************************
+   2          * File Name: PWM_Steering_PM.c
+   3          * Version 2.20
+   4          *
+   5          * Description:
+   6          *  This file provides the power management source code to API for the
+   7          *  PWM.
+   8          *
+   9          * Note:
+  10          *
+  11          ********************************************************************************
+  12          * Copyright 2008-2012, Cypress Semiconductor Corporation.  All rights reserved.
+  13          * You may use this file only in accordance with the license, terms, conditions,
+  14          * disclaimers, and limitations in the end user license agreement accompanying
+  15          * the software package with which this file was provided.
+  16          *******************************************************************************/
+  17          #include "cytypes.h"
+  18          #include "PWM_Steering.h"
+  19          
+  20          static PWM_Steering_backupStruct PWM_Steering_backup;
+  21          
+  22          
+  23          /*******************************************************************************
+  24          * Function Name: PWM_Steering_SaveConfig
+  25          ********************************************************************************
+  26          *
+  27          * Summary:
+  28          *  Saves the current user configuration of the component.
+  29          *  
+  30          * Parameters:  
+  31          *  void
+  32          *
+  33          * Return: 
+  34          *  void
+  35          *
+  36          * Global variables:
+  37          *  PWM_Steering_backup:  Variables of this global structure are modified to 
+  38          *  store the values of non retention configuration registers when Sleep() API is 
+  39          *  called.
+  40          *
+  41          *******************************************************************************/
+  42          void PWM_Steering_SaveConfig(void) 
+  43          {
+  44   1          
+  45   1          #if(!PWM_Steering_UsingFixedFunction)
+  46   1              #if (CY_PSOC5A)
+                          PWM_Steering_backup.PWMUdb = PWM_Steering_ReadCounter();
+                          PWM_Steering_backup.PWMPeriod = PWM_Steering_ReadPeriod();
+                          #if (PWM_Steering_UseStatus)
+                              PWM_Steering_backup.InterruptMaskValue = PWM_Steering_STATUS_MASK;
+                          #endif /* (PWM_Steering_UseStatus) */
+                          
+                          #if(PWM_Steering_UseOneCompareMode)
+C51 COMPILER V9.03   PWM_STEERING_PM                                                       04/28/2015 04:56:11 PAGE 2   
+
+                              PWM_Steering_backup.PWMCompareValue = PWM_Steering_ReadCompare();
+                          #else
+                              PWM_Steering_backup.PWMCompareValue1 = PWM_Steering_ReadCompare1();
+                              PWM_Steering_backup.PWMCompareValue2 = PWM_Steering_ReadCompare2();
+                          #endif /* (PWM_Steering_UseOneCompareMode) */
+                          
+                         #if(PWM_Steering_DeadBandUsed)
+                              PWM_Steering_backup.PWMdeadBandValue = PWM_Steering_ReadDeadTime();
+                          #endif /* (PWM_Steering_DeadBandUsed) */
+                        
+                          #if ( PWM_Steering_KillModeMinTime)
+                              PWM_Steering_backup.PWMKillCounterPeriod = PWM_Steering_ReadKillTime();
+                          #endif /* ( PWM_Steering_KillModeMinTime) */
+                      #endif /* (CY_PSOC5A) */
+  68   1              
+  69   1              #if (CY_PSOC3 || CY_PSOC5LP)
+  70   1                  #if(!PWM_Steering_PWMModeIsCenterAligned)
+  71   1                      PWM_Steering_backup.PWMPeriod = PWM_Steering_ReadPeriod();
+  72   1                  #endif /* (!PWM_Steering_PWMModeIsCenterAligned) */
+  73   1                  PWM_Steering_backup.PWMUdb = PWM_Steering_ReadCounter();
+  74   1                  #if (PWM_Steering_UseStatus)
+  75   1                      PWM_Steering_backup.InterruptMaskValue = PWM_Steering_STATUS_MASK;
+  76   1                  #endif /* (PWM_Steering_UseStatus) */
+  77   1                  
+  78   1                  #if(PWM_Steering_DeadBandMode == PWM_Steering__B_PWM__DBM_256_CLOCKS || \
+  79   1                      PWM_Steering_DeadBandMode == PWM_Steering__B_PWM__DBM_2_4_CLOCKS)
+                              PWM_Steering_backup.PWMdeadBandValue = PWM_Steering_ReadDeadTime();
+                          #endif /*  deadband count is either 2-4 clocks or 256 clocks */
+  82   1                  
+  83   1                  #if(PWM_Steering_KillModeMinTime)
+                               PWM_Steering_backup.PWMKillCounterPeriod = PWM_Steering_ReadKillTime();
+                          #endif /* (PWM_Steering_KillModeMinTime) */
+  86   1              #endif /* (CY_PSOC3 || CY_PSOC5LP) */
+  87   1              
+  88   1              #if(PWM_Steering_UseControl)
+  89   1                  PWM_Steering_backup.PWMControlRegister = PWM_Steering_ReadControlRegister();
+  90   1              #endif /* (PWM_Steering_UseControl) */
+  91   1          #endif  /* (!PWM_Steering_UsingFixedFunction) */
+  92   1      }
+  93          
+  94          
+  95          /*******************************************************************************
+  96          * Function Name: PWM_Steering_RestoreConfig
+  97          ********************************************************************************
+  98          * 
+  99          * Summary:
+ 100          *  Restores the current user configuration of the component.
+ 101          *
+ 102          * Parameters:  
+ 103          *  void
+ 104          *
+ 105          * Return: 
+ 106          *  void
+ 107          *
+ 108          * Global variables:
+ 109          *  PWM_Steering_backup:  Variables of this global structure are used to  
+ 110          *  restore the values of non retention registers on wakeup from sleep mode.
+ 111          *
+ 112          *******************************************************************************/
+ 113          void PWM_Steering_RestoreConfig(void) 
+ 114          {
+ 115   1              #if(!PWM_Steering_UsingFixedFunction)
+C51 COMPILER V9.03   PWM_STEERING_PM                                                       04/28/2015 04:56:11 PAGE 3   
+
+ 116   1                  #if (CY_PSOC5A)
+                              /* Interrupt State Backup for Critical Region*/
+                              uint8 PWM_Steering_interruptState;
+                              /* Enter Critical Region*/
+                              PWM_Steering_interruptState = CyEnterCriticalSection();
+                              #if (PWM_Steering_UseStatus)
+                                  /* Use the interrupt output of the status register for IRQ output */
+                                  PWM_Steering_STATUS_AUX_CTRL |= PWM_Steering_STATUS_ACTL_INT_EN_MASK;
+                                  
+                                  PWM_Steering_STATUS_MASK = PWM_Steering_backup.InterruptMaskValue;
+                              #endif /* (PWM_Steering_UseStatus) */
+                              
+                              #if (PWM_Steering_Resolution == 8)
+                                  /* Set FIFO 0 to 1 byte register for period*/
+                                  PWM_Steering_AUX_CONTROLDP0 |= (PWM_Steering_AUX_CTRL_FIFO0_CLR);
+                              #else /* (PWM_Steering_Resolution == 16)*/
+                                  /* Set FIFO 0 to 1 byte register for period */
+                                  PWM_Steering_AUX_CONTROLDP0 |= (PWM_Steering_AUX_CTRL_FIFO0_CLR);
+                                  PWM_Steering_AUX_CONTROLDP1 |= (PWM_Steering_AUX_CTRL_FIFO0_CLR);
+                              #endif /* (PWM_Steering_Resolution == 8) */
+                              /* Exit Critical Region*/
+                              CyExitCriticalSection(PWM_Steering_interruptState);
+                              
+                              PWM_Steering_WriteCounter(PWM_Steering_backup.PWMUdb);
+                              PWM_Steering_WritePeriod(PWM_Steering_backup.PWMPeriod);
+                              
+                              #if(PWM_Steering_UseOneCompareMode)
+                                  PWM_Steering_WriteCompare(PWM_Steering_backup.PWMCompareValue);
+                              #else
+                                  PWM_Steering_WriteCompare1(PWM_Steering_backup.PWMCompareValue1);
+                                  PWM_Steering_WriteCompare2(PWM_Steering_backup.PWMCompareValue2);
+                              #endif /* (PWM_Steering_UseOneCompareMode) */
+                              
+                             #if(PWM_Steering_DeadBandMode == PWM_Steering__B_PWM__DBM_256_CLOCKS || \
+                                 PWM_Steering_DeadBandMode == PWM_Steering__B_PWM__DBM_2_4_CLOCKS)
+                                  PWM_Steering_WriteDeadTime(PWM_Steering_backup.PWMdeadBandValue);
+                              #endif /* deadband count is either 2-4 clocks or 256 clocks */
+                          
+                              #if ( PWM_Steering_KillModeMinTime)
+                                  PWM_Steering_WriteKillTime(PWM_Steering_backup.PWMKillCounterPeriod);
+                              #endif /* ( PWM_Steering_KillModeMinTime) */
+                          #endif /* (CY_PSOC5A) */
+ 158   1                  
+ 159   1                  #if (CY_PSOC3 || CY_PSOC5LP)
+ 160   1                      #if(!PWM_Steering_PWMModeIsCenterAligned)
+ 161   1                          PWM_Steering_WritePeriod(PWM_Steering_backup.PWMPeriod);
+ 162   1                      #endif /* (!PWM_Steering_PWMModeIsCenterAligned) */
+ 163   1                      PWM_Steering_WriteCounter(PWM_Steering_backup.PWMUdb);
+ 164   1                      #if (PWM_Steering_UseStatus)
+ 165   1                          PWM_Steering_STATUS_MASK = PWM_Steering_backup.InterruptMaskValue;
+ 166   1                      #endif /* (PWM_Steering_UseStatus) */
+ 167   1                      
+ 168   1                      #if(PWM_Steering_DeadBandMode == PWM_Steering__B_PWM__DBM_256_CLOCKS || \
+ 169   1                          PWM_Steering_DeadBandMode == PWM_Steering__B_PWM__DBM_2_4_CLOCKS)
+                                  PWM_Steering_WriteDeadTime(PWM_Steering_backup.PWMdeadBandValue);
+                              #endif /* deadband count is either 2-4 clocks or 256 clocks */
+ 172   1                      
+ 173   1                      #if(PWM_Steering_KillModeMinTime)
+                                  PWM_Steering_WriteKillTime(PWM_Steering_backup.PWMKillCounterPeriod);
+                              #endif /* (PWM_Steering_KillModeMinTime) */
+ 176   1                  #endif /* (CY_PSOC3 || CY_PSOC5LP) */
+ 177   1                  
+C51 COMPILER V9.03   PWM_STEERING_PM                                                       04/28/2015 04:56:11 PAGE 4   
+
+ 178   1                  #if(PWM_Steering_UseControl)
+ 179   1                      PWM_Steering_WriteControlRegister(PWM_Steering_backup.PWMControlRegister); 
+ 180   1                  #endif /* (PWM_Steering_UseControl) */
+ 181   1              #endif  /* (!PWM_Steering_UsingFixedFunction) */
+ 182   1          }
+ 183          
+ 184          
+ 185          /*******************************************************************************
+ 186          * Function Name: PWM_Steering_Sleep
+ 187          ********************************************************************************
+ 188          * 
+ 189          * Summary:
+ 190          *  Disables block's operation and saves the user configuration. Should be called 
+ 191          *  just prior to entering sleep.
+ 192          *  
+ 193          * Parameters:  
+ 194          *  void
+ 195          *
+ 196          * Return: 
+ 197          *  void
+ 198          *
+ 199          * Global variables:
+ 200          *  PWM_Steering_backup.PWMEnableState:  Is modified depending on the enable 
+ 201          *  state of the block before entering sleep mode.
+ 202          *
+ 203          *******************************************************************************/
+ 204          void PWM_Steering_Sleep(void) 
+ 205          {
+ 206   1          #if(PWM_Steering_UseControl)
+ 207   1              if(PWM_Steering_CTRL_ENABLE == (PWM_Steering_CONTROL & PWM_Steering_CTRL_ENABLE))
+ 208   1              {
+ 209   2                  /*Component is enabled */
+ 210   2                  PWM_Steering_backup.PWMEnableState = 1u;
+ 211   2              }
+ 212   1              else
+ 213   1              {
+ 214   2                  /* Component is disabled */
+ 215   2                  PWM_Steering_backup.PWMEnableState = 0u;
+ 216   2              }
+ 217   1          #endif /* (PWM_Steering_UseControl) */
+ 218   1          /* Stop component */
+ 219   1          PWM_Steering_Stop();
+ 220   1          
+ 221   1          /* Save registers configuration */
+ 222   1          PWM_Steering_SaveConfig();
+ 223   1      }
+ 224          
+ 225          
+ 226          /*******************************************************************************
+ 227          * Function Name: PWM_Steering_Wakeup
+ 228          ********************************************************************************
+ 229          * 
+ 230          * Summary:
+ 231          *  Restores and enables the user configuration. Should be called just after 
+ 232          *  awaking from sleep.
+ 233          *  
+ 234          * Parameters:  
+ 235          *  void
+ 236          *
+ 237          * Return: 
+ 238          *  void
+ 239          *
+C51 COMPILER V9.03   PWM_STEERING_PM                                                       04/28/2015 04:56:11 PAGE 5   
+
+ 240          * Global variables:
+ 241          *  PWM_Steering_backup.pwmEnable:  Is used to restore the enable state of 
+ 242          *  block on wakeup from sleep mode.
+ 243          *
+ 244          *******************************************************************************/
+ 245          void PWM_Steering_Wakeup(void) 
+ 246          {
+ 247   1           /* Restore registers values */
+ 248   1          PWM_Steering_RestoreConfig();
+ 249   1          
+ 250   1          if(PWM_Steering_backup.PWMEnableState != 0u)
+ 251   1          {
+ 252   2              /* Enable component's operation */
+ 253   2              PWM_Steering_Enable();
+ 254   2          } /* Do nothing if component's block was disabled before */
+ 255   1          
+ 256   1      }
+ 257          
+ 258          
+ 259          /* [] END OF FILE */
+C51 COMPILER V9.03   PWM_STEERING_PM                                                       04/28/2015 04:56:11 PAGE 6   
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+
+             ; FUNCTION PWM_Steering_SaveConfig (BEGIN)
+                                           ; SOURCE LINE # 42
+                                           ; SOURCE LINE # 43
+                                           ; SOURCE LINE # 71
+0000 7B02              MOV     R3,#02H
+0002 7A65              MOV     R2,#065H
+0004 7946              MOV     R1,#046H
+0006 120000      E     LCALL   _cyread16_nodpx
+0009 900000      R     MOV     DPTR,#PWM_Steering_backup+03H
+000C EE                MOV     A,R6
+000D F0                MOVX    @DPTR,A
+000E A3                INC     DPTR
+000F EF                MOV     A,R7
+0010 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 73
+0011 120000      E     LCALL   PWM_Steering_ReadCounter
+0014 900000      R     MOV     DPTR,#PWM_Steering_backup+01H
+0017 EE                MOV     A,R6
+0018 F0                MOVX    @DPTR,A
+0019 A3                INC     DPTR
+001A EF                MOV     A,R7
+001B F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 75
+001C 906586            MOV     DPTR,#06586H
+001F E0                MOVX    A,@DPTR
+0020 FF                MOV     R7,A
+0021 900000      R     MOV     DPTR,#PWM_Steering_backup+05H
+0024 EF                MOV     A,R7
+0025 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 89
+0026 906576            MOV     DPTR,#06576H
+0029 E0                MOVX    A,@DPTR
+002A FF                MOV     R7,A
+002B 900000      R     MOV     DPTR,#PWM_Steering_backup+06H
+002E EF                MOV     A,R7
+002F F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 92
+0030 22                RET     
+             ; FUNCTION PWM_Steering_SaveConfig (END)
+
+             ; FUNCTION PWM_Steering_RestoreConfig (BEGIN)
+                                           ; SOURCE LINE # 113
+                                           ; SOURCE LINE # 114
+                                           ; SOURCE LINE # 161
+0000 900000      R     MOV     DPTR,#PWM_Steering_backup+03H
+0003 E0                MOVX    A,@DPTR
+0004 FE                MOV     R6,A
+0005 A3                INC     DPTR
+0006 E0                MOVX    A,@DPTR
+0007 FF                MOV     R7,A
+0008 120000      E     LCALL   _PWM_Steering_WritePeriod
+                                           ; SOURCE LINE # 163
+000B 900000      R     MOV     DPTR,#PWM_Steering_backup+01H
+000E E0                MOVX    A,@DPTR
+000F FE                MOV     R6,A
+0010 A3                INC     DPTR
+0011 E0                MOVX    A,@DPTR
+0012 FF                MOV     R7,A
+0013 120000      E     LCALL   _PWM_Steering_WriteCounter
+C51 COMPILER V9.03   PWM_STEERING_PM                                                       04/28/2015 04:56:11 PAGE 7   
+
+                                           ; SOURCE LINE # 165
+0016 900000      R     MOV     DPTR,#PWM_Steering_backup+05H
+0019 E0                MOVX    A,@DPTR
+001A FF                MOV     R7,A
+001B 906586            MOV     DPTR,#06586H
+001E EF                MOV     A,R7
+001F F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 179
+0020 900000      R     MOV     DPTR,#PWM_Steering_backup+06H
+0023 E0                MOVX    A,@DPTR
+0024 FF                MOV     R7,A
+0025 906576            MOV     DPTR,#06576H
+0028 EF                MOV     A,R7
+0029 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 182
+002A 22                RET     
+             ; FUNCTION PWM_Steering_RestoreConfig (END)
+
+             ; FUNCTION PWM_Steering_Sleep (BEGIN)
+                                           ; SOURCE LINE # 204
+                                           ; SOURCE LINE # 205
+                                           ; SOURCE LINE # 207
+0000 906576            MOV     DPTR,#06576H
+0003 E0                MOVX    A,@DPTR
+0004 FF                MOV     R7,A
+0005 EF                MOV     A,R7
+0006 5480              ANL     A,#080H
+0008 FF                MOV     R7,A
+0009 7E00              MOV     R6,#00H
+000B EF                MOV     A,R7
+000C 6480              XRL     A,#080H
+000E 4E                ORL     A,R6
+000F 7008              JNZ     ?C0003
+                                           ; SOURCE LINE # 208
+                                           ; SOURCE LINE # 210
+0011 900000      R     MOV     DPTR,#PWM_Steering_backup
+0014 7401              MOV     A,#01H
+0016 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 211
+0017 8005              SJMP    ?C0004
+0019         ?C0003:
+                                           ; SOURCE LINE # 213
+                                           ; SOURCE LINE # 215
+0019 900000      R     MOV     DPTR,#PWM_Steering_backup
+001C E4                CLR     A
+001D F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 216
+001E         ?C0004:
+                                           ; SOURCE LINE # 219
+001E 120000      E     LCALL   PWM_Steering_Stop
+                                           ; SOURCE LINE # 222
+0021 120000      R     LCALL   PWM_Steering_SaveConfig
+                                           ; SOURCE LINE # 223
+0024 22                RET     
+             ; FUNCTION PWM_Steering_Sleep (END)
+
+             ; FUNCTION PWM_Steering_Wakeup (BEGIN)
+                                           ; SOURCE LINE # 245
+                                           ; SOURCE LINE # 246
+                                           ; SOURCE LINE # 248
+0000 120000      R     LCALL   PWM_Steering_RestoreConfig
+                                           ; SOURCE LINE # 250
+C51 COMPILER V9.03   PWM_STEERING_PM                                                       04/28/2015 04:56:11 PAGE 8   
+
+0003 900000      R     MOV     DPTR,#PWM_Steering_backup
+0006 E0                MOVX    A,@DPTR
+0007 FF                MOV     R7,A
+0008 EF                MOV     A,R7
+0009 6003              JZ      ?C0007
+                                           ; SOURCE LINE # 251
+                                           ; SOURCE LINE # 253
+000B 120000      E     LCALL   PWM_Steering_Enable
+                                           ; SOURCE LINE # 254
+                                           ; SOURCE LINE # 256
+000E         ?C0007:
+000E 22                RET     
+             ; FUNCTION PWM_Steering_Wakeup (END)
+
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    144    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =      7    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

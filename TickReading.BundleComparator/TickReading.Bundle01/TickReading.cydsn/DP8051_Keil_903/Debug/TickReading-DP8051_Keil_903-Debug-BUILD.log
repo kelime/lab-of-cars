@@ -1,0 +1,114 @@
+--------------- Build Started: 04/28/2015 04:57:45 Project: TickReading, Configuration: DP8051 Keil 9.03 Debug ---------------
+The code generation step is up to date.
+c51.exe .\main.c NOIV LARGE MODDP2 OMF2 VB(1) PR(.\DP8051_Keil_903\Debug\main.lst) CD DB NOIP "OT(2, Size)" INCDIR(Generated_Source\PSoC3) OJ(.\DP8051_Keil_903\Debug\main.obj)
+WARNING: .\main.c:292: 'lines': unreferenced local variable
+WARNING: .\main.c:293: 'linestr': unreferenced local variable
+LIBX51.exe TRANSFER '.\DP8051_Keil_903\Debug\LCD.obj', '.\DP8051_Keil_903\Debug\LCD_PM.obj', '.\DP8051_Keil_903\Debug\LCD_LCDPort.obj', '.\DP8051_Keil_903\Debug\CyBootAsmKeil.obj', '.\DP8051_Keil_903\Debug\CyDmac.obj', '.\DP8051_Keil_903\Debug\CyFlash.obj', '.\DP8051_Keil_903\Debug\CyLib.obj', '.\DP8051_Keil_903\Debug\cymem.obj', '.\DP8051_Keil_903\Debug\cyPm.obj', '.\DP8051_Keil_903\Debug\CySpc.obj', '.\DP8051_Keil_903\Debug\cyutils.obj', '.\DP8051_Keil_903\Debug\KeilStart.obj', '.\DP8051_Keil_903\Debug\ISR_Hall.obj', '.\DP8051_Keil_903\Debug\ISR_Overflow.obj', '.\DP8051_Keil_903\Debug\PWM.obj', '.\DP8051_Keil_903\Debug\PWM_PM.obj', '.\DP8051_Keil_903\Debug\Input_LED.obj', '.\DP8051_Keil_903\Debug\Hall_Counter.obj', '.\DP8051_Keil_903\Debug\Hall_Counter_PM.obj', '.\DP8051_Keil_903\Debug\Clock_Hall.obj', '.\DP8051_Keil_903\Debug\Hall_To_PSOC.obj', '.\DP8051_Keil_903\Debug\Composite_Video.obj', '.\DP8051_Keil_903\Debug\Horizontal_Sync_Line.obj', '.\DP8051_Keil_903\Debug\Vertical_Sync_Frame.obj', '.\DP8051_Keil_903\Debug\Lines_Per_Frame_Counter.obj', '.\DP8051_Keil_903\Debug\Lines_Per_Frame_Counter_PM.obj', '.\DP8051_Keil_903\Debug\ISR_50_Lines.obj', '.\DP8051_Keil_903\Debug\ISR_100_Lines.obj', '.\DP8051_Keil_903\Debug\Pin_1.obj', '.\DP8051_Keil_903\Debug\Pin_2.obj', '.\DP8051_Keil_903\Debug\Line_Timer.obj', '.\DP8051_Keil_903\Debug\Line_Timer_PM.obj', '.\DP8051_Keil_903\Debug\Camera_Comp.obj', '.\DP8051_Keil_903\Debug\Camera_Comp_PM.obj', '.\DP8051_Keil_903\Debug\Camera_Threshold.obj', '.\DP8051_Keil_903\Debug\Camera_Threshold_PM.obj', '.\DP8051_Keil_903\Debug\Pin_3.obj', '.\DP8051_Keil_903\Debug\Pin_4.obj', '.\DP8051_Keil_903\Debug\Steering_Output.obj', '.\DP8051_Keil_903\Debug\Clock_Steering.obj', '.\DP8051_Keil_903\Debug\PWM_Steering.obj', '.\DP8051_Keil_903\Debug\PWM_Steering_PM.obj', '.\DP8051_Keil_903\Debug\drive_output_1.obj', '.\DP8051_Keil_903\Debug\drive_output_2.obj', '.\DP8051_Keil_903\Debug\elevator_input.obj', '.\DP8051_Keil_903\Debug\Elevator_Comparator.obj', '.\DP8051_Keil_903\Debug\Elevator_Comparator_PM.obj', '.\DP8051_Keil_903\Debug\Elevator_Threshold.obj', '.\DP8051_Keil_903\Debug\Elevator_Threshold_PM.obj', '.\DP8051_Keil_903\Debug\ISR_Elevator.obj', '.\DP8051_Keil_903\Debug\elevator_test.obj', '.\DP8051_Keil_903\Debug\Drive_Control_Reg.obj', '.\DP8051_Keil_903\Debug\elevator_input_2.obj', '.\DP8051_Keil_903\Debug\Elevator_Comparator_1.obj', '.\DP8051_Keil_903\Debug\Elevator_Comparator_1_PM.obj', '.\DP8051_Keil_903\Debug\ISR_Elevator_2.obj', '.\DP8051_Keil_903\Debug\Wait_Counter.obj', '.\DP8051_Keil_903\Debug\Wait_Counter_PM.obj', '.\DP8051_Keil_903\Debug\Wait_Clock.obj', '.\DP8051_Keil_903\Debug\ISR_Wait.obj', '.\DP8051_Keil_903\Debug\ADC_DelSig.obj', '.\DP8051_Keil_903\Debug\ADC_DelSig_PM.obj', '.\DP8051_Keil_903\Debug\ADC_DelSig_INT.obj', '.\DP8051_Keil_903\Debug\ADC_DelSig_theACLK.obj', '.\DP8051_Keil_903\Debug\ADC_DelSig_Ext_CP_Clk.obj', '.\DP8051_Keil_903\Debug\ADC_DelSig_AMux.obj', '.\DP8051_Keil_903\Debug\ISR_getVolts.obj', '.\DP8051_Keil_903\Debug\cyfitter_cfg.obj' TO '.\DP8051_Keil_903\Debug\TickReading.lib'
+LX51.exe '.\DP8051_Keil_903\Debug\main.obj', '.\DP8051_Keil_903\Debug\TickReading.lib', 'C:\Program Files (x86)\Cypress\PSoC Creator\2.1\PSoC Creator\psoc\content\cycomponentlibrary\CyComponentLibrary.cylib\DP8051\DP8051_Keil_903\Debug\CyComponentLibrary.lib'  TO '.\DP8051_Keil_903\Debug\TickReading.omf' PR(.\DP8051_Keil_903\Debug\TickReading.map) IX CODE DW(16) RU CL(XDATA(X:0x0000-X:0x1FFF)) CL(CODE(C:0x0000-C:0xFFFF)) CL(CONST(C:0x0000-C:0xFFFF))
+*** WARNING L15: MULTIPLE CALL TO FUNCTION
+    NAME:    _PWM_STEERING_WRITECOMPARE/PWM_STEERING
+    CALLER1: TOCK/MAIN
+    CALLER2: FIFTY/MAIN
+*** WARNING L15: MULTIPLE CALL TO FUNCTION
+    NAME:    _DRIVE_CONTROL_REG_WRITE/DRIVE_CONTROL_REG
+    CALLER1: TOCK/MAIN
+    CALLER2: ELEVATOR_ENTERING/MAIN
+*** WARNING L15: MULTIPLE CALL TO FUNCTION
+    NAME:    _DRIVE_CONTROL_REG_WRITE/DRIVE_CONTROL_REG
+    CALLER1: ELEVATOR_ENTERING/MAIN
+    CALLER2: ELEVATOR_LEAVING/MAIN
+*** WARNING L15: MULTIPLE CALL TO FUNCTION
+    NAME:    _LCD_POSITION/LCD
+    CALLER1: TOCK/MAIN
+    CALLER2: ISR_WAITING/MAIN
+*** WARNING L15: MULTIPLE CALL TO FUNCTION
+    NAME:    _LCD_WRITECONTROL/LCD
+    CALLER1: TOCK/MAIN
+    CALLER2: ISR_WAITING/MAIN
+*** WARNING L15: MULTIPLE CALL TO FUNCTION
+    NAME:    LCD_ISREADY/LCD
+    CALLER1: TOCK/MAIN
+    CALLER2: ISR_WAITING/MAIN
+*** WARNING L15: MULTIPLE CALL TO FUNCTION
+    NAME:    _LCD_WRCNTRLNIB/LCD
+    CALLER1: TOCK/MAIN
+    CALLER2: ISR_WAITING/MAIN
+*** WARNING L15: MULTIPLE CALL TO FUNCTION
+    NAME:    _LCD_PRINTDECUINT16/LCD
+    CALLER1: TOCK/MAIN
+    CALLER2: ISR_WAITING/MAIN
+*** WARNING L15: MULTIPLE CALL TO FUNCTION
+    NAME:    _LCD_PRINTSTRING/LCD
+    CALLER1: TOCK/MAIN
+    CALLER2: ISR_WAITING/MAIN
+*** WARNING L15: MULTIPLE CALL TO FUNCTION
+    NAME:    _LCD_WRITEDATA/LCD
+    CALLER1: TOCK/MAIN
+    CALLER2: ISR_WAITING/MAIN
+*** WARNING L15: MULTIPLE CALL TO FUNCTION
+    NAME:    _LCD_WRDATNIB/LCD
+    CALLER1: TOCK/MAIN
+    CALLER2: ISR_WAITING/MAIN
+*** WARNING L15: MULTIPLE CALL TO FUNCTION
+    NAME:    _LCD_POSITION/LCD
+    CALLER1: ISR_WAITING/MAIN
+    CALLER2: GETVOLTS/MAIN
+*** WARNING L15: MULTIPLE CALL TO FUNCTION
+    NAME:    _LCD_WRITECONTROL/LCD
+    CALLER1: ISR_WAITING/MAIN
+    CALLER2: GETVOLTS/MAIN
+*** WARNING L15: MULTIPLE CALL TO FUNCTION
+    NAME:    LCD_ISREADY/LCD
+    CALLER1: ISR_WAITING/MAIN
+    CALLER2: GETVOLTS/MAIN
+*** WARNING L15: MULTIPLE CALL TO FUNCTION
+    NAME:    _LCD_WRCNTRLNIB/LCD
+    CALLER1: ISR_WAITING/MAIN
+    CALLER2: GETVOLTS/MAIN
+*** WARNING L15: MULTIPLE CALL TO FUNCTION
+    NAME:    _PWM_WRITECOMPARE/PWM
+    CALLER1: TOCK/MAIN
+    CALLER2: ?C_C51STARTUP
+*** WARNING L15: MULTIPLE CALL TO FUNCTION
+    NAME:    _PWM_STEERING_WRITECOMPARE/PWM_STEERING
+    CALLER1: FIFTY/MAIN
+    CALLER2: ?C_C51STARTUP
+*** WARNING L15: MULTIPLE CALL TO FUNCTION
+    NAME:    _LCD_WRCNTRLNIB/LCD
+    CALLER1: GETVOLTS/MAIN
+    CALLER2: ?C_C51STARTUP
+*** WARNING L15: MULTIPLE CALL TO FUNCTION
+    NAME:    _LCD_WRITECONTROL/LCD
+    CALLER1: GETVOLTS/MAIN
+    CALLER2: ?C_C51STARTUP
+*** WARNING L15: MULTIPLE CALL TO FUNCTION
+    NAME:    LCD_ISREADY/LCD
+    CALLER1: GETVOLTS/MAIN
+    CALLER2: ?C_C51STARTUP
+*** WARNING L15: MULTIPLE CALL TO FUNCTION
+    NAME:    _LCD_POSITION/LCD
+    CALLER1: GETVOLTS/MAIN
+    CALLER2: ?C_C51STARTUP
+*** WARNING L15: MULTIPLE CALL TO FUNCTION
+    NAME:    _LCD_PRINTSTRING/LCD
+    CALLER1: ISR_WAITING/MAIN
+    CALLER2: ?C_C51STARTUP
+*** WARNING L15: MULTIPLE CALL TO FUNCTION
+    NAME:    _LCD_WRITEDATA/LCD
+    CALLER1: ISR_WAITING/MAIN
+    CALLER2: ?C_C51STARTUP
+*** WARNING L15: MULTIPLE CALL TO FUNCTION
+    NAME:    _LCD_WRDATNIB/LCD
+    CALLER1: ISR_WAITING/MAIN
+    CALLER2: ?C_C51STARTUP
+*** WARNING L15: MULTIPLE CALL TO FUNCTION
+    NAME:    _DRIVE_CONTROL_REG_WRITE/DRIVE_CONTROL_REG
+    CALLER1: ELEVATOR_LEAVING/MAIN
+    CALLER2: ?C_C51STARTUP
+Program Size: data=20.1 xdata=389 const=46 code=14779
+OHx51.exe TickReading.omf HEXFILE(TickReading.ihx)
+c8051-elf-omf2elf.exe TickReading.omf TickReading.elf
+cyhextool -o .\DP8051_Keil_903\Debug\TickReading.hex -f .\DP8051_Keil_903\Debug\TickReading.ihx -prot .\Generated_Source\PSoC3\protect.hex -id 1E028069 -a EEPROM=90200000:800,PROGRAM=00000000:10000,CONFIG=80000000:2000,PROTECT=90400000:40 -meta 0301 -cunv 00000005 -wonv AFAC90BC -ecc .\Generated_Source\PSoC3\config.hex
+Flash used: 14825 of 65536 bytes (22.6 %).
+SRAM used: 389 of 8192 bytes (4.7 %).
+--------------- Build Succeeded: 04/28/2015 04:57:48 ---------------
