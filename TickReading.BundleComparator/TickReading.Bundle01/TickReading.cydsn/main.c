@@ -338,24 +338,32 @@ CY_ISR(isr_waiting) {
     /*============================
     // Testing code. Delete later.
     //===========================*/
-CY_ISR(getVolts){
+CY_ISR(ADC_DelSig_ISR1){
 
-    if (state == 33) {
-    
     int32 result;
     float resultInVolts;    
     char resultstr[16];
+    
+    LCD_Position(1,14);    
+    LCD_PrintString("(:");
+       
+    if (state == 33) {  
         
     // write value to LCD screen
         
     result = ADC_DelSig_GetResult32();  
-    resultInVolts = ADC_DelSig_CountsTo_Volts(result);
+    //LCD_PrintNumber(result);
     
+    resultInVolts = ADC_DelSig_CountsTo_Volts(result);
+        
     // Display the lines per frame
+   
     LCD_Position(1,0);
-    sprintf(resultstr, "DC: %+1.4f", resultInVolts); // ugly
+    sprintf(resultstr, "ADC: %1.4f", resultInVolts); // ugly
+    LCD_PrintString(resultstr);
        // LCD_Position(1,0);
         //LCD_PrintNumber();
+      
     }
 }
    
@@ -433,19 +441,19 @@ void main()
     // Testing code. Delete later.
     //===========================*/
     
-    ADC_DelSig_StartConvert();
-    
+      
     LCD_Position(1,0);    
     LCD_PrintString("A");
     
     
     // start ADC
     ADC_DelSig_Start();
+    ADC_DelSig_IRQ_Enable();       // start ADC ISR 
     ADC_DelSig_StartConvert(); 
        
-    // start ADC ISR 
-    ISR_getVolts_Start();
-    ISR_getVolts_SetVector(getVolts);     
+   
+   // ISR_getVolts_Start();
+   // ISR_getVolts_SetVector(getVolts);     
     /*============================
     // Testing code. Delete later.
     //===========================*/
