@@ -34,7 +34,7 @@
 *           Parameter Defaults        
 **************************************/
 
-#define Wait_Counter_Resolution            8u
+#define Wait_Counter_Resolution            16u
 #define Wait_Counter_UsingFixedFunction    1u
 #define Wait_Counter_ControlRegRemoved     0u
 #define Wait_Counter_COMPARE_MODE_SOFTWARE 0u
@@ -56,14 +56,14 @@ typedef struct Wait_Counter_backupStruct
     /* Sleep BackUp structure */
     uint8 CounterEnableState; 
     #if (CY_PSOC5A)
-        uint8 CounterUdb;    /* Current Counter Value      */
-        uint8 CounterPeriod; /* Counter Period Value       */
-        uint8 CompareValue;  /* Counter Compare Value      */           
+        uint16 CounterUdb;    /* Current Counter Value      */
+        uint16 CounterPeriod; /* Counter Period Value       */
+        uint16 CompareValue;  /* Counter Compare Value      */           
         uint8 InterruptMaskValue; /* Counter Compare Value */
     #endif /* (CY_PSOC5A) */
 
     #if (CY_PSOC3 || CY_PSOC5LP)
-            uint8 CounterUdb;
+            uint16 CounterUdb;
             uint8 InterruptMaskValue;
     #endif /* (CY_PSOC3 || CY_PSOC5LP) */
 
@@ -87,18 +87,18 @@ uint8   Wait_Counter_ReadStatusRegister(void) ;
         ;
 #endif /* (!Wait_Counter_ControlRegRemoved) */
 #if (!(Wait_Counter_UsingFixedFunction && (CY_PSOC5A)))
-    void    Wait_Counter_WriteCounter(uint8 counter) \
+    void    Wait_Counter_WriteCounter(uint16 counter) \
             ; 
 #endif /* (!(Wait_Counter_UsingFixedFunction && (CY_PSOC5A))) */
-uint8  Wait_Counter_ReadCounter(void) ;
-uint8  Wait_Counter_ReadCapture(void) ;
-void    Wait_Counter_WritePeriod(uint8 period) \
+uint16  Wait_Counter_ReadCounter(void) ;
+uint16  Wait_Counter_ReadCapture(void) ;
+void    Wait_Counter_WritePeriod(uint16 period) \
     ;
-uint8  Wait_Counter_ReadPeriod( void ) ;
+uint16  Wait_Counter_ReadPeriod( void ) ;
 #if (!Wait_Counter_UsingFixedFunction)
-    void    Wait_Counter_WriteCompare(uint8 compare) \
+    void    Wait_Counter_WriteCompare(uint16 compare) \
         ;
-    uint8  Wait_Counter_ReadCompare( void ) \
+    uint16  Wait_Counter_ReadCompare( void ) \
         ;
 #endif /* (!Wait_Counter_UsingFixedFunction) */
 
@@ -155,12 +155,12 @@ void Wait_Counter_Wakeup(void)        ;
 /***************************************
  *  Initialization Values
  **************************************/
-#define Wait_Counter_INIT_PERIOD_VALUE       110u
-#define Wait_Counter_INIT_COUNTER_VALUE      110u
+#define Wait_Counter_INIT_PERIOD_VALUE       1000u
+#define Wait_Counter_INIT_COUNTER_VALUE      1000u
 #if (Wait_Counter_UsingFixedFunction)
 #define Wait_Counter_INIT_INTERRUPTS_MASK    ((1u << Wait_Counter_STATUS_ZERO_INT_EN_MASK_SHIFT))
 #else
-#define Wait_Counter_INIT_COMPARE_VALUE      1u
+#define Wait_Counter_INIT_COMPARE_VALUE      0u
 #define Wait_Counter_INIT_INTERRUPTS_MASK ((1u << Wait_Counter_STATUS_ZERO_INT_EN_MASK_SHIFT) | \
         (0u << Wait_Counter_STATUS_CAPTURE_INT_EN_MASK_SHIFT) | \
         (0u << Wait_Counter_STATUS_CMP_INT_EN_MASK_SHIFT) | \
@@ -188,44 +188,44 @@ void Wait_Counter_Wakeup(void)        ;
     #define Wait_Counter_RT1                 (*(reg8 *) Wait_Counter_CounterHW__RT1)
     #define Wait_Counter_RT1_PTR             ( (reg8 *) Wait_Counter_CounterHW__RT1)
 #else
-    #define Wait_Counter_STATICCOUNT_LSB     (*(reg8 *) \
-        Wait_Counter_CounterUDB_sC8_counterdp_u0__F0_REG )
-    #define Wait_Counter_STATICCOUNT_LSB_PTR ( (reg8 *) \
-        Wait_Counter_CounterUDB_sC8_counterdp_u0__F0_REG )
-    #define Wait_Counter_PERIOD_LSB          (*(reg8 *) \
-        Wait_Counter_CounterUDB_sC8_counterdp_u0__D0_REG )
-    #define Wait_Counter_PERIOD_LSB_PTR      ( (reg8 *) \
-        Wait_Counter_CounterUDB_sC8_counterdp_u0__D0_REG )
-    #define Wait_Counter_COMPARE_LSB         (*(reg8 *) \
-        Wait_Counter_CounterUDB_sC8_counterdp_u0__D1_REG )
-    #define Wait_Counter_COMPARE_LSB_PTR     ( (reg8 *) \
-        Wait_Counter_CounterUDB_sC8_counterdp_u0__D1_REG )
-    #define Wait_Counter_COUNTER_LSB         (*(reg8 *) \
-        Wait_Counter_CounterUDB_sC8_counterdp_u0__A0_REG )
-    #define Wait_Counter_COUNTER_LSB_PTR     ( (reg8 *)\
-        Wait_Counter_CounterUDB_sC8_counterdp_u0__A0_REG )
+    #define Wait_Counter_STATICCOUNT_LSB     (*(reg16 *) \
+        Wait_Counter_CounterUDB_sC16_counterdp_u0__F0_REG )
+    #define Wait_Counter_STATICCOUNT_LSB_PTR ( (reg16 *) \
+        Wait_Counter_CounterUDB_sC16_counterdp_u0__F0_REG )
+    #define Wait_Counter_PERIOD_LSB          (*(reg16 *) \
+        Wait_Counter_CounterUDB_sC16_counterdp_u0__D0_REG )
+    #define Wait_Counter_PERIOD_LSB_PTR      ( (reg16 *) \
+        Wait_Counter_CounterUDB_sC16_counterdp_u0__D0_REG )
+    #define Wait_Counter_COMPARE_LSB         (*(reg16 *) \
+        Wait_Counter_CounterUDB_sC16_counterdp_u0__D1_REG )
+    #define Wait_Counter_COMPARE_LSB_PTR     ( (reg16 *) \
+        Wait_Counter_CounterUDB_sC16_counterdp_u0__D1_REG )
+    #define Wait_Counter_COUNTER_LSB         (*(reg16 *) \
+        Wait_Counter_CounterUDB_sC16_counterdp_u0__A0_REG )
+    #define Wait_Counter_COUNTER_LSB_PTR     ( (reg16 *)\
+        Wait_Counter_CounterUDB_sC16_counterdp_u0__A0_REG )
 
     #define Wait_Counter_AUX_CONTROLDP0 \
-        (*(reg8 *) Wait_Counter_CounterUDB_sC8_counterdp_u0__DP_AUX_CTL_REG)
+        (*(reg8 *) Wait_Counter_CounterUDB_sC16_counterdp_u0__DP_AUX_CTL_REG)
     #define Wait_Counter_AUX_CONTROLDP0_PTR \
-        ( (reg8 *) Wait_Counter_CounterUDB_sC8_counterdp_u0__DP_AUX_CTL_REG)
+        ( (reg8 *) Wait_Counter_CounterUDB_sC16_counterdp_u0__DP_AUX_CTL_REG)
     #if (Wait_Counter_Resolution == 16 || Wait_Counter_Resolution == 24 || Wait_Counter_Resolution == 32)
        #define Wait_Counter_AUX_CONTROLDP1 \
-           (*(reg8 *) Wait_Counter_CounterUDB_sC8_counterdp_u1__DP_AUX_CTL_REG)
+           (*(reg8 *) Wait_Counter_CounterUDB_sC16_counterdp_u1__DP_AUX_CTL_REG)
        #define Wait_Counter_AUX_CONTROLDP1_PTR \
-           ( (reg8 *) Wait_Counter_CounterUDB_sC8_counterdp_u1__DP_AUX_CTL_REG)
+           ( (reg8 *) Wait_Counter_CounterUDB_sC16_counterdp_u1__DP_AUX_CTL_REG)
     #endif /* (Wait_Counter_Resolution == 16 || Wait_Counter_Resolution == 24 || Wait_Counter_Resolution == 32) */
     #if (Wait_Counter_Resolution == 24 || Wait_Counter_Resolution == 32)
        #define Wait_Counter_AUX_CONTROLDP2 \
-           (*(reg8 *) Wait_Counter_CounterUDB_sC8_counterdp_u2__DP_AUX_CTL_REG)
+           (*(reg8 *) Wait_Counter_CounterUDB_sC16_counterdp_u2__DP_AUX_CTL_REG)
        #define Wait_Counter_AUX_CONTROLDP2_PTR \
-           ( (reg8 *) Wait_Counter_CounterUDB_sC8_counterdp_u2__DP_AUX_CTL_REG)
+           ( (reg8 *) Wait_Counter_CounterUDB_sC16_counterdp_u2__DP_AUX_CTL_REG)
     #endif /* (Wait_Counter_Resolution == 24 || Wait_Counter_Resolution == 32) */
     #if (Wait_Counter_Resolution == 32)
        #define Wait_Counter_AUX_CONTROLDP3 \
-           (*(reg8 *) Wait_Counter_CounterUDB_sC8_counterdp_u3__DP_AUX_CTL_REG)
+           (*(reg8 *) Wait_Counter_CounterUDB_sC16_counterdp_u3__DP_AUX_CTL_REG)
        #define Wait_Counter_AUX_CONTROLDP3_PTR \
-           ( (reg8 *) Wait_Counter_CounterUDB_sC8_counterdp_u3__DP_AUX_CTL_REG)
+           ( (reg8 *) Wait_Counter_CounterUDB_sC16_counterdp_u3__DP_AUX_CTL_REG)
     #endif /* (Wait_Counter_Resolution == 32) */
 #endif  /* (Wait_Counter_UsingFixedFunction) */
 

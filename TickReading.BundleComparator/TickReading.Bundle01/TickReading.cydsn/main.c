@@ -30,7 +30,7 @@ static float prevticks = 0;
 static uint8 overflow = 0; // overflow counter. shouldn't update
 
 /* PID helper variables */
-static const float target = 3; // target speed in ft/sec
+    static const float target = 1.5;// target speed in ft/sec
 static float error = 0; // difference between desired speed and actual speed
 static float var = 0; // affects current speed
 static float sum = 0; // integral
@@ -55,10 +55,10 @@ static uint16 move_backward = 4;
 static uint16 turning = 5;
 static uint16 follow_line = 6;
 
-static uint16 testing = 33;
+// static uint16 testing = 33;
 
 // Set initial state
-static uint16 state = 33;
+static uint16 state = 0;
 
 // are you going into the Elevator?
 static bool isGoingElevator = false;
@@ -79,7 +79,7 @@ CY_ISR(tock)
     // char varstr[8];
     float prev;
     
-    // counts the number of ticks to determine how far the car has traveled, to stop at 2 laps
+    // counts the number of ticks to determine how far the car has traveled
     number_of_ticks = number_of_ticks + 1;  
            
     // update ticks
@@ -141,8 +141,11 @@ CY_ISR(tock)
         LCD_PrintString("false");
     }
 
+    // meh, you can read the value of the ADC while in the tick interrupt.
     // 1 tick is ~1.545 inches traveled!
-    if (number_of_ticks >= 50 && state == move_forward) {
+    // should use the voltage value of the rangefinder instead of the ticks -- gives you a ~consistent
+    // stopping point, and can start from closer or further back from the elevator
+    if (number_of_ticks >= 28 && state == move_forward) {
         // stop car!
         
         uint8 control = 0; 
@@ -161,7 +164,7 @@ CY_ISR(tock)
         state = waiting;
     }
         
-    if (number_of_ticks >= 50 && state == move_backward) {
+if (number_of_ticks >= 105 && state == move_backward) {
         // stop car because back EMF
         uint8 control = 0;
         Drive_Control_Reg_Write(control);
@@ -183,7 +186,7 @@ CY_ISR(tock)
         state = turning;
     }
     
-    if (number_of_ticks >= 40 && state == turning) {
+    if (number_of_ticks >= 31 && state == turning) {
         uint8 control = 0;
         
         PWM_Steering_WriteCompare(152);
@@ -305,6 +308,7 @@ CY_ISR(hundred)
 }
 
 // thrown when doors are detected to be open by front rangefinder
+// rangefinder comparator value is currently set at 1.0V
 CY_ISR(elevator_entering)
 {
     if (state == wait_for_elevator) {
@@ -312,6 +316,20 @@ CY_ISR(elevator_entering)
 
         Drive_Control_Reg_Write(control);
         state = move_forward;
+    }
+}
+
+// thrown once 1.1 seconds have passed when in wait stage
+CY_ISR(isr_waiting) {
+    if (state == waiting) {
+    
+        state = in_elevator;
+        
+        LCD_Position(0,0);
+        LCD_PrintNumber(state);
+        
+        LCD_Position(1,0);
+        LCD_PrintString("wait over");
     }
 }
 
@@ -324,21 +342,13 @@ CY_ISR(elevator_leaving) {
         state = move_backward;
     }
 }
-// thrown once 1.1 seconds have passed when in wait stage
-CY_ISR(isr_waiting) {
-    if (state == waiting) {
-    
-        state = in_elevator;
-        
-        LCD_Position(0,0);
-        LCD_PrintNumber(state);
-    }
-}
 
+
+// this interrupt is thrown each time the ADC makes a conversion.
     /*============================
     // Testing code. Delete later.
     //===========================*/
-CY_ISR(ADC_DelSig_ISR1){
+/* CY_ISR(ADC_DelSig_ISR1){
 
     int32 result;
     float resultInVolts;    
@@ -367,6 +377,8 @@ CY_ISR(ADC_DelSig_ISR1){
     }
 }
    
+  
+*/
     /*============================
     // Testing code. Delete later.
     //===========================*/
@@ -440,7 +452,7 @@ void main()
     /*============================
     // Testing code. Delete later.
     //===========================*/
-    
+/*    
       
     LCD_Position(1,0);    
     LCD_PrintString("A");
@@ -448,12 +460,9 @@ void main()
     
     // start ADC
     ADC_DelSig_Start();
-    ADC_DelSig_IRQ_Enable();       // start ADC ISR 
+    ADC_DelSig_IRQ_Enable(); 
     ADC_DelSig_StartConvert(); 
-       
-   
-   // ISR_getVolts_Start();
-   // ISR_getVolts_SetVector(getVolts);     
+ */      
     /*============================
     // Testing code. Delete later.
     //===========================*/

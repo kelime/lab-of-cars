@@ -1,4 +1,4 @@
-C51 COMPILER V9.03   HALL_COUNTER_PM                                                       04/28/2015 04:56:08 PAGE 1   
+C51 COMPILER V9.03   HALL_COUNTER_PM                                                       04/28/2015 05:44:46 PAGE 1   
 
 
 C51 COMPILER V9.03, COMPILATION OF MODULE HALL_COUNTER_PM
@@ -62,7 +62,7 @@ line level    source
                       #endif /* (CY_PSOC5A) */
   52   1              
   53   1              #if (CY_PSOC3 || CY_PSOC5LP)
-C51 COMPILER V9.03   HALL_COUNTER_PM                                                       04/28/2015 04:56:08 PAGE 2   
+C51 COMPILER V9.03   HALL_COUNTER_PM                                                       04/28/2015 05:44:46 PAGE 2   
 
   54   1                  Hall_Counter_backup.CounterUdb = Hall_Counter_ReadCounter();
   55   1                  Hall_Counter_backup.InterruptMaskValue = Hall_Counter_STATUS_MASK;
@@ -126,7 +126,7 @@ line level    source
  113          
  114          
  115          /*******************************************************************************
-C51 COMPILER V9.03   HALL_COUNTER_PM                                                       04/28/2015 04:56:08 PAGE 3   
+C51 COMPILER V9.03   HALL_COUNTER_PM                                                       04/28/2015 05:44:46 PAGE 3   
 
  116          * Function Name: Hall_Counter_Sleep
  117          ********************************************************************************
@@ -190,7 +190,7 @@ line level    source
  175   1              {
  176   2                  /* Enable Counter's operation */
  177   2                  Hall_Counter_Enable();
-C51 COMPILER V9.03   HALL_COUNTER_PM                                                       04/28/2015 04:56:08 PAGE 4   
+C51 COMPILER V9.03   HALL_COUNTER_PM                                                       04/28/2015 05:44:46 PAGE 4   
 
  178   2              } /* Do nothing if Counter was disabled before */    
  179   1          #endif /* (!Hall_Counter_ControlRegRemoved) */
@@ -199,7 +199,7 @@ line level    source
  182          
  183          
  184          /* [] END OF FILE */
-C51 COMPILER V9.03   HALL_COUNTER_PM                                                       04/28/2015 04:56:08 PAGE 5   
+C51 COMPILER V9.03   HALL_COUNTER_PM                                                       04/28/2015 05:44:46 PAGE 5   
 
 ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
@@ -212,7 +212,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0003 900000      R     MOV     DPTR,#Hall_Counter_backup+01H
 0006 120000      E     LCALL   ?C?LSTXDATA
                                            ; SOURCE LINE # 55
-0009 90648D            MOV     DPTR,#0648DH
+0009 906486            MOV     DPTR,#06486H
 000C E0                MOVX    A,@DPTR
 000D FF                MOV     R7,A
 000E 900000      R     MOV     DPTR,#Hall_Counter_backup+05H
@@ -238,7 +238,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0009 900000      R     MOV     DPTR,#Hall_Counter_backup+05H
 000C E0                MOVX    A,@DPTR
 000D FF                MOV     R7,A
-000E 90648D            MOV     DPTR,#0648DH
+000E 906486            MOV     DPTR,#06486H
 0011 EF                MOV     A,R7
 0012 F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 109
@@ -254,7 +254,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 132
                                            ; SOURCE LINE # 133
                                            ; SOURCE LINE # 136
-0000 90647D            MOV     DPTR,#0647DH
+0000 906475            MOV     DPTR,#06475H
 0003 E0                MOVX    A,@DPTR
 0004 FF                MOV     R7,A
 0005 EF                MOV     A,R7
@@ -263,7 +263,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0009 7E00              MOV     R6,#00H
 000B EF                MOV     A,R7
 000C 6480              XRL     A,#080H
-C51 COMPILER V9.03   HALL_COUNTER_PM                                                       04/28/2015 04:56:08 PAGE 6   
+C51 COMPILER V9.03   HALL_COUNTER_PM                                                       04/28/2015 05:44:46 PAGE 6   
 
 000E 4E                ORL     A,R6
 000F 7008              JNZ     ?C0003

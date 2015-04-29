@@ -1,5 +1,5 @@
 -- Project:   TickReading
--- Generated: 04/28/2015 04:55:20
+-- Generated: 04/28/2015 16:08:25
 -- 
 
 ENTITY TickReading IS
@@ -72,7 +72,7 @@ ARCHITECTURE __DEFAULT__ OF TickReading IS
     ATTRIBUTE global_signal OF Net_2114 : SIGNAL IS true;
     SIGNAL Net_2114_local : bit;
     SIGNAL Net_2146 : bit;
-    SIGNAL Net_2184 : bit;
+    SIGNAL Net_2207 : bit;
     SIGNAL Net_658 : bit;
     SIGNAL Net_965 : bit;
     SIGNAL \ADC_DelSig:Net_40\ : bit;
@@ -1417,13 +1417,6 @@ BEGIN
             interrupt => Net_2146,
             clock => ClockBlock_BUS_CLK);
 
-    ISR_getVolts:interrupt
-        GENERIC MAP(
-            int_type => "10")
-        PORT MAP(
-            interrupt => Net_2184,
-            clock => ClockBlock_BUS_CLK);
-
     Input_LED:logicalport
         GENERIC MAP(
             drive_mode => "011",
@@ -1844,7 +1837,7 @@ BEGIN
             mod_dat_0 => \ADC_DelSig:mod_dat_0\,
             ext_start => __ONE__,
             modrst => \ADC_DelSig:mod_reset\,
-            interrupt => Net_2184);
+            interrupt => Net_2207);
 
     \ADC_DelSig:DSM4\:dsmodcell
         GENERIC MAP(
@@ -1874,7 +1867,7 @@ BEGIN
         GENERIC MAP(
             int_type => "10")
         PORT MAP(
-            interrupt => Net_2184,
+            interrupt => Net_2207,
             clock => ClockBlock_BUS_CLK);
 
     \Camera_Comp:ctComp\:comparatorcell

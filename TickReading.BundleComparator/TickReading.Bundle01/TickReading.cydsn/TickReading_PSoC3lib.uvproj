@@ -1053,16 +1053,6 @@
               <FileType>5</FileType>
               <FilePath>.\Generated_Source\PSoC3\ADC_DelSig_AMux.h</FilePath>
             </File>
-            <File>
-              <FileName>ISR_getVolts.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Generated_Source\PSoC3\ISR_getVolts.c</FilePath>
-            </File>
-            <File>
-              <FileName>ISR_getVolts.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Generated_Source\PSoC3\ISR_getVolts.h</FilePath>
-            </File>
           </Files>
         </Group>
       </Groups>
@@ -2117,16 +2107,6 @@
               <FileName>ADC_DelSig_AMux.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\Generated_Source\PSoC3\ADC_DelSig_AMux.h</FilePath>
-            </File>
-            <File>
-              <FileName>ISR_getVolts.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Generated_Source\PSoC3\ISR_getVolts.c</FilePath>
-            </File>
-            <File>
-              <FileName>ISR_getVolts.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Generated_Source\PSoC3\ISR_getVolts.h</FilePath>
             </File>
           </Files>
         </Group>

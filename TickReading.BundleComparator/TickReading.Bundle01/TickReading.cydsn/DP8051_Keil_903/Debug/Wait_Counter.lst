@@ -1,4 +1,4 @@
-C51 COMPILER V9.03   WAIT_COUNTER                                                          04/28/2015 04:56:13 PAGE 1   
+C51 COMPILER V9.03   WAIT_COUNTER                                                          04/28/2015 15:53:00 PAGE 1   
 
 
 C51 COMPILER V9.03, COMPILATION OF MODULE WAIT_COUNTER
@@ -62,7 +62,7 @@ line level    source
   51   1                  
   52   1                  /* Clear the mode bits for continuous run mode */
   53   1                  #if (CY_PSOC5A)
-C51 COMPILER V9.03   WAIT_COUNTER                                                          04/28/2015 04:56:13 PAGE 2   
+C51 COMPILER V9.03   WAIT_COUNTER                                                          04/28/2015 15:53:00 PAGE 2   
 
                               Wait_Counter_CONTROL2 &= ~Wait_Counter_CTRL_MODE_MASK;
                           #endif /* (CY_PSOC5A) */
@@ -126,7 +126,7 @@ line level    source
                           /* Exit Critical Region*/
                           CyExitCriticalSection(Wait_Counter_interruptState);
                           
-C51 COMPILER V9.03   WAIT_COUNTER                                                          04/28/2015 04:56:13 PAGE 3   
+C51 COMPILER V9.03   WAIT_COUNTER                                                          04/28/2015 15:53:00 PAGE 3   
 
                       #endif /* (!Wait_Counter_UsingFixedFunction) */
  117   1      }
@@ -190,7 +190,7 @@ line level    source
  175   1          {
  176   2              Wait_Counter_Init();
  177   2              
-C51 COMPILER V9.03   WAIT_COUNTER                                                          04/28/2015 04:56:13 PAGE 4   
+C51 COMPILER V9.03   WAIT_COUNTER                                                          04/28/2015 15:53:00 PAGE 4   
 
  178   2              Wait_Counter_initVar = 1u; /* Clear this bit for Initialization */        
  179   2          }
@@ -254,7 +254,7 @@ line level    source
  237          /*******************************************************************************
  238          * Function Name: Wait_Counter_ReadStatusRegister
  239          ********************************************************************************
-C51 COMPILER V9.03   WAIT_COUNTER                                                          04/28/2015 04:56:13 PAGE 5   
+C51 COMPILER V9.03   WAIT_COUNTER                                                          04/28/2015 15:53:00 PAGE 5   
 
  240          * Summary:
  241          *   Reads the status register and returns it's state. This function should use
@@ -318,7 +318,7 @@ line level    source
  299          {
  300   1          Wait_Counter_CONTROL = control;
  301   1      }
-C51 COMPILER V9.03   WAIT_COUNTER                                                          04/28/2015 04:56:13 PAGE 6   
+C51 COMPILER V9.03   WAIT_COUNTER                                                          04/28/2015 15:53:00 PAGE 6   
 
  302          
  303          #endif  /* (!Wait_Counter_ControlRegRemoved) */
@@ -338,7 +338,7 @@ line level    source
  317          *  void 
  318          *
  319          *******************************************************************************/
- 320          void Wait_Counter_WriteCounter(uint8 counter) \
+ 320          void Wait_Counter_WriteCounter(uint16 counter) \
  321                                             
  322          {
  323   1          #if(Wait_Counter_UsingFixedFunction)
@@ -349,7 +349,7 @@ line level    source
  328   1              CY_SET_REG16(Wait_Counter_COUNTER_LSB_PTR, (uint16)counter);
  329   1              Wait_Counter_GLOBAL_ENABLE &= ~Wait_Counter_BLOCK_EN_MASK;
  330   1          #else
-                      CY_SET_REG8(Wait_Counter_COUNTER_LSB_PTR, counter);
+                      CY_SET_REG16(Wait_Counter_COUNTER_LSB_PTR, counter);
                   #endif /* (Wait_Counter_UsingFixedFunction) */
  333   1      }
  334          #endif /* (!(Wait_Counter_UsingFixedFunction && (CY_PSOC5A))) */
@@ -366,10 +366,10 @@ line level    source
  345          *  void:  
  346          *
  347          * Return: 
- 348          *  (uint8) The present value of the counter.
+ 348          *  (uint16) The present value of the counter.
  349          *
  350          *******************************************************************************/
- 351          uint8 Wait_Counter_ReadCounter(void) 
+ 351          uint16 Wait_Counter_ReadCounter(void) 
  352          {
  353   1          /* Force capture by reading Accumulator */
  354   1          /* Must first do a software capture to be able to read the counter */
@@ -377,12 +377,12 @@ line level    source
  356   1          CY_GET_REG8(Wait_Counter_COUNTER_LSB_PTR);
  357   1          
  358   1          /* Read the data from the FIFO (or capture register for Fixed Function)*/
- 359   1          return (CY_GET_REG8(Wait_Counter_STATICCOUNT_LSB_PTR));
+ 359   1          return (CY_GET_REG16(Wait_Counter_STATICCOUNT_LSB_PTR));
  360   1      }
  361          
  362          
  363          /*******************************************************************************
-C51 COMPILER V9.03   WAIT_COUNTER                                                          04/28/2015 04:56:13 PAGE 7   
+C51 COMPILER V9.03   WAIT_COUNTER                                                          04/28/2015 15:53:00 PAGE 7   
 
  364          * Function Name: Wait_Counter_ReadCapture
  365          ********************************************************************************
@@ -393,12 +393,12 @@ line level    source
  370          *  void
  371          *
  372          * Return: 
- 373          *  (uint8) Present Capture value.
+ 373          *  (uint16) Present Capture value.
  374          *
  375          *******************************************************************************/
- 376          uint8 Wait_Counter_ReadCapture(void) 
+ 376          uint16 Wait_Counter_ReadCapture(void) 
  377          {
- 378   1         return ( CY_GET_REG8(Wait_Counter_STATICCOUNT_LSB_PTR) );  
+ 378   1         return ( CY_GET_REG16(Wait_Counter_STATICCOUNT_LSB_PTR) );  
  379   1      }
  380          
  381          
@@ -410,19 +410,19 @@ line level    source
  387          * will be loaded the next time terminal count is detected.
  388          *
  389          * Parameters:  
- 390          *  period: (uint8) A value of 0 will result in
+ 390          *  period: (uint16) A value of 0 will result in
  391          *         the counter remaining at zero.  
  392          *
  393          * Return: 
  394          *  void
  395          *
  396          *******************************************************************************/
- 397          void Wait_Counter_WritePeriod(uint8 period) 
+ 397          void Wait_Counter_WritePeriod(uint16 period) 
  398          {
  399   1          #if(Wait_Counter_UsingFixedFunction)
  400   1              CY_SET_REG16(Wait_Counter_PERIOD_LSB_PTR,(uint16)period);
  401   1          #else
-                      CY_SET_REG8(Wait_Counter_PERIOD_LSB_PTR,period);
+                      CY_SET_REG16(Wait_Counter_PERIOD_LSB_PTR,period);
                   #endif /* (Wait_Counter_UsingFixedFunction) */
  404   1      }
  405          
@@ -437,16 +437,16 @@ line level    source
  414          *  void:  
  415          *
  416          * Return: 
- 417          *  (uint8) Present period value.
+ 417          *  (uint16) Present period value.
  418          *
  419          *******************************************************************************/
- 420          uint8 Wait_Counter_ReadPeriod(void) 
+ 420          uint16 Wait_Counter_ReadPeriod(void) 
  421          {
- 422   1         return ( CY_GET_REG8(Wait_Counter_PERIOD_LSB_PTR));
+ 422   1         return ( CY_GET_REG16(Wait_Counter_PERIOD_LSB_PTR));
  423   1      }
  424          
  425          
-C51 COMPILER V9.03   WAIT_COUNTER                                                          04/28/2015 04:56:13 PAGE 8   
+C51 COMPILER V9.03   WAIT_COUNTER                                                          04/28/2015 15:53:00 PAGE 8   
 
  426          #if (!Wait_Counter_UsingFixedFunction)
               /*******************************************************************************
@@ -465,13 +465,13 @@ line level    source
               *  void
               *
               *******************************************************************************/
-              void Wait_Counter_WriteCompare(uint8 compare) \
+              void Wait_Counter_WriteCompare(uint16 compare) \
                                                  
               {
                   #if(Wait_Counter_UsingFixedFunction)
                       CY_SET_REG16(Wait_Counter_COMPARE_LSB_PTR,(uint16)compare);
                   #else
-                      CY_SET_REG8(Wait_Counter_COMPARE_LSB_PTR,compare);
+                      CY_SET_REG16(Wait_Counter_COMPARE_LSB_PTR,compare);
                   #endif /* (Wait_Counter_UsingFixedFunction) */
               }
               
@@ -486,12 +486,12 @@ line level    source
               *  void:
               *
               * Return: 
-              *  (uint8) Present compare value.
+              *  (uint16) Present compare value.
               *
               *******************************************************************************/
-              uint8 Wait_Counter_ReadCompare(void) 
+              uint16 Wait_Counter_ReadCompare(void) 
               {
-                 return ( CY_GET_REG8(Wait_Counter_COMPARE_LSB_PTR));
+                 return ( CY_GET_REG16(Wait_Counter_COMPARE_LSB_PTR));
               }
               
               
@@ -510,7 +510,7 @@ line level    source
               *
               *******************************************************************************/
               void Wait_Counter_SetCompareMode(uint8 compareMode) 
-C51 COMPILER V9.03   WAIT_COUNTER                                                          04/28/2015 04:56:13 PAGE 9   
+C51 COMPILER V9.03   WAIT_COUNTER                                                          04/28/2015 15:53:00 PAGE 9   
 
               {
                   /* Clear the compare mode bits in the control register */
@@ -574,7 +574,7 @@ line level    source
  547          
  548          /* [] END OF FILE */
  549          
-C51 COMPILER V9.03   WAIT_COUNTER                                                          04/28/2015 04:56:13 PAGE 10  
+C51 COMPILER V9.03   WAIT_COUNTER                                                          04/28/2015 15:53:00 PAGE 10  
 
 ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
@@ -638,7 +638,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0041 F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 73
 0042 904F0B            MOV     DPTR,#04F0BH
-C51 COMPILER V9.03   WAIT_COUNTER                                                          04/28/2015 04:56:13 PAGE 11  
+C51 COMPILER V9.03   WAIT_COUNTER                                                          04/28/2015 15:53:00 PAGE 11  
 
 0045 E0                MOVX    A,@DPTR
 0046 FF                MOV     R7,A
@@ -657,16 +657,18 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0056 EF                MOV     A,R7
 0057 F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 94
-0058 7F6E              MOV     R7,#06EH
-005A 120000      R     LCALL   _Wait_Counter_WritePeriod
+0058 7FE8              MOV     R7,#0E8H
+005A 7E03              MOV     R6,#03H
+005C 120000      R     LCALL   _Wait_Counter_WritePeriod
                                            ; SOURCE LINE # 96
-005D 7F6E              MOV     R7,#06EH
-005F 120000      R     LCALL   _Wait_Counter_WriteCounter
+005F 7FE8              MOV     R7,#0E8H
+0061 7E03              MOV     R6,#03H
+0063 120000      R     LCALL   _Wait_Counter_WriteCounter
                                            ; SOURCE LINE # 98
-0062 7F08              MOV     R7,#08H
-0064 120000      R     LCALL   _Wait_Counter_SetInterruptMode
+0066 7F08              MOV     R7,#08H
+0068 120000      R     LCALL   _Wait_Counter_SetInterruptMode
                                            ; SOURCE LINE # 117
-0067 22                RET     
+006B 22                RET     
              ; FUNCTION Wait_Counter_Init (END)
 
              ; FUNCTION Wait_Counter_Enable (BEGIN)
@@ -700,10 +702,10 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 001F EF                MOV     A,R7
 0020 F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 152
+C51 COMPILER V9.03   WAIT_COUNTER                                                          04/28/2015 15:53:00 PAGE 12  
+
 0021 22                RET     
              ; FUNCTION Wait_Counter_Enable (END)
-C51 COMPILER V9.03   WAIT_COUNTER                                                          04/28/2015 04:56:13 PAGE 12  
-
 
              ; FUNCTION Wait_Counter_Start (BEGIN)
                                            ; SOURCE LINE # 172
@@ -764,10 +766,10 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
              ; FUNCTION Wait_Counter_Stop (END)
 
              ; FUNCTION _Wait_Counter_SetInterruptMode (BEGIN)
+C51 COMPILER V9.03   WAIT_COUNTER                                                          04/28/2015 15:53:00 PAGE 13  
+
                                            ; SOURCE LINE # 231
 0000 900000      R     MOV     DPTR,#interruptsMask
-C51 COMPILER V9.03   WAIT_COUNTER                                                          04/28/2015 04:56:13 PAGE 13  
-
 0003 EF                MOV     A,R7
 0004 F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 232
@@ -826,76 +828,79 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
              ; FUNCTION _Wait_Counter_WriteCounter (BEGIN)
                                            ; SOURCE LINE # 320
 0000 900000      R     MOV     DPTR,#counter
-0003 EF                MOV     A,R7
+0003 EE                MOV     A,R6
 0004 F0                MOVX    @DPTR,A
+C51 COMPILER V9.03   WAIT_COUNTER                                                          04/28/2015 15:53:00 PAGE 14  
+
+0005 A3                INC     DPTR
+0006 EF                MOV     A,R7
+0007 F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 322
                                            ; SOURCE LINE # 325
-C51 COMPILER V9.03   WAIT_COUNTER                                                          04/28/2015 04:56:13 PAGE 14  
-
-0005 9043A3            MOV     DPTR,#043A3H
-0008 E0                MOVX    A,@DPTR
-0009 FF                MOV     R7,A
-000A EF                MOV     A,R7
-000B 5401              ANL     A,#01H
-000D FF                MOV     R7,A
-000E 7E00              MOV     R6,#00H
-0010 EF                MOV     A,R7
-0011 4E                ORL     A,R6
-0012 601C              JZ      ?C0010
-0014 9043A3            MOV     DPTR,#043A3H
-0017 E0                MOVX    A,@DPTR
-0018 FF                MOV     R7,A
-0019 EF                MOV     A,R7
-001A 5401              ANL     A,#01H
-001C FF                MOV     R7,A
-001D 7E00              MOV     R6,#00H
-001F EF                MOV     A,R7
-0020 4E                ORL     A,R6
-0021 7004              JNZ     ?C0011
-0023 7F01              MOV     R7,#01H
-0025 8002              SJMP    ?C0012
-0027         ?C0011:
-0027 7F00              MOV     R7,#00H
-0029         ?C0012:
-0029 E4                CLR     A
-002A FC                MOV     R4,A
-002B FD                MOV     R5,A
-002C FE                MOV     R6,A
-002D 120000      E     LCALL   _?CyHalt
-0030         ?C0010:
+0008 9043A3            MOV     DPTR,#043A3H
+000B E0                MOVX    A,@DPTR
+000C FF                MOV     R7,A
+000D EF                MOV     A,R7
+000E 5401              ANL     A,#01H
+0010 FF                MOV     R7,A
+0011 7E00              MOV     R6,#00H
+0013 EF                MOV     A,R7
+0014 4E                ORL     A,R6
+0015 601C              JZ      ?C0010
+0017 9043A3            MOV     DPTR,#043A3H
+001A E0                MOVX    A,@DPTR
+001B FF                MOV     R7,A
+001C EF                MOV     A,R7
+001D 5401              ANL     A,#01H
+001F FF                MOV     R7,A
+0020 7E00              MOV     R6,#00H
+0022 EF                MOV     A,R7
+0023 4E                ORL     A,R6
+0024 7004              JNZ     ?C0011
+0026 7F01              MOV     R7,#01H
+0028 8002              SJMP    ?C0012
+002A         ?C0011:
+002A 7F00              MOV     R7,#00H
+002C         ?C0012:
+002C E4                CLR     A
+002D FC                MOV     R4,A
+002E FD                MOV     R5,A
+002F FE                MOV     R6,A
+0030 120000      E     LCALL   _?CyHalt
+0033         ?C0010:
                                            ; SOURCE LINE # 327
-0030 9043A3            MOV     DPTR,#043A3H
-0033 E0                MOVX    A,@DPTR
-0034 FF                MOV     R7,A
-0035 EF                MOV     A,R7
-0036 4401              ORL     A,#01H
-0038 FF                MOV     R7,A
-0039 EF                MOV     A,R7
-003A F0                MOVX    @DPTR,A
+0033 9043A3            MOV     DPTR,#043A3H
+0036 E0                MOVX    A,@DPTR
+0037 FF                MOV     R7,A
+0038 EF                MOV     A,R7
+0039 4401              ORL     A,#01H
+003B FF                MOV     R7,A
+003C EF                MOV     A,R7
+003D F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 328
-003B 7B02              MOV     R3,#02H
-003D 7A4F              MOV     R2,#04FH
-003F 7906              MOV     R1,#06H
-0041 900000      R     MOV     DPTR,#counter
-0044 E0                MOVX    A,@DPTR
-0045 FF                MOV     R7,A
-0046 EF                MOV     A,R7
-0047 FD                MOV     R5,A
-0048 7C00              MOV     R4,#00H
-004A 120000      E     LCALL   _cywrite16_nodpx
+003E 7B02              MOV     R3,#02H
+0040 7A4F              MOV     R2,#04FH
+0042 7906              MOV     R1,#06H
+0044 900000      R     MOV     DPTR,#counter
+0047 E0                MOVX    A,@DPTR
+0048 FC                MOV     R4,A
+0049 A3                INC     DPTR
+004A E0                MOVX    A,@DPTR
+004B FD                MOV     R5,A
+004C 120000      E     LCALL   _cywrite16_nodpx
                                            ; SOURCE LINE # 329
-004D 9043A3            MOV     DPTR,#043A3H
-0050 E0                MOVX    A,@DPTR
-0051 FF                MOV     R7,A
-0052 EF                MOV     A,R7
-0053 54FE              ANL     A,#0FEH
-0055 FF                MOV     R7,A
-0056 EF                MOV     A,R7
-0057 F0                MOVX    @DPTR,A
-                                           ; SOURCE LINE # 333
-0058 22                RET     
-C51 COMPILER V9.03   WAIT_COUNTER                                                          04/28/2015 04:56:13 PAGE 15  
+004F 9043A3            MOV     DPTR,#043A3H
+0052 E0                MOVX    A,@DPTR
+0053 FF                MOV     R7,A
+0054 EF                MOV     A,R7
+0055 54FE              ANL     A,#0FEH
+C51 COMPILER V9.03   WAIT_COUNTER                                                          04/28/2015 15:53:00 PAGE 15  
 
+0057 FF                MOV     R7,A
+0058 EF                MOV     A,R7
+0059 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 333
+005A 22                RET     
              ; FUNCTION _Wait_Counter_WriteCounter (END)
 
              ; FUNCTION Wait_Counter_ReadCounter (BEGIN)
@@ -906,67 +911,73 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0003 E0                MOVX    A,@DPTR
 0004 FF                MOV     R7,A
                                            ; SOURCE LINE # 359
-0005 904F08            MOV     DPTR,#04F08H
-0008 E0                MOVX    A,@DPTR
-0009 FF                MOV     R7,A
+0005 7B02              MOV     R3,#02H
+0007 7A4F              MOV     R2,#04FH
+0009 7908              MOV     R1,#08H
+000B 120000      E     LCALL   _cyread16_nodpx
                                            ; SOURCE LINE # 360
-000A         ?C0014:
-000A 22                RET     
+000E         ?C0014:
+000E 22                RET     
              ; FUNCTION Wait_Counter_ReadCounter (END)
 
              ; FUNCTION Wait_Counter_ReadCapture (BEGIN)
                                            ; SOURCE LINE # 376
                                            ; SOURCE LINE # 377
                                            ; SOURCE LINE # 378
-0000 904F08            MOV     DPTR,#04F08H
-0003 E0                MOVX    A,@DPTR
-0004 FF                MOV     R7,A
+0000 7B02              MOV     R3,#02H
+0002 7A4F              MOV     R2,#04FH
+0004 7908              MOV     R1,#08H
+0006 120000      E     LCALL   _cyread16_nodpx
                                            ; SOURCE LINE # 379
-0005         ?C0015:
-0005 22                RET     
+0009         ?C0015:
+0009 22                RET     
              ; FUNCTION Wait_Counter_ReadCapture (END)
 
              ; FUNCTION _Wait_Counter_WritePeriod (BEGIN)
                                            ; SOURCE LINE # 397
 0000 900000      R     MOV     DPTR,#period
-0003 EF                MOV     A,R7
+0003 EE                MOV     A,R6
 0004 F0                MOVX    @DPTR,A
+0005 A3                INC     DPTR
+0006 EF                MOV     A,R7
+0007 F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 398
                                            ; SOURCE LINE # 400
-0005 7B02              MOV     R3,#02H
-0007 7A4F              MOV     R2,#04FH
-0009 7904              MOV     R1,#04H
-000B 900000      R     MOV     DPTR,#period
-000E E0                MOVX    A,@DPTR
-000F FF                MOV     R7,A
-0010 EF                MOV     A,R7
-0011 FD                MOV     R5,A
-0012 7C00              MOV     R4,#00H
-0014 120000      E     LCALL   _cywrite16_nodpx
+0008 7B02              MOV     R3,#02H
+000A 7A4F              MOV     R2,#04FH
+000C 7904              MOV     R1,#04H
+000E 900000      R     MOV     DPTR,#period
+0011 E0                MOVX    A,@DPTR
+0012 FC                MOV     R4,A
+0013 A3                INC     DPTR
+0014 E0                MOVX    A,@DPTR
+0015 FD                MOV     R5,A
+0016 120000      E     LCALL   _cywrite16_nodpx
                                            ; SOURCE LINE # 404
-0017 22                RET     
+0019 22                RET     
              ; FUNCTION _Wait_Counter_WritePeriod (END)
 
              ; FUNCTION Wait_Counter_ReadPeriod (BEGIN)
+C51 COMPILER V9.03   WAIT_COUNTER                                                          04/28/2015 15:53:00 PAGE 16  
+
                                            ; SOURCE LINE # 420
                                            ; SOURCE LINE # 421
                                            ; SOURCE LINE # 422
-0000 904F04            MOV     DPTR,#04F04H
-0003 E0                MOVX    A,@DPTR
-0004 FF                MOV     R7,A
+0000 7B02              MOV     R3,#02H
+0002 7A4F              MOV     R2,#04FH
+0004 7904              MOV     R1,#04H
+0006 120000      E     LCALL   _cyread16_nodpx
                                            ; SOURCE LINE # 423
-0005         ?C0017:
-0005 22                RET     
+0009         ?C0017:
+0009 22                RET     
              ; FUNCTION Wait_Counter_ReadPeriod (END)
-C51 COMPILER V9.03   WAIT_COUNTER                                                          04/28/2015 04:56:13 PAGE 16  
-
 
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    373    ----
+   CODE SIZE        =    393    ----
    CONSTANT SIZE    =   ----    ----
-   XDATA SIZE       =      1       4
+   XDATA SIZE       =      1       6
    PDATA SIZE       =   ----    ----
    DATA SIZE        =   ----    ----
    IDATA SIZE       =   ----    ----

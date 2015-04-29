@@ -118,8 +118,6 @@
   <file name="C:\Users\Emmily\!Spring2015\CarLab\TickReading.BundleComparator\TickReading.BundleComparator\TickReading.Bundle01\TickReading.cydsn\codegentemp\ADC_DelSig.h" value="NONE;ADC_DelSig" />
   <file name="C:\Users\Emmily\!Spring2015\CarLab\TickReading.BundleComparator\TickReading.BundleComparator\TickReading.Bundle01\TickReading.cydsn\codegentemp\ADC_DelSig_PM.c" value="DP8051_C_FILE;ADC_DelSig" />
   <file name="C:\Users\Emmily\!Spring2015\CarLab\TickReading.BundleComparator\TickReading.BundleComparator\TickReading.Bundle01\TickReading.cydsn\codegentemp\ADC_DelSig_INT.c" value="DP8051_C_FILE;ADC_DelSig" />
-  <file name="C:\Users\Emmily\!Spring2015\CarLab\TickReading.BundleComparator\TickReading.BundleComparator\TickReading.Bundle01\TickReading.cydsn\codegentemp\ISR_getVolts.c" value="DP8051_C_FILE;ISR_getVolts" />
-  <file name="C:\Users\Emmily\!Spring2015\CarLab\TickReading.BundleComparator\TickReading.BundleComparator\TickReading.Bundle01\TickReading.cydsn\codegentemp\ISR_getVolts.h" value="NONE;ISR_getVolts" />
   <file name="C:\Users\Emmily\!Spring2015\CarLab\TickReading.BundleComparator\TickReading.BundleComparator\TickReading.Bundle01\TickReading.cydsn\codegentemp\LCD_LCDPort.c" value="DP8051_C_FILE;LCD_LCDPort" />
   <file name="C:\Users\Emmily\!Spring2015\CarLab\TickReading.BundleComparator\TickReading.BundleComparator\TickReading.Bundle01\TickReading.cydsn\codegentemp\LCD_LCDPort.h" value="NONE;LCD_LCDPort" />
   <file name="C:\Users\Emmily\!Spring2015\CarLab\TickReading.BundleComparator\TickReading.BundleComparator\TickReading.Bundle01\TickReading.cydsn\codegentemp\LCD_LCDPort_aliases.h" value="NONE;LCD_LCDPort" />

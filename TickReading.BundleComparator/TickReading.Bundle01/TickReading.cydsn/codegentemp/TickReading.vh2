@@ -2,7 +2,7 @@
 --	Conversion of TickReading.v to vh2:
 --
 --	Cypress Semiconductor - WARP Version 6.3 IR 41
---	Tue Apr 28 04:55:16 2015
+--	Tue Apr 28 16:08:22 2015
 --
 
 USE cypress.cypress.all;
@@ -1742,7 +1742,7 @@ SIGNAL \ADC_DelSig:mod_dat_1\ : bit;
 SIGNAL \ADC_DelSig:mod_dat_0\ : bit;
 SIGNAL \ADC_DelSig:soc\ : bit;
 SIGNAL \ADC_DelSig:mod_reset\ : bit;
-SIGNAL Net_2184 : bit;
+SIGNAL Net_2207 : bit;
 SIGNAL \ADC_DelSig:Net_481\ : bit;
 SIGNAL \ADC_DelSig:Net_482\ : bit;
 SIGNAL \ADC_DelSig:Net_40\ : bit;
@@ -3831,7 +3831,7 @@ Pin_4:cy_psoc3_pins_v1_10
 		mod_dat=>(\ADC_DelSig:mod_dat_3\, \ADC_DelSig:mod_dat_2\, \ADC_DelSig:mod_dat_1\, \ADC_DelSig:mod_dat_0\),
 		ext_start=>tmpOE__Hall_To_PSOC_net_0,
 		mod_reset=>\ADC_DelSig:mod_reset\,
-		interrupt=>Net_2184);
+		interrupt=>Net_2207);
 \ADC_DelSig:theACLK\:cy_clock_v1_0
 	GENERIC MAP(cy_registers=>"",
 		id=>"1e8f4f01-953e-441e-ab54-a848fe7d73b4/edd15f43-b66b-457b-be3a-5342345270c8",
@@ -3844,7 +3844,7 @@ Pin_4:cy_psoc3_pins_v1_10
 		dig_domain_out=>open);
 \ADC_DelSig:IRQ\:cy_isr_v1_0
 	GENERIC MAP(int_type=>"10")
-	PORT MAP(int_signal=>Net_2184);
+	PORT MAP(int_signal=>Net_2207);
 \ADC_DelSig:cy_analog_virtualmux_1_connect\:cy_connect_v1_0
 	GENERIC MAP(sig_width=>1,
 		is_net_join=>'0')
@@ -3929,9 +3929,6 @@ Pin_4:cy_psoc3_pins_v1_10
 		autoenable=>'1',
 		ignoresleep=>'0')
 	PORT MAP(vout=>\ADC_DelSig:Net_11\);
-ISR_getVolts:cy_isr_v1_0
-	GENERIC MAP(int_type=>"10")
-	PORT MAP(int_signal=>Net_2184);
 \PWM:PWMUDB:tc_reg_i\:cy_dff
 	PORT MAP(d=>\PWM:PWMUDB:tc_i\,
 		clk=>\PWM:PWMUDB:ClockOutFromEnBlock\,

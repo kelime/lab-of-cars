@@ -1,4 +1,4 @@
-C51 COMPILER V9.03   LINE_TIMER                                                            04/28/2015 04:56:10 PAGE 1   
+C51 COMPILER V9.03   LINE_TIMER                                                            04/28/2015 05:44:48 PAGE 1   
 
 
 C51 COMPILER V9.03, COMPILATION OF MODULE LINE_TIMER
@@ -62,7 +62,7 @@ line level    source
                       /* Clear all bits but the enable bit (if it's already set) for Timer operation */
                       Line_Timer_CONTROL &= Line_Timer_CTRL_ENABLE;
               
-C51 COMPILER V9.03   LINE_TIMER                                                            04/28/2015 04:56:10 PAGE 2   
+C51 COMPILER V9.03   LINE_TIMER                                                            04/28/2015 05:44:48 PAGE 2   
 
                       /* Clear the mode bits for continuous run mode */
                       #if (CY_PSOC5A)
@@ -126,7 +126,7 @@ line level    source
                       /* Set the IRQ to use the status register interrupts */
                       Line_Timer_CONTROL2 |= Line_Timer_CTRL2_IRQ_SEL;
                   #endif /* Configuring registers of fixed function implementation */
-C51 COMPILER V9.03   LINE_TIMER                                                            04/28/2015 04:56:10 PAGE 3   
+C51 COMPILER V9.03   LINE_TIMER                                                            04/28/2015 05:44:48 PAGE 3   
 
  116   1      
  117   1          /* Set Initial values from Configuration */
@@ -190,7 +190,7 @@ line level    source
  175          * Return:
  176          *  void
  177          *
-C51 COMPILER V9.03   LINE_TIMER                                                            04/28/2015 04:56:10 PAGE 4   
+C51 COMPILER V9.03   LINE_TIMER                                                            04/28/2015 05:44:48 PAGE 4   
 
  178          *******************************************************************************/
  179          void Line_Timer_Enable(void) 
@@ -254,7 +254,7 @@ line level    source
  237          *  void
  238          *
  239          * Return:
-C51 COMPILER V9.03   LINE_TIMER                                                            04/28/2015 04:56:10 PAGE 5   
+C51 COMPILER V9.03   LINE_TIMER                                                            04/28/2015 05:44:48 PAGE 5   
 
  240          *  void
  241          *
@@ -318,7 +318,7 @@ line level    source
  299          *
  300          *******************************************************************************/
  301          void Line_Timer_SoftwareCapture(void) 
-C51 COMPILER V9.03   LINE_TIMER                                                            04/28/2015 04:56:10 PAGE 6   
+C51 COMPILER V9.03   LINE_TIMER                                                            04/28/2015 05:44:48 PAGE 6   
 
  302          {
  303   1          /* Generate a software capture by reading the counter register */
@@ -382,7 +382,7 @@ line level    source
  361          * Summary:
  362          *  Sets the bit-field of the control register.
  363          *
-C51 COMPILER V9.03   LINE_TIMER                                                            04/28/2015 04:56:10 PAGE 7   
+C51 COMPILER V9.03   LINE_TIMER                                                            04/28/2015 05:44:48 PAGE 7   
 
  364          * Parameters:
  365          *  control: The contents of the control register
@@ -446,7 +446,7 @@ line level    source
  422          
  423          
  424          /*******************************************************************************
-C51 COMPILER V9.03   LINE_TIMER                                                            04/28/2015 04:56:10 PAGE 8   
+C51 COMPILER V9.03   LINE_TIMER                                                            04/28/2015 05:44:48 PAGE 8   
 
  425          * Function Name: Line_Timer_ReadCapture
  426          ********************************************************************************
@@ -510,7 +510,7 @@ line level    source
  483          *  void
  484          *
  485          * Return:
-C51 COMPILER V9.03   LINE_TIMER                                                            04/28/2015 04:56:10 PAGE 9   
+C51 COMPILER V9.03   LINE_TIMER                                                            04/28/2015 05:44:48 PAGE 9   
 
  486          *  Present compare value.
  487          *
@@ -574,7 +574,7 @@ line level    source
                   /* Clear the Current Setting */
                   Line_Timer_CONTROL &= ~Line_Timer_CTRL_CAP_MODE_MASK;
               
-C51 COMPILER V9.03   LINE_TIMER                                                            04/28/2015 04:56:10 PAGE 10  
+C51 COMPILER V9.03   LINE_TIMER                                                            04/28/2015 05:44:48 PAGE 10  
 
                   /* Write The New Setting */
                   Line_Timer_CONTROL |= captureMode;
@@ -638,7 +638,7 @@ line level    source
               void Line_Timer_EnableTrigger(void) 
               {
                   #if (!Line_Timer_ControlRegRemoved)   /* Remove assignment if control register is removed */
-C51 COMPILER V9.03   LINE_TIMER                                                            04/28/2015 04:56:10 PAGE 11  
+C51 COMPILER V9.03   LINE_TIMER                                                            04/28/2015 05:44:48 PAGE 11  
 
                       Line_Timer_CONTROL |= Line_Timer_CTRL_TRIG_EN;
                   #endif /* Remove code section if control register is not used */
@@ -702,7 +702,7 @@ line level    source
  669          #endif /* Remove API if control register is removed */
  670          #endif /* Line_Timer_InterruptOnCaptureCount */
  671          
-C51 COMPILER V9.03   LINE_TIMER                                                            04/28/2015 04:56:10 PAGE 12  
+C51 COMPILER V9.03   LINE_TIMER                                                            04/28/2015 05:44:48 PAGE 12  
 
  672          
  673          #if (Line_Timer_UsingHWCaptureCounter)
@@ -766,7 +766,7 @@ line level    source
  731          *
  732          *******************************************************************************/
  733          void Line_Timer_ClearFIFO(void) 
-C51 COMPILER V9.03   LINE_TIMER                                                            04/28/2015 04:56:10 PAGE 13  
+C51 COMPILER V9.03   LINE_TIMER                                                            04/28/2015 05:44:48 PAGE 13  
 
  734          {
  735   1          while(Line_Timer_ReadStatusRegister() & Line_Timer_STATUS_FIFONEMP)
@@ -779,7 +779,7 @@ line level    source
  742          
  743          
  744          /* [] END OF FILE */
-C51 COMPILER V9.03   LINE_TIMER                                                            04/28/2015 04:56:10 PAGE 14  
+C51 COMPILER V9.03   LINE_TIMER                                                            04/28/2015 05:44:48 PAGE 14  
 
 ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
@@ -801,7 +801,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0014 EF                MOV     A,R7
 0015 F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 143
-0016 906493            MOV     DPTR,#06493H
+0016 906490            MOV     DPTR,#06490H
 0019 E0                MOVX    A,@DPTR
 001A FF                MOV     R7,A
 001B EF                MOV     A,R7
@@ -830,7 +830,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 179
                                            ; SOURCE LINE # 180
                                            ; SOURCE LINE # 189
-0000 906472            MOV     DPTR,#06472H
+0000 906470            MOV     DPTR,#06470H
 0003 E0                MOVX    A,@DPTR
 0004 FF                MOV     R7,A
 0005 EF                MOV     A,R7
@@ -843,7 +843,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
              ; FUNCTION Line_Timer_Enable (END)
 
              ; FUNCTION Line_Timer_Start (BEGIN)
-C51 COMPILER V9.03   LINE_TIMER                                                            04/28/2015 04:56:10 PAGE 15  
+C51 COMPILER V9.03   LINE_TIMER                                                            04/28/2015 05:44:48 PAGE 15  
 
                                            ; SOURCE LINE # 214
                                            ; SOURCE LINE # 215
@@ -872,7 +872,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 246
                                            ; SOURCE LINE # 247
                                            ; SOURCE LINE # 250
-0000 906472            MOV     DPTR,#06472H
+0000 906470            MOV     DPTR,#06470H
 0003 E0                MOVX    A,@DPTR
 0004 FF                MOV     R7,A
 0005 EF                MOV     A,R7
@@ -894,7 +894,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0005 900000      R     MOV     DPTR,#interruptMode
 0008 E0                MOVX    A,@DPTR
 0009 FF                MOV     R7,A
-000A 906483            MOV     DPTR,#06483H
+000A 906480            MOV     DPTR,#06480H
 000D EF                MOV     A,R7
 000E F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 281
@@ -905,9 +905,9 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 301
                                            ; SOURCE LINE # 302
                                            ; SOURCE LINE # 304
-0000 906402            MOV     DPTR,#06402H
+0000 906400            MOV     DPTR,#06400H
 0003 E0                MOVX    A,@DPTR
-C51 COMPILER V9.03   LINE_TIMER                                                            04/28/2015 04:56:10 PAGE 16  
+C51 COMPILER V9.03   LINE_TIMER                                                            04/28/2015 05:44:48 PAGE 16  
 
 0004 FF                MOV     R7,A
                                            ; SOURCE LINE # 306
@@ -918,7 +918,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 328
                                            ; SOURCE LINE # 329
                                            ; SOURCE LINE # 330
-0000 906463            MOV     DPTR,#06463H
+0000 906460            MOV     DPTR,#06460H
 0003 E0                MOVX    A,@DPTR
 0004 FF                MOV     R7,A
                                            ; SOURCE LINE # 331
@@ -930,7 +930,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 351
                                            ; SOURCE LINE # 352
                                            ; SOURCE LINE # 353
-0000 906472            MOV     DPTR,#06472H
+0000 906470            MOV     DPTR,#06470H
 0003 E0                MOVX    A,@DPTR
 0004 FF                MOV     R7,A
                                            ; SOURCE LINE # 354
@@ -948,7 +948,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0005 900000      R     MOV     DPTR,#control
 0008 E0                MOVX    A,@DPTR
 0009 FF                MOV     R7,A
-000A 906472            MOV     DPTR,#06472H
+000A 906470            MOV     DPTR,#06470H
 000D EF                MOV     A,R7
 000E F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 373
@@ -961,7 +961,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 393
 0000 7B02              MOV     R3,#02H
 0002 7A64              MOV     R2,#064H
-0004 7922              MOV     R1,#022H
+0004 7920              MOV     R1,#020H
 0006 120000      E     LCALL   _cyread16_nodpx
                                            ; SOURCE LINE # 394
 0009         ?C0011:
@@ -971,7 +971,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
              ; FUNCTION _Line_Timer_WritePeriod (BEGIN)
                                            ; SOURCE LINE # 413
 0000 900000      R     MOV     DPTR,#period
-C51 COMPILER V9.03   LINE_TIMER                                                            04/28/2015 04:56:10 PAGE 17  
+C51 COMPILER V9.03   LINE_TIMER                                                            04/28/2015 05:44:48 PAGE 17  
 
 0003 EE                MOV     A,R6
 0004 F0                MOVX    @DPTR,A
@@ -982,7 +982,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 419
 0008 7B02              MOV     R3,#02H
 000A 7A64              MOV     R2,#064H
-000C 7922              MOV     R1,#022H
+000C 7920              MOV     R1,#020H
 000E 900000      R     MOV     DPTR,#period
 0011 E0                MOVX    A,@DPTR
 0012 FC                MOV     R4,A
@@ -1000,7 +1000,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 440
 0000 7B02              MOV     R3,#02H
 0002 7A64              MOV     R2,#064H
-0004 7942              MOV     R1,#042H
+0004 7940              MOV     R1,#040H
 0006 120000      E     LCALL   _cyread16_nodpx
                                            ; SOURCE LINE # 441
 0009         ?C0013:
@@ -1019,7 +1019,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 470
 0008 7B02              MOV     R3,#02H
 000A 7A64              MOV     R2,#064H
-000C 7902              MOV     R1,#02H
+000C 7900              MOV     R1,#00H
 000E 900000      R     MOV     DPTR,#counter
 0011 E0                MOVX    A,@DPTR
 0012 FC                MOV     R4,A
@@ -1035,15 +1035,15 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 489
                                            ; SOURCE LINE # 490
                                            ; SOURCE LINE # 495
-C51 COMPILER V9.03   LINE_TIMER                                                            04/28/2015 04:56:10 PAGE 18  
+C51 COMPILER V9.03   LINE_TIMER                                                            04/28/2015 05:44:48 PAGE 18  
 
-0000 906402            MOV     DPTR,#06402H
+0000 906400            MOV     DPTR,#06400H
 0003 E0                MOVX    A,@DPTR
 0004 FF                MOV     R7,A
                                            ; SOURCE LINE # 498
 0005 7B02              MOV     R3,#02H
 0007 7A64              MOV     R2,#064H
-0009 7942              MOV     R1,#042H
+0009 7940              MOV     R1,#040H
 000B 120000      E     LCALL   _cyread16_nodpx
                                            ; SOURCE LINE # 499
 000E         ?C0015:
@@ -1067,7 +1067,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0011 EF                MOV     A,R7
 0012 F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 665
-0013 906472            MOV     DPTR,#06472H
+0013 906470            MOV     DPTR,#06470H
 0016 E0                MOVX    A,@DPTR
 0017 FF                MOV     R7,A
 0018 EF                MOV     A,R7
@@ -1076,7 +1076,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 001C EF                MOV     A,R7
 001D F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 667
-001E 906472            MOV     DPTR,#06472H
+001E 906470            MOV     DPTR,#06470H
 0021 C083              PUSH    DPH
 0023 C082              PUSH    DPL
 0025 E0                MOVX    A,@DPTR
@@ -1099,7 +1099,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 733
                                            ; SOURCE LINE # 734
 0000         ?C0017:
-C51 COMPILER V9.03   LINE_TIMER                                                            04/28/2015 04:56:10 PAGE 19  
+C51 COMPILER V9.03   LINE_TIMER                                                            04/28/2015 05:44:48 PAGE 19  
 
                                            ; SOURCE LINE # 735
 0000 120000      R     LCALL   Line_Timer_ReadStatusRegister

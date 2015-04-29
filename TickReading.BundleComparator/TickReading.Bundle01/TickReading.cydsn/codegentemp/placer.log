@@ -6,7 +6,7 @@
 
 #Build Date:         Jun 19 2012 09:55:54
 
-#File Generated:     Apr 28 2015 04:55:20
+#File Generated:     Apr 28 2015 16:08:25
 
 #Purpose:            
 
@@ -86,7 +86,7 @@ Clock: ADC_DelSig_theACLK   | Frequency: N/A       | Target:   0.5 MHz
 Clock: Clock_Hall           | Frequency:  41.7 MHz | Target:   0.1 MHz
 Clock: Clock_Hall(routed)   | Frequency: N/A       | Target:   0.1 MHz
 Clock: Clock_Steering       | Frequency:  41.7 MHz | Target:   0.1 MHz
-Clock: CyBUS_CLK            | Frequency:  24.1 MHz | Target:  24.0 MHz
+Clock: CyBUS_CLK            | Frequency:  26.6 MHz | Target:  24.0 MHz
 Clock: CyBUS_CLK(routed)    | Frequency: N/A       | Target:  24.0 MHz
 Clock: CyILO                | Frequency: N/A       | Target:   0.0 MHz
 Clock: CyIMO                | Frequency: N/A       | Target:   3.0 MHz
@@ -111,7 +111,7 @@ Clock: ADC_DelSig_theACLK   | Frequency: N/A       | Target:   0.5 MHz
 Clock: Clock_Hall           | Frequency:  41.7 MHz | Target:   0.1 MHz
 Clock: Clock_Hall(routed)   | Frequency: N/A       | Target:   0.1 MHz
 Clock: Clock_Steering       | Frequency:  41.7 MHz | Target:   0.1 MHz
-Clock: CyBUS_CLK            | Frequency:  23.9 MHz | Target:  24.0 MHz
+Clock: CyBUS_CLK            | Frequency:  26.6 MHz | Target:  24.0 MHz
 Clock: CyBUS_CLK(routed)    | Frequency: N/A       | Target:  24.0 MHz
 Clock: CyILO                | Frequency: N/A       | Target:   0.0 MHz
 Clock: CyIMO                | Frequency: N/A       | Target:   3.0 MHz
@@ -122,7 +122,7 @@ Clock: Wait_Clock           | Frequency: N/A       | Target:   0.0 MHz
 ======================================================================
                      End of Clock Summary
 ######################################################################
-D2088: Phase 7, elapsed time : 0.4 (sec)
+D2088: Phase 7, elapsed time : 0.3 (sec)
 
 Final Design Statistics
     Number of Combinational MCs 	:	21
@@ -159,7 +159,7 @@ Clock: ADC_DelSig_theACLK   | Frequency: N/A       | Target:   0.5 MHz
 Clock: Clock_Hall           | Frequency:  41.7 MHz | Target:   0.1 MHz
 Clock: Clock_Hall(routed)   | Frequency: N/A       | Target:   0.1 MHz
 Clock: Clock_Steering       | Frequency:  41.7 MHz | Target:   0.1 MHz
-Clock: CyBUS_CLK            | Frequency:  23.9 MHz | Target:  26.3 MHz
+Clock: CyBUS_CLK            | Frequency:  26.6 MHz | Target:  26.3 MHz
 Clock: CyBUS_CLK(routed)    | Frequency: N/A       | Target:  24.0 MHz
 Clock: CyILO                | Frequency: N/A       | Target:   0.0 MHz
 Clock: CyIMO                | Frequency: N/A       | Target:   3.0 MHz
@@ -191,7 +191,7 @@ Clock: ADC_DelSig_theACLK   | Frequency: N/A       | Target:   0.5 MHz
 Clock: Clock_Hall           | Frequency:  41.7 MHz | Target:   0.1 MHz
 Clock: Clock_Hall(routed)   | Frequency: N/A       | Target:   0.1 MHz
 Clock: Clock_Steering       | Frequency:  41.7 MHz | Target:   0.1 MHz
-Clock: CyBUS_CLK            | Frequency:  24.1 MHz | Target:  26.3 MHz
+Clock: CyBUS_CLK            | Frequency:  26.6 MHz | Target:  26.3 MHz
 Clock: CyBUS_CLK(routed)    | Frequency: N/A       | Target:  24.0 MHz
 Clock: CyILO                | Frequency: N/A       | Target:   0.0 MHz
 Clock: CyIMO                | Frequency: N/A       | Target:   3.0 MHz
@@ -216,7 +216,7 @@ Clock: ADC_DelSig_theACLK   | Frequency: N/A       | Target:   0.5 MHz
 Clock: Clock_Hall           | Frequency:  41.7 MHz | Target:   0.1 MHz
 Clock: Clock_Hall(routed)   | Frequency: N/A       | Target:   0.1 MHz
 Clock: Clock_Steering       | Frequency:  41.7 MHz | Target:   0.1 MHz
-Clock: CyBUS_CLK            | Frequency:  23.9 MHz | Target:  26.3 MHz
+Clock: CyBUS_CLK            | Frequency:  26.6 MHz | Target:  28.6 MHz
 Clock: CyBUS_CLK(routed)    | Frequency: N/A       | Target:  24.0 MHz
 Clock: CyILO                | Frequency: N/A       | Target:   0.0 MHz
 Clock: CyIMO                | Frequency: N/A       | Target:   3.0 MHz
@@ -264,7 +264,7 @@ Clock: ADC_DelSig_theACLK   | Frequency: N/A       | Target:   0.5 MHz
 Clock: Clock_Hall           | Frequency:  41.7 MHz | Target:   0.1 MHz
 Clock: Clock_Hall(routed)   | Frequency: N/A       | Target:   0.1 MHz
 Clock: Clock_Steering       | Frequency:  41.7 MHz | Target:   0.1 MHz
-Clock: CyBUS_CLK            | Frequency:  25.8 MHz | Target:  26.3 MHz
+Clock: CyBUS_CLK            | Frequency:  27.0 MHz | Target:  28.6 MHz
 Clock: CyBUS_CLK(routed)    | Frequency: N/A       | Target:  24.0 MHz
 Clock: CyILO                | Frequency: N/A       | Target:   0.0 MHz
 Clock: CyIMO                | Frequency: N/A       | Target:   3.0 MHz
@@ -281,5 +281,5 @@ D2088: Phase 8, elapsed time : 0.0 (sec)
 
 D2054: Placement of the design completed successfully
 
-I2076: Total run-time: 2.3 sec.
+I2076: Total run-time: 2.0 sec.
 

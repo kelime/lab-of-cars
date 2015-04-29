@@ -1,6 +1,6 @@
 // ======================================================================
 // TickReading.v generated from TopDesign.cysch
-// 04/28/2015 at 04:55
+// 04/28/2015 at 16:08
 // This file is auto generated. ANY EDITS YOU MAKE MAY BE LOST WHEN THIS FILE IS REGENERATED!!!
 // ======================================================================
 
@@ -764,7 +764,7 @@ module Comp_v1_90_8 (
 
 endmodule
 
-// VDAC8_v1_80(Data_Source=0, Initial_Value=250, Strobe_Mode=0, VDAC_Range=0, VDAC_Speed=0, Voltage=1000, CY_COMPONENT_NAME=VDAC8_v1_80, CY_CONTROL_FILE=<:default:>, CY_FITTER_NAME=Elevator_Threshold, CY_INSTANCE_SHORT_NAME=Elevator_Threshold, CY_MAJOR_VERSION=1, CY_MINOR_VERSION=80, CY_REMOVE=false, CY_SUPPRESS_API_GEN=false, CY_VERSION=cydsfit No Version Information Found, INSTANCE_NAME=Elevator_Threshold, )
+// VDAC8_v1_80(Data_Source=0, Initial_Value=200, Strobe_Mode=0, VDAC_Range=0, VDAC_Speed=0, Voltage=800, CY_COMPONENT_NAME=VDAC8_v1_80, CY_CONTROL_FILE=<:default:>, CY_FITTER_NAME=Elevator_Threshold, CY_INSTANCE_SHORT_NAME=Elevator_Threshold, CY_MAJOR_VERSION=1, CY_MINOR_VERSION=80, CY_REMOVE=false, CY_SUPPRESS_API_GEN=false, CY_VERSION=cydsfit No Version Information Found, INSTANCE_NAME=Elevator_Threshold, )
 module VDAC8_v1_80_9 (
     strobe,
     data,
@@ -775,7 +775,7 @@ module VDAC8_v1_80_9 (
     electrical  vOut;
 
     parameter Data_Source = 0;
-    parameter Initial_Value = 250;
+    parameter Initial_Value = 200;
     parameter Strobe_Mode = 0;
 
     electrical  Net_77;
@@ -871,7 +871,7 @@ module Comp_v1_90_10 (
 
 endmodule
 
-// Counter_v2_20(CaptureMode=0, CaptureModeSoftware=0, ClockMode=3, CompareMode=1, CompareModeSoftware=0, CompareStatusEdgeSense=true, CompareValue=1, CONTROL3=1, ControlRegRemoved=0, CtlModeReplacementString=SyncCtl, CyGetRegReplacementString=CY_GET_REG8, CySetRegReplacementString=CY_SET_REG8, EnableMode=0, FF16=false, FF8=true, FixedFunction=true, FixedFunctionUsed=1, InitCounterValue=110, InterruptOnCapture=false, InterruptOnCompare=false, InterruptOnOverUnderFlow=false, InterruptOnTC=true, Period=110, RegDefReplacementString=reg8, RegSizeReplacementString=uint8, ReloadOnCapture=false, ReloadOnCompare=false, ReloadOnOverUnder=true, ReloadOnReset=true, Resolution=8, RstStatusReplacementString=sSTSReg_rstSts, RunMode=1, UDB16=false, UDB24=false, UDB32=false, UDB8=false, UDBControlReg=false, UseInterrupt=true, VerilogSectionReplacementString=sC8, CY_COMPONENT_NAME=Counter_v2_20, CY_CONTROL_FILE=<:default:>, CY_FITTER_NAME=Wait_Counter, CY_INSTANCE_SHORT_NAME=Wait_Counter, CY_MAJOR_VERSION=2, CY_MINOR_VERSION=20, CY_REMOVE=false, CY_SUPPRESS_API_GEN=false, CY_VERSION=cydsfit No Version Information Found, INSTANCE_NAME=Wait_Counter, )
+// Counter_v2_20(CaptureMode=0, CaptureModeSoftware=0, ClockMode=3, CompareMode=1, CompareModeSoftware=0, CompareStatusEdgeSense=true, CompareValue=0, CONTROL3=1, ControlRegRemoved=0, CtlModeReplacementString=SyncCtl, CyGetRegReplacementString=CY_GET_REG16, CySetRegReplacementString=CY_SET_REG16, EnableMode=0, FF16=true, FF8=false, FixedFunction=true, FixedFunctionUsed=1, InitCounterValue=1000, InterruptOnCapture=false, InterruptOnCompare=false, InterruptOnOverUnderFlow=false, InterruptOnTC=true, Period=1000, RegDefReplacementString=reg16, RegSizeReplacementString=uint16, ReloadOnCapture=false, ReloadOnCompare=false, ReloadOnOverUnder=true, ReloadOnReset=true, Resolution=16, RstStatusReplacementString=sSTSReg_rstSts, RunMode=1, UDB16=false, UDB24=false, UDB32=false, UDB8=false, UDBControlReg=false, UseInterrupt=true, VerilogSectionReplacementString=sC16, CY_COMPONENT_NAME=Counter_v2_20, CY_CONTROL_FILE=<:default:>, CY_FITTER_NAME=Wait_Counter, CY_INSTANCE_SHORT_NAME=Wait_Counter, CY_MAJOR_VERSION=2, CY_MINOR_VERSION=20, CY_REMOVE=false, CY_SUPPRESS_API_GEN=false, CY_VERSION=cydsfit No Version Information Found, INSTANCE_NAME=Wait_Counter, )
 module Counter_v2_20_11 (
     clock,
     comp,
@@ -905,7 +905,7 @@ module Counter_v2_20_11 (
     parameter ReloadOnCompare = 0;
     parameter ReloadOnOverUnder = 1;
     parameter ReloadOnReset = 1;
-    parameter Resolution = 8;
+    parameter Resolution = 16;
     parameter RunMode = 1;
     parameter UseInterrupt = 1;
 
@@ -1212,10 +1212,11 @@ endmodule
 // top
 module top ;
 
-    electrical  Net_2183;
-          wire  Net_2182;
-          wire  Net_2180;
-    electrical  Net_2179;
+    electrical  Net_2209;
+          wire  Net_2208;
+          wire  Net_2207;
+          wire  Net_2206;
+    electrical  Net_2205;
           wire  Net_2145;
           wire  Net_2155;
           wire  Net_2154;
@@ -1283,7 +1284,6 @@ module top ;
           wire  Net_1157;
           wire  Net_1156;
           wire  Net_1155;
-          wire  Net_2184;
           wire  Net_2146;
           wire  Net_2114;
     electrical  Net_1949;
@@ -2070,7 +2070,7 @@ module top ;
         .data(8'b00000000),
         .vOut(Net_1949));
     defparam Elevator_Threshold.Data_Source = 0;
-    defparam Elevator_Threshold.Initial_Value = 250;
+    defparam Elevator_Threshold.Initial_Value = 200;
     defparam Elevator_Threshold.Strobe_Mode = 0;
 
 
@@ -2254,7 +2254,7 @@ module top ;
     defparam Wait_Counter.ReloadOnCompare = 0;
     defparam Wait_Counter.ReloadOnOverUnder = 1;
     defparam Wait_Counter.ReloadOnReset = 1;
-    defparam Wait_Counter.Resolution = 8;
+    defparam Wait_Counter.Resolution = 16;
     defparam Wait_Counter.RunMode = 1;
     defparam Wait_Counter.UseInterrupt = 1;
 
@@ -2322,18 +2322,11 @@ module top ;
 
     ADC_DelSig_v2_30_13 ADC_DelSig (
         .vplus(Net_1947),
-        .vminus(Net_2179),
+        .vminus(Net_2205),
         .soc(1'b1),
-        .eoc(Net_2184),
+        .eoc(Net_2207),
         .aclk(1'b0),
-        .nVref(Net_2183));
-
-
-	cy_isr_v1_0
-		#(.int_type(2'b10))
-		ISR_getVolts
-		 (.int_signal(Net_2184));
-
+        .nVref(Net_2209));
 
 
 

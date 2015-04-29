@@ -122,28 +122,28 @@ static const cfg_memset_t CYCODE cfg_memset_list [] = {
 
 #define cfg_byte_table ((const void CYFAR *)0x080000)
 /* IOPINS0_1 Address: CYREG_PRT1_DM0 Size (bytes): 8 */
-#define BS_IOPINS0_1_VAL ((const uint8 CYFAR *)0x000807B0)
+#define BS_IOPINS0_1_VAL ((const uint8 CYFAR *)0x000807B4)
 
 /* IOPINS0_7 Address: CYREG_PRT12_DM0 Size (bytes): 8 */
-#define BS_IOPINS0_7_VAL ((const uint8 CYFAR *)0x000807B8)
+#define BS_IOPINS0_7_VAL ((const uint8 CYFAR *)0x000807BC)
 
 /* IOPINS0_8 Address: CYREG_PRT15_DM0 Size (bytes): 8 */
-#define BS_IOPINS0_8_VAL ((const uint8 CYFAR *)0x000807C0)
+#define BS_IOPINS0_8_VAL ((const uint8 CYFAR *)0x000807C4)
 
 /* IOPINS0_2 Address: CYREG_PRT2_DM0 Size (bytes): 8 */
-#define BS_IOPINS0_2_VAL ((const uint8 CYFAR *)0x000807C8)
+#define BS_IOPINS0_2_VAL ((const uint8 CYFAR *)0x000807CC)
 
 /* IOPINS0_4 Address: CYREG_PRT4_DM0 Size (bytes): 8 */
-#define BS_IOPINS0_4_VAL ((const uint8 CYFAR *)0x000807D0)
+#define BS_IOPINS0_4_VAL ((const uint8 CYFAR *)0x000807D4)
 
 /* IOPINS0_5 Address: CYREG_PRT5_DM0 Size (bytes): 8 */
-#define BS_IOPINS0_5_VAL ((const uint8 CYFAR *)0x000807D8)
+#define BS_IOPINS0_5_VAL ((const uint8 CYFAR *)0x000807DC)
 
 /* IOPINS0_6 Address: CYREG_PRT6_DM0 Size (bytes): 8 */
-#define BS_IOPINS0_6_VAL ((const uint8 CYFAR *)0x000807E0)
+#define BS_IOPINS0_6_VAL ((const uint8 CYFAR *)0x000807E4)
 
 /* CYDEV_CLKDIST_ACFG0_CFG0 Address: CYREG_CLKDIST_ACFG0_CFG0 Size (bytes): 4 */
-#define BS_CYDEV_CLKDIST_ACFG0_CFG0_VAL ((const uint8 CYFAR *)0x000807E8)
+#define BS_CYDEV_CLKDIST_ACFG0_CFG0_VAL ((const uint8 CYFAR *)0x000807EC)
 
 
 extern void cfg_write_bytes_code(void CYCODE *table);
@@ -389,6 +389,7 @@ void cyfitter_cfg(void)
 	CYCONFIGCPY((void CYFAR *)(CYREG_PRT4_DM0), (void CYFAR *)(BS_IOPINS0_4_VAL), 8);
 	CYCONFIGCPY((void CYFAR *)(CYREG_PRT5_DM0), (void CYFAR *)(BS_IOPINS0_5_VAL), 8);
 	CYCONFIGCPY((void CYFAR *)(CYREG_PRT6_DM0), (void CYFAR *)(BS_IOPINS0_6_VAL), 8);
+	CY_SET_XTND_REG8((void CYFAR *)(CYREG_B0_P0_U0_CFG27), 0x44);
 	CY_SET_XTND_REG8((void CYFAR *)(CYREG_B0_P1_U1_CFG27), 0x44);
 	CY_SET_REG8((void CYXDATA *)(CYREG_INTC_CSR_EN), 0x01);
 

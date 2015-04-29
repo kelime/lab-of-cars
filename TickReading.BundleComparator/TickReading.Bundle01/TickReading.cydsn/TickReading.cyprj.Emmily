@@ -1232,13 +1232,6 @@
 <v>${CyRoot}\psoc\content\cyprimitives\CyPrimitives.cylib\cy_vref_v1_60\Custom\cyvrefidcontrol.cs</v>
 <v>${CyRoot}\psoc\content\cyprimitives\CyPrimitives.cylib\cy_vref_v1_60\Custom\cyvrefidcontrol.Designer.cs</v>
 <v>${CyRoot}\psoc\content\cyprimitives\CyPrimitives.cylib\cy_vref_v1_60\Custom\cyvrefidcontrol.resx</v>
-<v>${CyRoot}\psoc\content\cyprimitives\CyPrimitives.cylib\cy_isr_v1_60\cy_isr_v1_60.cysym</v>
-<v>${CyRoot}\psoc\content\cyprimitives\CyPrimitives.cylib\cy_isr_v1_60\cy_isr_v1_60.pdf</v>
-<v>${CyRoot}\psoc\content\cyprimitives\CyPrimitives.cylib\cy_isr_v1_60\cy_isr_v1_60.primitive</v>
-<v>${CyRoot}\psoc\content\cyprimitives\CyPrimitives.cylib\cy_isr_v1_60\cy_isr_v1_60.cystate</v>
-<v>${CyRoot}\psoc\content\cyprimitives\CyPrimitives.cylib\cy_isr_v1_60\Custom\custom.cs</v>
-<v>${CyRoot}\psoc\content\cyprimitives\CyPrimitives.cylib\cy_isr_v1_60\PSoC3\API\intc.c</v>
-<v>${CyRoot}\psoc\content\cyprimitives\CyPrimitives.cylib\cy_isr_v1_60\PSoC3\API\intc.h</v>
 <v>.\TickReading.cydwr</v>
 <v>${CyRoot}\psoc\content\cycomponentlibrary\CyComponentLibrary.cylib\cy_boot_v3_10\PSoC3\API\CyBootAsmKeil.a51</v>
 <v>${CyRoot}\psoc\content\cycomponentlibrary\CyComponentLibrary.cylib\cy_boot_v3_10\PSoC3\API\CyDmac.c</v>
@@ -1512,7 +1505,7 @@
 <v>C:\Program Files (x86)\Cypress\PSoC Creator\2.1\PSoC Creator\warp\lib\common\stdlogic\rtlpkg.vif</v>
 <v>C:\Program Files (x86)\Cypress\PSoC Creator\2.1\PSoC Creator\warp\lib\common\stdlogic\cy_psoc3.vif</v>
 </warp_dep>
-<deps_time v="130746849314103889" />
+<deps_time v="130747253148377478" />
 </CyGuid_925cc1e1-309e-4e08-b0a1-09a83c35b157>
 </dataGuid>
 <dataGuid v="47ec7058-2f43-4a2f-ae73-172624e235df">
@@ -1553,7 +1546,6 @@
 <dep name=".\Generated_Source\PSoC3\ISR_Hall.h" />
 <dep name=".\Generated_Source\PSoC3\ISR_Overflow.h" />
 <dep name=".\Generated_Source\PSoC3\ISR_Wait.h" />
-<dep name=".\Generated_Source\PSoC3\ISR_getVolts.h" />
 <dep name=".\Generated_Source\PSoC3\Input_LED.h" />
 <dep name=".\Generated_Source\PSoC3\Input_LED_aliases.h" />
 <dep name=".\Generated_Source\PSoC3\LCD.h" />
@@ -1630,7 +1622,6 @@
 <file name=".\Generated_Source\PSoC3\ISR_Hall.h" />
 <file name=".\Generated_Source\PSoC3\ISR_Overflow.h" />
 <file name=".\Generated_Source\PSoC3\ISR_Wait.h" />
-<file name=".\Generated_Source\PSoC3\ISR_getVolts.h" />
 <file name=".\Generated_Source\PSoC3\Input_LED.h" />
 <file name=".\Generated_Source\PSoC3\Input_LED_aliases.h" />
 <file name=".\Generated_Source\PSoC3\LCD.h" />
@@ -1676,6 +1667,57 @@
 <file name=".\Generated_Source\PSoC3\project.h" />
 <file name=".\device.h" />
 <file name=".\main.c" />
+<file name=".\DP8051_Keil_903\Debug\Elevator_Threshold.obj">
+<dep name=".\Generated_Source\PSoC3\CyFlash.h" />
+<dep name=".\Generated_Source\PSoC3\CyLib.h" />
+<dep name=".\Generated_Source\PSoC3\CySpc.h" />
+<dep name=".\Generated_Source\PSoC3\Elevator_Threshold.h" />
+<dep name=".\Generated_Source\PSoC3\PSoC3_8051.h" />
+<dep name=".\Generated_Source\PSoC3\cyPm.h" />
+<dep name=".\Generated_Source\PSoC3\cydevice.h" />
+<dep name=".\Generated_Source\PSoC3\cydevice_trm.h" />
+<dep name=".\Generated_Source\PSoC3\cyfitter.h" />
+<dep name=".\Generated_Source\PSoC3\cytypes.h" />
+<dep name=".\Generated_Source\PSoC3\Elevator_Threshold.c" />
+</file>
+<file name=".\Generated_Source\PSoC3\Elevator_Threshold.c" />
+<file name=".\DP8051_Keil_903\Debug\Elevator_Threshold_PM.obj">
+<dep name=".\Generated_Source\PSoC3\Elevator_Threshold.h" />
+<dep name=".\Generated_Source\PSoC3\cydevice.h" />
+<dep name=".\Generated_Source\PSoC3\cydevice_trm.h" />
+<dep name=".\Generated_Source\PSoC3\cyfitter.h" />
+<dep name=".\Generated_Source\PSoC3\cytypes.h" />
+<dep name=".\Generated_Source\PSoC3\Elevator_Threshold_PM.c" />
+</file>
+<file name=".\Generated_Source\PSoC3\Elevator_Threshold_PM.c" />
+<file name=".\DP8051_Keil_903\Debug\Wait_Counter.obj">
+<dep name=".\Generated_Source\PSoC3\CyFlash.h" />
+<dep name=".\Generated_Source\PSoC3\CyLib.h" />
+<dep name=".\Generated_Source\PSoC3\CySpc.h" />
+<dep name=".\Generated_Source\PSoC3\PSoC3_8051.h" />
+<dep name=".\Generated_Source\PSoC3\Wait_Counter.h" />
+<dep name=".\Generated_Source\PSoC3\cyPm.h" />
+<dep name=".\Generated_Source\PSoC3\cydevice.h" />
+<dep name=".\Generated_Source\PSoC3\cydevice_trm.h" />
+<dep name=".\Generated_Source\PSoC3\cyfitter.h" />
+<dep name=".\Generated_Source\PSoC3\cytypes.h" />
+<dep name=".\Generated_Source\PSoC3\Wait_Counter.c" />
+</file>
+<file name=".\Generated_Source\PSoC3\Wait_Counter.c" />
+<file name=".\DP8051_Keil_903\Debug\Wait_Counter_PM.obj">
+<dep name=".\Generated_Source\PSoC3\CyFlash.h" />
+<dep name=".\Generated_Source\PSoC3\CyLib.h" />
+<dep name=".\Generated_Source\PSoC3\CySpc.h" />
+<dep name=".\Generated_Source\PSoC3\PSoC3_8051.h" />
+<dep name=".\Generated_Source\PSoC3\Wait_Counter.h" />
+<dep name=".\Generated_Source\PSoC3\cyPm.h" />
+<dep name=".\Generated_Source\PSoC3\cydevice.h" />
+<dep name=".\Generated_Source\PSoC3\cydevice_trm.h" />
+<dep name=".\Generated_Source\PSoC3\cyfitter.h" />
+<dep name=".\Generated_Source\PSoC3\cytypes.h" />
+<dep name=".\Generated_Source\PSoC3\Wait_Counter_PM.c" />
+</file>
+<file name=".\Generated_Source\PSoC3\Wait_Counter_PM.c" />
 <file name=".\DP8051_Keil_903\Debug\ADC_DelSig.obj">
 <dep name=".\Generated_Source\PSoC3\ADC_DelSig.h" />
 <dep name=".\Generated_Source\PSoC3\ADC_DelSig_AMux.h" />
@@ -1951,29 +1993,6 @@
 <dep name=".\Generated_Source\PSoC3\Elevator_Comparator_PM.c" />
 </file>
 <file name=".\Generated_Source\PSoC3\Elevator_Comparator_PM.c" />
-<file name=".\DP8051_Keil_903\Debug\Elevator_Threshold.obj">
-<dep name=".\Generated_Source\PSoC3\CyFlash.h" />
-<dep name=".\Generated_Source\PSoC3\CyLib.h" />
-<dep name=".\Generated_Source\PSoC3\CySpc.h" />
-<dep name=".\Generated_Source\PSoC3\Elevator_Threshold.h" />
-<dep name=".\Generated_Source\PSoC3\PSoC3_8051.h" />
-<dep name=".\Generated_Source\PSoC3\cyPm.h" />
-<dep name=".\Generated_Source\PSoC3\cydevice.h" />
-<dep name=".\Generated_Source\PSoC3\cydevice_trm.h" />
-<dep name=".\Generated_Source\PSoC3\cyfitter.h" />
-<dep name=".\Generated_Source\PSoC3\cytypes.h" />
-<dep name=".\Generated_Source\PSoC3\Elevator_Threshold.c" />
-</file>
-<file name=".\Generated_Source\PSoC3\Elevator_Threshold.c" />
-<file name=".\DP8051_Keil_903\Debug\Elevator_Threshold_PM.obj">
-<dep name=".\Generated_Source\PSoC3\Elevator_Threshold.h" />
-<dep name=".\Generated_Source\PSoC3\cydevice.h" />
-<dep name=".\Generated_Source\PSoC3\cydevice_trm.h" />
-<dep name=".\Generated_Source\PSoC3\cyfitter.h" />
-<dep name=".\Generated_Source\PSoC3\cytypes.h" />
-<dep name=".\Generated_Source\PSoC3\Elevator_Threshold_PM.c" />
-</file>
-<file name=".\Generated_Source\PSoC3\Elevator_Threshold_PM.c" />
 <file name=".\DP8051_Keil_903\Debug\Hall_Counter.obj">
 <dep name=".\Generated_Source\PSoC3\CyFlash.h" />
 <dep name=".\Generated_Source\PSoC3\CyLib.h" />
@@ -2153,24 +2172,6 @@
 </file>
 <file name=".\Generated_Source\PSoC3\ISR_Wait.H" />
 <file name=".\Generated_Source\PSoC3\ISR_Wait.c" />
-<file name=".\DP8051_Keil_903\Debug\ISR_getVolts.obj">
-<dep name=".\Generated_Source\PSoC3\CYDEVICE.H" />
-<dep name=".\Generated_Source\PSoC3\CYDEVICE_TRM.H" />
-<dep name=".\Generated_Source\PSoC3\CYLIB.H" />
-<dep name=".\Generated_Source\PSoC3\CyFlash.h" />
-<dep name=".\Generated_Source\PSoC3\CyLib.h" />
-<dep name=".\Generated_Source\PSoC3\CySpc.h" />
-<dep name=".\Generated_Source\PSoC3\ISR_getVolts.H" />
-<dep name=".\Generated_Source\PSoC3\PSoC3_8051.h" />
-<dep name=".\Generated_Source\PSoC3\cyPm.h" />
-<dep name=".\Generated_Source\PSoC3\cydevice.h" />
-<dep name=".\Generated_Source\PSoC3\cydevice_trm.h" />
-<dep name=".\Generated_Source\PSoC3\cyfitter.h" />
-<dep name=".\Generated_Source\PSoC3\cytypes.h" />
-<dep name=".\Generated_Source\PSoC3\ISR_getVolts.c" />
-</file>
-<file name=".\Generated_Source\PSoC3\ISR_getVolts.H" />
-<file name=".\Generated_Source\PSoC3\ISR_getVolts.c" />
 <file name=".\DP8051_Keil_903\Debug\Input_LED.obj">
 <dep name=".\Generated_Source\PSoC3\Input_LED.h" />
 <dep name=".\Generated_Source\PSoC3\Input_LED_aliases.h" />
@@ -2403,34 +2404,6 @@
 <dep name=".\Generated_Source\PSoC3\Wait_Clock.c" />
 </file>
 <file name=".\Generated_Source\PSoC3\Wait_Clock.c" />
-<file name=".\DP8051_Keil_903\Debug\Wait_Counter.obj">
-<dep name=".\Generated_Source\PSoC3\CyFlash.h" />
-<dep name=".\Generated_Source\PSoC3\CyLib.h" />
-<dep name=".\Generated_Source\PSoC3\CySpc.h" />
-<dep name=".\Generated_Source\PSoC3\PSoC3_8051.h" />
-<dep name=".\Generated_Source\PSoC3\Wait_Counter.h" />
-<dep name=".\Generated_Source\PSoC3\cyPm.h" />
-<dep name=".\Generated_Source\PSoC3\cydevice.h" />
-<dep name=".\Generated_Source\PSoC3\cydevice_trm.h" />
-<dep name=".\Generated_Source\PSoC3\cyfitter.h" />
-<dep name=".\Generated_Source\PSoC3\cytypes.h" />
-<dep name=".\Generated_Source\PSoC3\Wait_Counter.c" />
-</file>
-<file name=".\Generated_Source\PSoC3\Wait_Counter.c" />
-<file name=".\DP8051_Keil_903\Debug\Wait_Counter_PM.obj">
-<dep name=".\Generated_Source\PSoC3\CyFlash.h" />
-<dep name=".\Generated_Source\PSoC3\CyLib.h" />
-<dep name=".\Generated_Source\PSoC3\CySpc.h" />
-<dep name=".\Generated_Source\PSoC3\PSoC3_8051.h" />
-<dep name=".\Generated_Source\PSoC3\Wait_Counter.h" />
-<dep name=".\Generated_Source\PSoC3\cyPm.h" />
-<dep name=".\Generated_Source\PSoC3\cydevice.h" />
-<dep name=".\Generated_Source\PSoC3\cydevice_trm.h" />
-<dep name=".\Generated_Source\PSoC3\cyfitter.h" />
-<dep name=".\Generated_Source\PSoC3\cytypes.h" />
-<dep name=".\Generated_Source\PSoC3\Wait_Counter_PM.c" />
-</file>
-<file name=".\Generated_Source\PSoC3\Wait_Counter_PM.c" />
 <file name=".\DP8051_Keil_903\Debug\cyPm.obj">
 <dep name=".\Generated_Source\PSoC3\CyFlash.h" />
 <dep name=".\Generated_Source\PSoC3\CyLib.h" />
@@ -2541,6 +2514,25 @@
 <dep name=".\Generated_Source\PSoC3\KeilStart.a51" />
 </file>
 <file name=".\Generated_Source\PSoC3\KeilStart.a51" />
+<file name=".\Generated_Source\PSoC3\ISR_getVolts.h" />
+<file name=".\DP8051_Keil_903\Debug\ISR_getVolts.obj">
+<dep name=".\Generated_Source\PSoC3\CYDEVICE.H" />
+<dep name=".\Generated_Source\PSoC3\CYDEVICE_TRM.H" />
+<dep name=".\Generated_Source\PSoC3\CYLIB.H" />
+<dep name=".\Generated_Source\PSoC3\CyFlash.h" />
+<dep name=".\Generated_Source\PSoC3\CyLib.h" />
+<dep name=".\Generated_Source\PSoC3\CySpc.h" />
+<dep name=".\Generated_Source\PSoC3\ISR_getVolts.H" />
+<dep name=".\Generated_Source\PSoC3\PSoC3_8051.h" />
+<dep name=".\Generated_Source\PSoC3\cyPm.h" />
+<dep name=".\Generated_Source\PSoC3\cydevice.h" />
+<dep name=".\Generated_Source\PSoC3\cydevice_trm.h" />
+<dep name=".\Generated_Source\PSoC3\cyfitter.h" />
+<dep name=".\Generated_Source\PSoC3\cytypes.h" />
+<dep name=".\Generated_Source\PSoC3\ISR_getVolts.c" />
+</file>
+<file name=".\Generated_Source\PSoC3\ISR_getVolts.H" />
+<file name=".\Generated_Source\PSoC3\ISR_getVolts.c" />
 <file name=".\Generated_Source\PSoC3\ISR_Getrange.h" />
 <file name=".\DP8051_Keil_903\Debug\isr_getrange.obj">
 <dep name=".\Generated_Source\PSoC3\CYDEVICE.H" />
@@ -2640,7 +2632,6 @@
 <dep name=".\DP8051_Keil_903\Debug\ADC_DelSig_theACLK.obj" />
 <dep name=".\DP8051_Keil_903\Debug\ADC_DelSig_Ext_CP_Clk.obj" />
 <dep name=".\DP8051_Keil_903\Debug\ADC_DelSig_AMux.obj" />
-<dep name=".\DP8051_Keil_903\Debug\ISR_getVolts.obj" />
 <dep name=".\DP8051_Keil_903\Debug\cyfitter_cfg.obj" />
 <dep name=".\DP8051_Keil_903\Debug\TickReading.lib" />
 <dep name="${CyRoot}\psoc\content\cycomponentlibrary\CyComponentLibrary.cylib\DP8051\DP8051_Keil_903\Debug\CyComponentLibrary.lib" />

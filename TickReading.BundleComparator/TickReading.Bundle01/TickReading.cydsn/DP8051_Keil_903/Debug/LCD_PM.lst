@@ -1,4 +1,4 @@
-C51 COMPILER V9.03   LCD_PM                                                                04/28/2015 04:56:06 PAGE 1   
+C51 COMPILER V9.03   LCD_PM                                                                04/28/2015 05:44:42 PAGE 1   
 
 
 C51 COMPILER V9.03, COMPILATION OF MODULE LCD_PM
@@ -62,7 +62,7 @@ line level    source
   51          *
   52          * Summary:
   53          *  Does nothing, provided for consistency.
-C51 COMPILER V9.03   LCD_PM                                                                04/28/2015 04:56:06 PAGE 2   
+C51 COMPILER V9.03   LCD_PM                                                                04/28/2015 05:44:42 PAGE 2   
 
   54          *
   55          * Parameters:
@@ -126,7 +126,7 @@ line level    source
  113          void LCD_Wakeup(void) 
  114          {
  115   1          LCD_RestoreConfig();
-C51 COMPILER V9.03   LCD_PM                                                                04/28/2015 04:56:06 PAGE 3   
+C51 COMPILER V9.03   LCD_PM                                                                04/28/2015 05:44:42 PAGE 3   
 
  116   1      
  117   1          if(LCD_backup.enableState == 1u)
@@ -137,7 +137,7 @@ line level    source
  122          
  123          
  124          /* [] END OF FILE */
-C51 COMPILER V9.03   LCD_PM                                                                04/28/2015 04:56:06 PAGE 4   
+C51 COMPILER V9.03   LCD_PM                                                                04/28/2015 05:44:42 PAGE 4   
 
 ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
@@ -201,7 +201,7 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =      1    ----
    PDATA SIZE       =   ----    ----
-C51 COMPILER V9.03   LCD_PM                                                                04/28/2015 04:56:06 PAGE 5   
+C51 COMPILER V9.03   LCD_PM                                                                04/28/2015 05:44:42 PAGE 5   
 
    DATA SIZE        =   ----    ----
    IDATA SIZE       =   ----    ----

@@ -87,7 +87,7 @@ void Elevator_Threshold_Wakeup(void)          ;
 /* Default Strobe mode */
 #define Elevator_Threshold_DEFAULT_STRB     0u
  /* Initial DAC value */
-#define Elevator_Threshold_DEFAULT_DATA     250u
+#define Elevator_Threshold_DEFAULT_DATA     200u
  /* Default Data Source */
 #define Elevator_Threshold_DEFAULT_DATA_SRC 0u
 

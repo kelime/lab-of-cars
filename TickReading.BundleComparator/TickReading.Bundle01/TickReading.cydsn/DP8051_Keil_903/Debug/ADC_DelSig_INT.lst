@@ -1,4 +1,4 @@
-C51 COMPILER V9.03   ADC_DELSIG_INT                                                        04/28/2015 04:56:14 PAGE 1   
+C51 COMPILER V9.03   ADC_DELSIG_INT                                                        04/28/2015 05:44:53 PAGE 1   
 
 
 C51 COMPILER V9.03, COMPILATION OF MODULE ADC_DELSIG_INT
@@ -62,7 +62,7 @@ line level    source
   51   1          *  Custom Code
   52   1          *  - add user ISR code between the following #START and #END tags
   53   1          **************************************************************************/
-C51 COMPILER V9.03   ADC_DELSIG_INT                                                        04/28/2015 04:56:14 PAGE 2   
+C51 COMPILER V9.03   ADC_DELSIG_INT                                                        04/28/2015 05:44:53 PAGE 2   
 
   54   1          /* `#START MAIN_ADC_ISR1`  */
   55   1      
@@ -126,7 +126,7 @@ line level    source
  113          *
  114          * Parameters:  
  115          *  void
-C51 COMPILER V9.03   ADC_DELSIG_INT                                                        04/28/2015 04:56:14 PAGE 3   
+C51 COMPILER V9.03   ADC_DELSIG_INT                                                        04/28/2015 05:44:53 PAGE 3   
 
  116          *
  117          * Return: 
@@ -190,13 +190,13 @@ line level    source
  175   1              ADC_DelSig_CFG4_CONVMODE == ADC_DelSig_MODE_SINGLE_SAMPLE) 
                       ADC_DelSig_StopConvert(); 
                   #endif /* Single sample conversion mode with resolution above 16 bits */
-C51 COMPILER V9.03   ADC_DELSIG_INT                                                        04/28/2015 04:56:14 PAGE 4   
+C51 COMPILER V9.03   ADC_DELSIG_INT                                                        04/28/2015 05:44:53 PAGE 4   
 
  178   1      }
  179          
  180          
  181          /* [] END OF FILE */
-C51 COMPILER V9.03   ADC_DELSIG_INT                                                        04/28/2015 04:56:14 PAGE 5   
+C51 COMPILER V9.03   ADC_DELSIG_INT                                                        04/28/2015 05:44:53 PAGE 5   
 
 ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
