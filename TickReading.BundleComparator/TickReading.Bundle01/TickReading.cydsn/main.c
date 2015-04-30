@@ -70,6 +70,11 @@ static bool isGoingElevator = false;
 
 // triggered with each "tick" from the Hall Effect sensor.
 // monitors current speed and adjusts PWM duty cycle
+
+/*==================================================================
+// Begin Hall Effect (tick) interrupt. Majority of processing code.
+//================================================================*/
+
 CY_ISR(tock)
 { 
     /* debugging LCD display strings */
@@ -202,6 +207,10 @@ if (number_of_ticks >= 105 && state == move_backward) {
     // clear interrupt
     Hall_Counter_ReadStatusRegister();
 }
+
+/*=======================================
+// End Hall Interrupt
+//=====================================*/
 
 // it has been 3 minutes with no input. what did you do wrong. this should not trigger.
 CY_ISR(flow)
@@ -343,11 +352,10 @@ CY_ISR(elevator_leaving) {
     }
 }
 
-
-// this interrupt is thrown each time the ADC makes a conversion.
-    /*============================
-    // Testing code. Delete later.
-    //===========================*/
+    /*==================================================
+    // ADC Testing / Debugging Code. Stay Commented Out
+    //==================================================*/
+    
 /* CY_ISR(ADC_DelSig_ISR1){
 
     int32 result;
@@ -379,10 +387,7 @@ CY_ISR(elevator_leaving) {
    
   
 */
-    /*============================
-    // Testing code. Delete later.
-    //===========================*/
-    
+        
 void main()
 {
 /* Place your initialization/startup code here (e.g. MyInst_Start()) */
@@ -449,9 +454,9 @@ void main()
     Drive_Control_Reg_Write(start_control);
     // interrupt driven. no code here.
     
-    /*============================
-    // Testing code. Delete later.
-    //===========================*/
+    /*===============================
+    // ADC Debugging Start Parameters
+    //==============================*/
 /*    
       
     LCD_Position(1,0);    
@@ -462,10 +467,7 @@ void main()
     ADC_DelSig_Start();
     ADC_DelSig_IRQ_Enable(); 
     ADC_DelSig_StartConvert(); 
- */      
-    /*============================
-    // Testing code. Delete later.
-    //===========================*/
+ */   
        
     for(;;)
     {             

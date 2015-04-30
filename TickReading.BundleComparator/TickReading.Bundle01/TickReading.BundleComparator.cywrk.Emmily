@@ -277,6 +277,12 @@
 <VisibleNodeIds>
 <v>TickReading</v>
 <v>TickReading\TickReading</v>
+<v>TickReading\TickReading\DP8051</v>
+<v>TickReading\TickReading\DP8051\DP8051_Keil_903</v>
+<v>TickReading\TickReading\DP8051\DP8051_Keil_903\Debug</v>
+<v>TickReading\TickReading\DP8051\DP8051_Keil_903\Debug\TickReading.elf</v>
+<v>TickReading\TickReading\DP8051\DP8051_Keil_903\Debug\TickReading.hex</v>
+<v>TickReading\TickReading\DP8051\DP8051_Keil_903\Debug\TickReading.map</v>
 <v>TickReading\TickReading\TickReading.rpt</v>
 <v>TickReading\TickReading\TickReading_timing.html</v>
 </VisibleNodeIds>
@@ -308,6 +314,7 @@
 <v>TickReading\TickReading\CyControlReg_v1_70</v>
 <v>TickReading\TickReading\mux_v1_10</v>
 <v>TickReading\TickReading\ADC_DelSig_v2_30</v>
+<v>TickReading\TickReading\I2C_v3_10</v>
 </ExpandedNodeIds>
 <VisibleNodeIds>
 <v>TickReading</v>
@@ -330,6 +337,7 @@
 <v>TickReading\TickReading\CyControlReg_v1_70</v>
 <v>TickReading\TickReading\mux_v1_10</v>
 <v>TickReading\TickReading\ADC_DelSig_v2_30</v>
+<v>TickReading\TickReading\I2C_v3_10</v>
 </VisibleNodeIds>
 </CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237>
 </TreeStatesV2>
