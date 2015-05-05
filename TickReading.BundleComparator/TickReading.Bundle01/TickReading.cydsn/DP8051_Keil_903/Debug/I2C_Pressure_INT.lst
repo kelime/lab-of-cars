@@ -1,0 +1,1406 @@
+C51 COMPILER V9.03   I2C_PRESSURE_INT                                                      05/05/2015 16:28:58 PAGE 1   
+
+
+C51 COMPILER V9.03, COMPILATION OF MODULE I2C_PRESSURE_INT
+OBJECT MODULE PLACED IN .\DP8051_Keil_903\Debug\I2C_Pressure_INT.obj
+COMPILER INVOKED BY: C:\Program Files (x86)\Cypress\PSoC Creator\2.1\PSoC Creator\import\keil\pk51\9.03\C51\BIN\c51.exe 
+                    -.\Generated_Source\PSoC3\I2C_Pressure_INT.c NOIV LARGE MODDP2 OMF2 VB(1) PR(.\DP8051_Keil_903\Debug\I2C_Pressure_INT.lst
+                    -) CD DB NOIP OT(2,SIZE) INCDIR(Generated_Source\PSoC3) OJ(.\DP8051_Keil_903\Debug\I2C_Pressure_INT.obj)
+
+line level    source
+
+   1          /*******************************************************************************
+   2          * File Name: I2C_Pressure_INT.c
+   3          * Version 3.10
+   4          *
+   5          * Description:
+   6          *  This file provides the source code of Interrupt Service Routine (ISR)
+   7          *  for I2C component.
+   8          *
+   9          *  Note:
+  10          *
+  11          ********************************************************************************
+  12          * Copyright 2008-2012, Cypress Semiconductor Corporation.  All rights reserved.
+  13          * You may use this file only in accordance with the license, terms, conditions, 
+  14          * disclaimers, and limitations in the end user license agreement accompanying 
+  15          * the software package with which this file was provided.
+  16          *******************************************************************************/
+  17          
+  18          #include "I2C_Pressure.h"
+  19          
+  20          /*******************************************************************************
+  21          *  Place your includes, defines and code here 
+  22          ********************************************************************************/
+  23          /* `#START I2C_Pressure_ISR_intc` */
+  24          
+  25          /* `#END` */
+  26          
+  27          /**********************************
+  28          *      System variables
+  29          **********************************/
+  30          
+  31          volatile uint8 I2C_Pressure_state = I2C_Pressure_SM_IDLE; /* Current state of I2C state machine */
+  32          
+  33          /* Master variables */
+  34          #if (0u != (I2C_Pressure_MODE & I2C_Pressure_MODE_MASTER))
+  35              volatile uint8 I2C_Pressure_mstrStatus;         /* Master Status byte */
+  36              volatile uint8 I2C_Pressure_mstrControl;        /* Master Control byte */
+  37              
+  38              /* Transmit buffer variables */
+  39              volatile uint8 * I2C_Pressure_mstrRdBufPtr;     /* Pointer to Master Tx/Rx buffer */
+  40              volatile uint8   I2C_Pressure_mstrRdBufSize;    /* Master buffer size */
+  41              volatile uint8   I2C_Pressure_mstrRdBufIndex;   /* Master buffer Index */
+  42              
+  43              /* Receive buffer variables */
+  44              volatile uint8 * I2C_Pressure_mstrWrBufPtr;     /* Pointer to Master Tx/Rx buffer */
+  45              volatile uint8   I2C_Pressure_mstrWrBufSize;    /* Master buffer size  */
+  46              volatile uint8   I2C_Pressure_mstrWrBufIndex;   /* Master buffer Index */
+  47          
+  48          #endif  /* End (0u != (I2C_Pressure_MODE & I2C_Pressure_MODE_MASTER)) */
+  49          
+  50          /* Slave variables */
+  51          #if (0u != (I2C_Pressure_MODE & I2C_Pressure_MODE_SLAVE))
+                  volatile uint8 I2C_Pressure_slStatus;             /* Slave Status byte */
+              
+C51 COMPILER V9.03   I2C_PRESSURE_INT                                                      05/05/2015 16:28:58 PAGE 2   
+
+                  #if (I2C_Pressure_ADDR_DECODE == I2C_Pressure_SW_DECODE)
+                      volatile uint8 I2C_Pressure_slAddress;        /* Software address variable */
+                  #endif  /* End (I2C_Pressure_ADDR_DECODE == I2C_Pressure_SW_DECODE) */
+                  
+                  /* Transmit buffer variables */
+                  volatile uint8 * I2C_Pressure_slRdBufPtr;     /* Pointer to Transmit buffer */
+                  volatile uint8   I2C_Pressure_slRdBufSize;    /* Slave Transmit buffer size */
+                  volatile uint8   I2C_Pressure_slRdBufIndex;   /* Slave Transmit buffer Index */
+                  
+                  /* Receive buffer variables */
+                  volatile uint8 * I2C_Pressure_slWrBufPtr;     /* Pointer to Receive buffer */
+                  volatile uint8   I2C_Pressure_slWrBufSize;    /* Slave Receive buffer size */
+                  volatile uint8   I2C_Pressure_slWrBufIndex;   /* Slave Receive buffer Index */
+              
+              #endif  /* End (0u != (I2C_Pressure_MODE & I2C_Pressure_MODE_SLAVE)) */
+  69          
+  70          
+  71          /*******************************************************************************
+  72          * Function Name: I2C_Pressure_ISR
+  73          ********************************************************************************
+  74          *
+  75          * Summary:
+  76          *  Handle Interrupt Service Routine.  
+  77          *
+  78          * Parameters:  
+  79          *  void
+  80          *
+  81          * Return: 
+  82          *  void
+  83          *
+  84          * Reentrant:
+  85          *  No
+  86          *
+  87          *******************************************************************************/
+  88          CY_ISR(I2C_Pressure_ISR)
+  89          {
+  90   1          #if (0u != (I2C_Pressure_MODE & I2C_Pressure_MODE_SLAVE))
+                     static uint8  tmp8;    /* Making these static so not wasting time allocating */
+                  #endif  /* End (0u != (I2C_Pressure_MODE & I2C_Pressure_MODE_SLAVE)) */
+  93   1          
+  94   1          static uint8  tmpCsr;  /* on the stack each time and no one else can see them */
+  95   1          
+  96   1          /* Entry from interrupt */
+  97   1          /* In hardware address compare mode, we can assume we only get interrupted when */
+  98   1          /* a valid address is recognized. In software address compare mode, we have to  */
+  99   1          /* check every address after a start condition.                                 */
+ 100   1          
+ 101   1          tmpCsr = I2C_Pressure_CSR_REG;          /* Make temp copy so that we can check */
+ 102   1                                                      /* for stop condition after we are done */
+ 103   1          
+ 104   1          /* Check if Start Condition was generated */
+ 105   1          #if (I2C_Pressure_MODE == I2C_Pressure_MODE_MULTI_MASTER_SLAVE)
+                      if (I2C_Pressure_CHECK_START_GEN(I2C_Pressure_MCSR_REG))
+                      {
+                          /* Clear Start Gen bit */
+                          I2C_Pressure_CLEAR_START_GEN;
+                          
+                          /* Check State for READ one: SM_MSTR_RD_ADDR or SM_MSTR_RD_DATA */
+                          if (0u != (I2C_Pressure_state & I2C_Pressure_SM_MSTR_RD))
+                          {
+                              /* Set READ complete, but was aborted */
+                              I2C_Pressure_mstrStatus |= (I2C_Pressure_MSTAT_RD_CMPLT | I2C_Pressure_MSTAT_ERR_XFER);
+C51 COMPILER V9.03   I2C_PRESSURE_INT                                                      05/05/2015 16:28:58 PAGE 3   
+
+                          }
+                          else /* All other: should be only write states */
+                          {
+                              /* Set WRITE complete, but was aborted */
+                              I2C_Pressure_mstrStatus |= (I2C_Pressure_MSTAT_WR_CMPLT | I2C_Pressure_MSTAT_ERR_XFER);
+                          }
+                          
+                          /* Reset State Machine to IDLE to enable the Slave */
+                          I2C_Pressure_state = I2C_Pressure_SM_IDLE;
+                      }
+                  #endif  /* End (I2C_Pressure_MODE == I2C_Pressure_MULTI_MASTER_ENABLE) */
+ 127   1          
+ 128   1          #if (0u != (I2C_Pressure_MODE & I2C_Pressure_MODE_MULTI_MASTER_ENABLE))
+                      /* Check for lost of arbitration  */
+                      if (I2C_Pressure_CHECK_LOST_ARB(tmpCsr))
+                      {
+                          /* MultiMaster-Slave */
+                          #if (I2C_Pressure_MODE == I2C_Pressure_MODE_MULTI_MASTER_SLAVE)
+                              /* Check on which state of transaction lost ARBITRAGE:
+                                Address    - if Address and pass control to Slave
+                                No Address - release the bus */
+                              if (0u == (tmpCsr & I2C_Pressure_CSR_ADDRESS))
+                              {
+                          #endif  /* End (I2C_Pressure_MODE == I2C_Pressure_MULTI_MASTER_ENABLE) */
+                          
+                                  /* Lost ARBITRAGE:
+                                     Data - reset state machine to IDLE, Disable Slave enable event */
+                                  
+                                  /* Disable interrupt on STOP in case that it was READ */
+                                  I2C_Pressure_DISABLE_INT_ON_STOP;
+                                  
+                                  /* Clear CSR to release the bus, if MultiMaster */
+                                  I2C_Pressure_READY_TO_READ;
+                          
+                          #if (I2C_Pressure_MODE == I2C_Pressure_MODE_MULTI_MASTER_SLAVE)
+                                  /* Clean up the Slave enable events: Byte Complete and Stop */
+                                  tmpCsr &= ~ (I2C_Pressure_CSR_BYTE_COMPLETE | I2C_Pressure_CSR_STOP_STATUS);
+                              }
+                          #endif  /* End (I2C_Pressure_MODE == I2C_Pressure_MULTI_MASTER_ENABLE) */
+                          
+                          /* Check State for READ one: SM_MSTR_RD_ADDR or SM_MSTR_RD_DATA */
+                          if (0u != (I2C_Pressure_state & I2C_Pressure_SM_MSTR_RD))
+                          {
+                              /* Set READ complete */
+                              I2C_Pressure_mstrStatus |= I2C_Pressure_MSTAT_RD_CMPLT;
+                          }
+                          else /* All other: should be only write states */
+                          {
+                              /* Set WRITE complete */
+                              I2C_Pressure_mstrStatus |= I2C_Pressure_MSTAT_WR_CMPLT;
+                          }
+                          
+                          /* Set status error transfer and arbitration lost */
+                          I2C_Pressure_mstrStatus |= (I2C_Pressure_MSTAT_ERR_ARB_LOST | 
+                                                          I2C_Pressure_MSTAT_ERR_XFER);
+                          
+                          /* Reset State Machine to IDLE */
+                          I2C_Pressure_state = I2C_Pressure_SM_IDLE;
+                      }
+                  #endif  /* End (0u != (I2C_Pressure_MODE & I2C_Pressure_MODE_MULTI_MASTER_ENABLE)) */
+ 176   1           
+ 177   1          /* Check for Master operation mode */
+C51 COMPILER V9.03   I2C_PRESSURE_INT                                                      05/05/2015 16:28:58 PAGE 4   
+
+ 178   1          if (0u != (I2C_Pressure_state & I2C_Pressure_SM_MASTER))
+ 179   1          {
+ 180   2              #if (0u != (I2C_Pressure_MODE & I2C_Pressure_MODE_MASTER))
+ 181   2                  
+ 182   2                  /* Enter Master state machine */
+ 183   2                  if (I2C_Pressure_CHECK_BYTE_COMPLETE(tmpCsr))
+ 184   2                  {
+ 185   3                      /* Clear external or previous stop event */
+ 186   3                      tmpCsr &= ~I2C_Pressure_CSR_STOP_STATUS;  /* Clear STOP bit */
+ 187   3                      
+ 188   3                      switch (I2C_Pressure_state)
+ 189   3                      {
+ 190   4                          case I2C_Pressure_SM_MSTR_WR_ADDR:    /* After address is sent, WRITE some data */
+ 191   4                          case I2C_Pressure_SM_MSTR_RD_ADDR:    /* After address is sent, READ some data */
+ 192   4                          
+ 193   4                              /* Check for Slave address ACK */
+ 194   4                              if (I2C_Pressure_CHECK_ADDR_ACK(tmpCsr))  /* Check ACK */
+ 195   4                              {
+ 196   5                                  /* Setup for transmit or receive of data */
+ 197   5                                  if (I2C_Pressure_state == I2C_Pressure_SM_MSTR_WR_ADDR)   /* TRANSMIT data */
+ 198   5                                  {
+ 199   6                                      if (I2C_Pressure_mstrWrBufSize > 0u)    /* Check if at least one byte is t
+             -ransfered */
+ 200   6                                      {
+ 201   7                                          /* Load first data byte */
+ 202   7                                          I2C_Pressure_DATA_REG = I2C_Pressure_mstrWrBufPtr[0u];
+ 203   7                                          I2C_Pressure_TRANSMIT_DATA;            /* Transmit data */
+ 204   7                                          I2C_Pressure_mstrWrBufIndex = 1u;      /* Set index to 2nd location */
+ 205   7                                          
+ 206   7                                          /* Set transmit state until done */
+ 207   7                                          I2C_Pressure_state = I2C_Pressure_SM_MSTR_WR_DATA; 
+ 208   7                                      }
+ 209   6                                      else   /* No data to tranfer */
+ 210   6                                      {
+ 211   7                                          /* Handles 0 bytes transfer - Not HALT is allowed */
+ 212   7                                          #if (CY_PSOC5A)
+                                                      I2C_Pressure_GENERATE_STOP;     /* Generate STOP */
+                                                      
+                                                      /* Set WRITE complete */
+                                                      I2C_Pressure_mstrStatus |= I2C_Pressure_MSTAT_WR_CMPLT;
+                                                      
+                                                      /* Reset State Machine to IDLE */
+                                                      I2C_Pressure_state  = I2C_Pressure_SM_IDLE;
+                                                      
+                                                  #else  /* The PSoC3 and PSoC5LP only handles this well */
+ 222   7                                              if (I2C_Pressure_CHECK_NO_STOP(I2C_Pressure_mstrControl))
+ 223   7                                              {
+ 224   8                                                  /* Reset State Machine to HALT, expect RESTART */
+ 225   8                                                  I2C_Pressure_state  = I2C_Pressure_SM_MSTR_HALT;
+ 226   8                                                  
+ 227   8                                                  /* Set WRITE complete and Master HALTED */
+ 228   8                                                  I2C_Pressure_mstrStatus |= (I2C_Pressure_MSTAT_WR_CMPLT |
+ 229   8                                                                                  I2C_Pressure_MSTAT_XFER_HALT);
+ 230   8                                                  
+ 231   8                                                  I2C_Pressure_DisableInt();
+ 232   8                                              }
+ 233   7                                              else  /* Do normal STOP */
+ 234   7                                              {
+ 235   8                                                  I2C_Pressure_ENABLE_INT_ON_STOP;    /* Enable interrupt on STO
+             -P, to catch it */
+ 236   8                                                  I2C_Pressure_GENERATE_STOP;         /* Generate STOP */
+ 237   8                                              }
+C51 COMPILER V9.03   I2C_PRESSURE_INT                                                      05/05/2015 16:28:58 PAGE 5   
+
+ 238   7                                              
+ 239   7                                          #endif  /* End (CY_PSOC5A) */
+ 240   7                                      }
+ 241   6                                  }
+ 242   5                                  else  /* Master Receive data */
+ 243   5                                  {
+ 244   6                                      I2C_Pressure_READY_TO_READ;     /* Ready to READ data */
+ 245   6                                      
+ 246   6                                      /* Set state machine to READ data */
+ 247   6                                      I2C_Pressure_state  = I2C_Pressure_SM_MSTR_RD_DATA;
+ 248   6                                  }
+ 249   5                              }
+ 250   4                              /* Check for Slave address NAK */
+ 251   4                              else if (I2C_Pressure_CHECK_ADDR_NAK(tmpCsr))  /* Check NACK */
+ 252   4                              {
+ 253   5                                  if (I2C_Pressure_CHECK_NO_STOP(I2C_Pressure_mstrControl))
+ 254   5                                  {
+ 255   6                                      /* Check State for READ one: SM_MSTR_RD_ADDR or SM_MSTR_RD_DATA */
+ 256   6                                      if (0u != (I2C_Pressure_state & I2C_Pressure_SM_MSTR_RD))
+ 257   6                                      {
+ 258   7                                          /* Set READ complete */
+ 259   7                                          I2C_Pressure_mstrStatus |= I2C_Pressure_MSTAT_RD_CMPLT;
+ 260   7                                      }
+ 261   6                                      else /* All other: should be only write states */
+ 262   6                                      {
+ 263   7                                          /* Set WRITE complete */
+ 264   7                                          I2C_Pressure_mstrStatus |= I2C_Pressure_MSTAT_WR_CMPLT;
+ 265   7                                      }
+ 266   6                                      
+ 267   6                                      /* Set Address NAK Error and Master HALTED */
+ 268   6                                      I2C_Pressure_mstrStatus |= (I2C_Pressure_MSTAT_XFER_HALT |
+ 269   6                                                                      I2C_Pressure_MSTAT_ERR_ADDR_NAK |
+ 270   6                                                                      I2C_Pressure_MSTAT_ERR_XFER);
+ 271   6                                                                      
+ 272   6                                      /* Reset State Machine to HALT, expect RESTART */
+ 273   6                                      I2C_Pressure_state  = I2C_Pressure_SM_MSTR_HALT;
+ 274   6                                      I2C_Pressure_DisableInt();
+ 275   6                                  }
+ 276   5                                  else  /* Do normal Stop */
+ 277   5                                  {
+ 278   6                                      I2C_Pressure_ENABLE_INT_ON_STOP;    /* Enable interrupt on STOP, to catch 
+             -it */
+ 279   6                                      I2C_Pressure_GENERATE_STOP;         /* Generate STOP */
+ 280   6                                      
+ 281   6                                      /* Set Address NAK and ERR transfer */
+ 282   6                                      I2C_Pressure_mstrStatus |= (I2C_Pressure_MSTAT_ERR_ADDR_NAK | 
+ 283   6                                                                      I2C_Pressure_MSTAT_ERR_XFER);
+ 284   6                                  }
+ 285   5                              }
+ 286   4                              /* Should never gets here: Address status is NOT set */
+ 287   4                              else
+ 288   4                              {
+ 289   5                                  CYASSERT(0);
+ 290   5                              }
+ 291   4                              break;
+ 292   4                              
+ 293   4                          case I2C_Pressure_SM_MSTR_WR_DATA:    /* Write data to slave */
+ 294   4                              
+ 295   4                              if (I2C_Pressure_CHECK_DATA_ACK(tmpCsr))       /* Check ACK */
+ 296   4                              {
+ 297   5                                  /* Check if end buffer */
+ 298   5                                  if (I2C_Pressure_mstrWrBufIndex  < I2C_Pressure_mstrWrBufSize)
+C51 COMPILER V9.03   I2C_PRESSURE_INT                                                      05/05/2015 16:28:58 PAGE 6   
+
+ 299   5                                  {
+ 300   6                                       /* Load first data byte  */
+ 301   6                                      I2C_Pressure_DATA_REG = I2C_Pressure_mstrWrBufPtr[I2C_Pressure_mstrWrBufIn
+             -dex];
+ 302   6                                      I2C_Pressure_TRANSMIT_DATA;     /* Transmit */
+ 303   6                                      
+ 304   6                                      I2C_Pressure_mstrWrBufIndex++;  /* Advance to data location */
+ 305   6                                  }
+ 306   5                                  else   /* Last byte was transmitted, send STOP */
+ 307   5                                  {
+ 308   6                                      if (I2C_Pressure_CHECK_NO_STOP(I2C_Pressure_mstrControl))
+ 309   6                                      {
+ 310   7                                          /* Reset State Machine to HALT, expect RESTART */
+ 311   7                                          I2C_Pressure_state  = I2C_Pressure_SM_MSTR_HALT;
+ 312   7                                          
+ 313   7                                          /* Set WRITE complete and Master HALTED */
+ 314   7                                          I2C_Pressure_mstrStatus |= (I2C_Pressure_MSTAT_WR_CMPLT |
+ 315   7                                                                          I2C_Pressure_MSTAT_XFER_HALT);
+ 316   7                                          
+ 317   7                                          I2C_Pressure_DisableInt();
+ 318   7                                      }
+ 319   6                                      else  /* Do normal STOP */
+ 320   6                                      {
+ 321   7                                          I2C_Pressure_Workaround();          /* Workaround for CDT 78083 */
+ 322   7                                          I2C_Pressure_ENABLE_INT_ON_STOP;    /* Enable interrupt on STOP, to ca
+             -tch it */
+ 323   7                                          I2C_Pressure_GENERATE_STOP;         /* Generate STOP */
+ 324   7                                      }
+ 325   6                                  }
+ 326   5                              }
+ 327   4                              else /* If last byte NAKed, stop transmit and send STOP */
+ 328   4                              {
+ 329   5                                  /* Check STOP generation */
+ 330   5                                  if (I2C_Pressure_CHECK_NO_STOP(I2C_Pressure_mstrControl))
+ 331   5                                  {
+ 332   6                                      /* Reset State Machine to HALT, expect RESTART */
+ 333   6                                      I2C_Pressure_state  = I2C_Pressure_SM_MSTR_HALT;
+ 334   6                                      
+ 335   6                                      /* Set WRITE complete, SHORT transfer and Master HALTED */
+ 336   6                                      I2C_Pressure_mstrStatus |= (I2C_Pressure_MSTAT_WR_CMPLT |
+ 337   6                                                                      I2C_Pressure_MSTAT_XFER_HALT |
+ 338   6                                                                      I2C_Pressure_MSTAT_ERR_SHORT_XFER |
+ 339   6                                                                      I2C_Pressure_MSTAT_ERR_XFER);
+ 340   6                                      
+ 341   6                                      I2C_Pressure_DisableInt();
+ 342   6                                  }
+ 343   5                                  else  /* Do normal STOP */
+ 344   5                                  {
+ 345   6                                      I2C_Pressure_ENABLE_INT_ON_STOP;    /* Enable interrupt on STOP, to catch 
+             -it */
+ 346   6                                      I2C_Pressure_GENERATE_STOP;         /* Generate STOP */
+ 347   6                                                                      
+ 348   6                                      /* Set SHORT and ERR transfer */
+ 349   6                                      I2C_Pressure_mstrStatus |= (I2C_Pressure_MSTAT_ERR_SHORT_XFER | 
+ 350   6                                                                      I2C_Pressure_MSTAT_ERR_XFER);
+ 351   6                                  }
+ 352   5                              }
+ 353   4                              break;
+ 354   4                              
+ 355   4                          case I2C_Pressure_SM_MSTR_RD_DATA:    /* Data received */
+ 356   4                              
+ 357   4                              I2C_Pressure_mstrRdBufPtr[I2C_Pressure_mstrRdBufIndex] = I2C_Pressure_DATA_REG;
+C51 COMPILER V9.03   I2C_PRESSURE_INT                                                      05/05/2015 16:28:58 PAGE 7   
+
+ 358   4                              I2C_Pressure_mstrRdBufIndex++;      /* Inc pointer */
+ 359   4                              /* Check if end of buffer */
+ 360   4                              if (I2C_Pressure_mstrRdBufIndex < I2C_Pressure_mstrRdBufSize)
+ 361   4                              {
+ 362   5                                  I2C_Pressure_ACK_AND_RECEIVE;       /* ACK and receive */
+ 363   5                              }
+ 364   4                              else   /* End of data, generate a STOP */
+ 365   4                              {
+ 366   5                                  if (I2C_Pressure_CHECK_NO_STOP(I2C_Pressure_mstrControl)) /* Check STOP genera
+             -tion */
+ 367   5                                  {
+ 368   6                                      /* Reset State Machine to HALT, expect RESTART */
+ 369   6                                      I2C_Pressure_state = I2C_Pressure_SM_MSTR_HALT;
+ 370   6                                      
+ 371   6                                      /* Set READ complete and Master HALTED */
+ 372   6                                      I2C_Pressure_mstrStatus |= (I2C_Pressure_MSTAT_RD_CMPLT |
+ 373   6                                                                      I2C_Pressure_MSTAT_XFER_HALT );
+ 374   6                                  }
+ 375   5                                  else   /* Do normal STOP */
+ 376   5                                  {
+ 377   6                                      I2C_Pressure_ENABLE_INT_ON_STOP;        /* Enable interrupt on STOP, to ca
+             -tch it */
+ 378   6                                      I2C_Pressure_NAK_AND_RECEIVE;           /* NACK and TRY to generate STOP *
+             -/
+ 379   6                                  }
+ 380   5                              }
+ 381   4                              break;
+ 382   4                              
+ 383   4                          default: /* This is an invalid state and should not occur */
+ 384   4                              
+ 385   4                              CYASSERT(0);
+ 386   4                              break;
+ 387   4                      }
+ 388   3                  }
+ 389   2                  
+ 390   2                  /* Check if STOP was detected */
+ 391   2                  if (I2C_Pressure_CHECK_STOP_STS(tmpCsr))
+ 392   2                  {
+ 393   3                      /* Check State for READ one: SM_MSTR_RD_ADDR or SM_MSTR_RD_DATA */
+ 394   3                      if (0u != (I2C_Pressure_state & I2C_Pressure_SM_MSTR_RD))
+ 395   3                      {
+ 396   4                          /* Set READ complete */
+ 397   4                          I2C_Pressure_mstrStatus |= I2C_Pressure_MSTAT_RD_CMPLT;
+ 398   4                      }
+ 399   3                      else /* All other: should be only write states */
+ 400   3                      {
+ 401   4                          /* Set WRITE complete */
+ 402   4                          I2C_Pressure_mstrStatus |= I2C_Pressure_MSTAT_WR_CMPLT;
+ 403   4                      }
+ 404   3                      
+ 405   3                      /* Catch STOP, disable the interrupt on STOP */
+ 406   3                      I2C_Pressure_DISABLE_INT_ON_STOP;
+ 407   3                      I2C_Pressure_state = I2C_Pressure_SM_IDLE;  /* Set state to IDLE */
+ 408   3                  }
+ 409   2              #endif  /* End (0u != (I2C_Pressure_MODE & I2C_Pressure_MODE_MASTER)) */
+ 410   2          }
+ 411   1          else    /* Slave */
+ 412   1          {
+ 413   2              #if (0u != (I2C_Pressure_MODE & I2C_Pressure_MODE_SLAVE))
+                          /* Check to see if a Start/Address is detected */
+                          if (0u != (tmpCsr & I2C_Pressure_CSR_ADDRESS))
+                          {
+C51 COMPILER V9.03   I2C_PRESSURE_INT                                                      05/05/2015 16:28:58 PAGE 8   
+
+                              /* Clears STOP status bit. This status bit sets by ANY of STOP condition detection on the 
+             -bus */
+                              tmpCsr &= ~I2C_Pressure_CSR_STOP_STATUS;  /* Clear STOP bit */
+                              
+                              /* This is a Start or ReStart. Reset the state machine and check for a Read/Write conditio
+             -n */
+                              
+                              /* Check for software address detection */
+                              #if (I2C_Pressure_ADDR_DECODE == I2C_Pressure_SW_DECODE)
+                                  tmp8 = ((I2C_Pressure_DATA_REG >> I2C_Pressure_SLAVE_ADDR_SHIFT) & 
+                                           I2C_Pressure_SLAVE_ADDR_MASK);
+                                  if (tmp8 == I2C_Pressure_slAddress)   /* Check for address match */
+                                  {
+                                      /* Check for read or write command */
+                                      if (0u != (I2C_Pressure_DATA_REG & I2C_Pressure_READ_FLAG))
+                                      {
+                                          /*        Place code to prepare read buffer here           */
+                                          /* `#START I2C_Pressure_SW_PREPARE_READ_BUF_interrupt` */
+              
+                                          /* `#END` */
+                                          
+                                          /* Prepare next opeation to read, get data and place in data register */
+                                          if (I2C_Pressure_slRdBufIndex < I2C_Pressure_slRdBufSize)
+                                          {
+                                              /* Load first data byte */
+                                              I2C_Pressure_DATA_REG = I2C_Pressure_slRdBufPtr[I2C_Pressure_slRdBufIndex]
+             -;
+                                              I2C_Pressure_ACK_AND_TRANSMIT;  /* ACK and transmit */
+                                              I2C_Pressure_slRdBufIndex++;    /* Advance to data location */
+                                              
+                                              /* Set READ activity */
+                                              I2C_Pressure_slStatus |= I2C_Pressure_SSTAT_RD_BUSY;
+                                          }
+                                          else    /* Data overflow */
+                                          {
+                                              I2C_Pressure_DATA_REG = 0xFFu;    /* Out of range, send 0xFF */
+                                              I2C_Pressure_ACK_AND_TRANSMIT;    /* ACK and transmit */
+                                              
+                                              /* Set READ activity with OVERFLOW */
+                                              I2C_Pressure_slStatus  |= (I2C_Pressure_SSTAT_RD_BUSY | 
+                                                                             I2C_Pressure_SSTAT_RD_ERR_OVFL);
+                                          }
+                                          
+                                          I2C_Pressure_state = I2C_Pressure_SM_SL_RD_DATA; /* Prepare for Read transacti
+             -on */
+                                      }
+                                      else  /* Start of a Write transaction, ready to write of the first byte */
+                                      {
+                                          /* Prepare to write the first byte */
+                                          I2C_Pressure_ACK_AND_RECEIVE;
+                                          I2C_Pressure_state = I2C_Pressure_SM_SL_WR_DATA; /* Prepare for Write transact
+             -ion */
+                                          
+                                          /* Set WRITE activity */
+                                          I2C_Pressure_slStatus |= I2C_Pressure_SSTAT_WR_BUSY;
+                                          I2C_Pressure_ENABLE_INT_ON_STOP;    /* Enable interrupt on Stop */
+                                      }
+                                  }
+                                  else   /* No address match */
+                                  {
+                                      /*     Place code to compare for additional address here    */
+                                      /* `#START I2C_Pressure_SW_ADDR_COMPARE_interruptStart` */
+C51 COMPILER V9.03   I2C_PRESSURE_INT                                                      05/05/2015 16:28:58 PAGE 9   
+
+              
+                                      /* `#END` */
+                                      
+                                          I2C_Pressure_NAK_AND_RECEIVE;   /* NAK address */
+                                      
+                                      /* Place code to end of condition for NACK generation here */
+                                      /* `#START I2C_Pressure_SW_ADDR_COMPARE_interruptEnd`  */
+              
+                                      /* `#END` */
+                                  }
+                                  
+                              #else  /* Hardware address detection */
+                                  /* Check for read or write command */
+                                  if (0u != (I2C_Pressure_DATA_REG & I2C_Pressure_READ_FLAG))
+                                  {
+                                      /*          Place code to prepare read buffer here         */
+                                      /* `#START I2C_Pressure_HW_PREPARE_READ_BUF_interrupt` */
+              
+                                      /* `#END` */
+                                       
+                                      /* Prepare next opeation to read, get data and place in data register */
+                                      if (I2C_Pressure_slRdBufIndex < I2C_Pressure_slRdBufSize)
+                                      {
+                                          /* Load first data byte */
+                                          I2C_Pressure_DATA_REG = I2C_Pressure_slRdBufPtr[I2C_Pressure_slRdBufIndex];
+                                          I2C_Pressure_ACK_AND_TRANSMIT;  /* ACK and transmit */
+                                          I2C_Pressure_slRdBufIndex++;    /* Advance to data location */
+                                          
+                                          /* Set READ activity */
+                                          I2C_Pressure_slStatus  |= I2C_Pressure_SSTAT_RD_BUSY;
+                                      }
+                                      else    /* Data overflow */
+                                      {
+                                          I2C_Pressure_DATA_REG = 0xFFu;    /* Out of range, send 0xFF  */
+                                          I2C_Pressure_ACK_AND_TRANSMIT;    /* ACK and transmit */
+                                          
+                                          /* Set READ activity with OVERFLOW */
+                                          I2C_Pressure_slStatus  |= (I2C_Pressure_SSTAT_RD_BUSY |
+                                                                         I2C_Pressure_SSTAT_RD_ERR_OVFL);
+                                      }
+                                      
+                                      I2C_Pressure_state = I2C_Pressure_SM_SL_RD_DATA;    /* Prepare for Read transactio
+             -n */
+                                  }
+                                  else  /* Start of a Write transaction, ready to write of the first byte */
+                                  {
+                                      /* Prepare to write the first byte */
+                                      I2C_Pressure_ACK_AND_RECEIVE;       /* ACK and ready to receive addr */
+                                      I2C_Pressure_state = I2C_Pressure_SM_SL_WR_DATA;    /* Prepare for write transacti
+             -on */
+                                      
+                                      /* Set WRITE activity */
+                                      I2C_Pressure_slStatus |= I2C_Pressure_SSTAT_WR_BUSY;
+                                      I2C_Pressure_ENABLE_INT_ON_STOP;    /* Enable interrupt on Stop */
+                                  }
+                                  
+                              #endif  /* End (I2C_Pressure_ADDR_DECODE == I2C_Pressure_SW_DECODE) */
+                          }
+                          /* Check for data transfer */
+                          else if (I2C_Pressure_CHECK_BYTE_COMPLETE(tmpCsr))  
+                          {
+                              /* Data write from Master to Slave */
+C51 COMPILER V9.03   I2C_PRESSURE_INT                                                      05/05/2015 16:28:58 PAGE 10  
+
+                              if (I2C_Pressure_state == I2C_Pressure_SM_SL_WR_DATA)
+                              {
+                                  if (I2C_Pressure_slWrBufIndex < I2C_Pressure_slWrBufSize)       /* Check for valid ran
+             -ge */
+                                  {
+                                      tmp8 = I2C_Pressure_DATA_REG;                        /* Get data, to ACK quickly *
+             -/
+                                      I2C_Pressure_ACK_AND_RECEIVE;                        /* ACK and ready to receive *
+             -/
+                                      I2C_Pressure_slWrBufPtr[I2C_Pressure_slWrBufIndex] = tmp8; /* Write data to array 
+             -*/
+                                      I2C_Pressure_slWrBufIndex++;                        /* Inc pointer */
+                                  }
+                                  else
+                                  {
+                                      I2C_Pressure_NAK_AND_RECEIVE;       /* NAK cause beyond write area */
+                                      
+                                      /* Set OVERFLOW, write completes on Stop */
+                                      I2C_Pressure_slStatus |= I2C_Pressure_SSTAT_WR_ERR_OVFL;
+                                  }
+                              }
+                              /* Data Read from Slave to Master */
+                              else if (I2C_Pressure_state == I2C_Pressure_SM_SL_RD_DATA)
+                              {
+                                  if (I2C_Pressure_CHECK_DATA_ACK(tmpCsr))
+                                  {
+                                      if (I2C_Pressure_slRdBufIndex < I2C_Pressure_slRdBufSize) 
+                                      {
+                                           /* Get data from array */
+                                          I2C_Pressure_DATA_REG = I2C_Pressure_slRdBufPtr[I2C_Pressure_slRdBufIndex];
+                                          I2C_Pressure_TRANSMIT_DATA;         /* Send Data */
+                                          I2C_Pressure_slRdBufIndex++;        /* Inc pointer */
+                                      }
+                                      else   /* Over flow */
+                                      {
+                                          I2C_Pressure_DATA_REG = 0xFFu;  /* Send 0xFF at the end of the buffer */
+                                          I2C_Pressure_TRANSMIT_DATA;     /* Send Data */
+                                          
+                                          /* Set OVERFLOW */
+                                          I2C_Pressure_slStatus |= I2C_Pressure_SSTAT_RD_ERR_OVFL;
+                                      }
+                                  }
+                                  else  /* Last byte NAKed, done */
+                                  {
+                                      I2C_Pressure_DATA_REG = 0xFFu;  /* End of read transaction */
+                                      I2C_Pressure_NAK_AND_TRANSMIT;  /* Clear transmit bit at the end of read transacti
+             -on */
+                                       
+                                      I2C_Pressure_slStatus &= ~I2C_Pressure_SSTAT_RD_BUSY;   /* Clear RD_BUSY Flag */
+                                      I2C_Pressure_slStatus |= I2C_Pressure_SSTAT_RD_CMPLT;    /* Set RD_CMPLT Flag */
+                                      
+                                      I2C_Pressure_state = I2C_Pressure_SM_IDLE;  /* Return to IDLE state */
+                                  }
+                              }
+                              /* This is an invalid state and should not occur */
+                              else
+                              {
+                                  CYASSERT(0);
+                              }   /* End Transfer mode */
+                          }
+                          /* EMPTY else: there is no Slave enable event. */
+                          else
+C51 COMPILER V9.03   I2C_PRESSURE_INT                                                      05/05/2015 16:28:58 PAGE 11  
+
+                          {
+                              /* The Multi-Master-Slave exist here when arbitrage happen on other than
+                                 address stage of transaction == No Slave enable event. */
+                          }
+                          
+                          /* Check if STOP was detected */
+                          if (I2C_Pressure_CHECK_STOP_STS(tmpCsr))
+                          {
+                              /* The Write transaction only IE on STOP, so Read never gets here */
+                              /* The WR_BUSY flag will be cleared at the end of "Write-ReStart-Read-Stop" transaction */
+                              
+                              I2C_Pressure_slStatus &= ~I2C_Pressure_SSTAT_WR_BUSY;   /* Clear WR_BUSY Flag */
+                              I2C_Pressure_slStatus |= I2C_Pressure_SSTAT_WR_CMPLT;    /* Set WR_CMPT Flag */
+                              
+                              I2C_Pressure_DISABLE_INT_ON_STOP;               /* Disable interrupt on STOP */
+                              I2C_Pressure_state = I2C_Pressure_SM_IDLE;  /* Return to IDLE */
+                          }
+                      
+                      #endif  /* End (0u != (I2C_Pressure_MODE & I2C_Pressure_MODE_SLAVE)) */
+ 610   2          }
+ 611   1      }
+ 612          
+ 613          
+ 614          /* [] END OF FILE */
+C51 COMPILER V9.03   I2C_PRESSURE_INT                                                      05/05/2015 16:28:58 PAGE 12  
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+
+             ; FUNCTION I2C_Pressure_ISR (BEGIN)
+0000 C0E0              PUSH    ACC
+0002 C0F0              PUSH    B
+0004 C083              PUSH    DPH
+0006 C082              PUSH    DPL
+0008 C085              PUSH    DPH1
+000A C084              PUSH    DPL1
+000C C086              PUSH    DPS
+000E 758600            MOV     DPS,#00H
+0011 C000        E     PUSH    ?C?XPAGE1SFR
+0013 750000      E     MOV     ?C?XPAGE1SFR,#?C?XPAGE1RST
+0016 C0D0              PUSH    PSW
+0018 75D000            MOV     PSW,#00H
+001B C000              PUSH    AR0
+001D C001              PUSH    AR1
+001F C002              PUSH    AR2
+0021 C003              PUSH    AR3
+0023 C004              PUSH    AR4
+0025 C005              PUSH    AR5
+0027 C006              PUSH    AR6
+0029 C007              PUSH    AR7
+                                           ; SOURCE LINE # 88
+                                           ; SOURCE LINE # 101
+002B 9049D7            MOV     DPTR,#049D7H
+002E E0                MOVX    A,@DPTR
+002F FF                MOV     R7,A
+0030 900000      R     MOV     DPTR,#tmpCsr
+0033 EF                MOV     A,R7
+0034 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 178
+0035 900000      R     MOV     DPTR,#I2C_Pressure_state
+0038 E0                MOVX    A,@DPTR
+0039 FF                MOV     R7,A
+003A EF                MOV     A,R7
+003B 5440              ANL     A,#040H
+003D FF                MOV     R7,A
+003E 7E00              MOV     R6,#00H
+0040 EF                MOV     A,R7
+0041 4E                ORL     A,R6
+0042 7003              JNZ     $ + 5H
+0044 020000      R     LJMP    ?C0041
+                                           ; SOURCE LINE # 179
+                                           ; SOURCE LINE # 183
+0047 900000      R     MOV     DPTR,#tmpCsr
+004A E0                MOVX    A,@DPTR
+004B FF                MOV     R7,A
+004C EF                MOV     A,R7
+004D 5401              ANL     A,#01H
+004F FF                MOV     R7,A
+0050 7E00              MOV     R6,#00H
+0052 EF                MOV     A,R7
+0053 4E                ORL     A,R6
+0054 7003              JNZ     $ + 5H
+0056 020000      R     LJMP    ?C0002
+                                           ; SOURCE LINE # 184
+                                           ; SOURCE LINE # 186
+0059 900000      R     MOV     DPTR,#tmpCsr
+005C E0                MOVX    A,@DPTR
+005D FF                MOV     R7,A
+C51 COMPILER V9.03   I2C_PRESSURE_INT                                                      05/05/2015 16:28:58 PAGE 13  
+
+005E EF                MOV     A,R7
+005F 54DF              ANL     A,#0DFH
+0061 FF                MOV     R7,A
+0062 900000      R     MOV     DPTR,#tmpCsr
+0065 EF                MOV     A,R7
+0066 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 188
+0067 900000      R     MOV     DPTR,#I2C_Pressure_state
+006A E0                MOVX    A,@DPTR
+006B FF                MOV     R7,A
+006C EF                MOV     A,R7
+006D 120000      E     LCALL   ?C?CCASE
+0070 0000        R     DW      ?C0005
+0072 45                DB      045H
+0073 0000        R     DW      ?C0021
+0075 46                DB      046H
+0076 0000        R     DW      ?C0005
+0078 49                DB      049H
+0079 0000        R     DW      ?C0030
+007B 4A                DB      04AH
+007C 0000              DW      00H
+007E 0000        R     DW      ?C0035
+                                           ; SOURCE LINE # 189
+                                           ; SOURCE LINE # 190
+                                           ; SOURCE LINE # 191
+0080         ?C0005:
+                                           ; SOURCE LINE # 194
+0080 900000      R     MOV     DPTR,#tmpCsr
+0083 E0                MOVX    A,@DPTR
+0084 FF                MOV     R7,A
+0085 EF                MOV     A,R7
+0086 540A              ANL     A,#0AH
+0088 FF                MOV     R7,A
+0089 7E00              MOV     R6,#00H
+008B EF                MOV     A,R7
+008C 6408              XRL     A,#08H
+008E 4E                ORL     A,R6
+008F 6003              JZ      $ + 5H
+0091 020000      R     LJMP    ?C0006
+                                           ; SOURCE LINE # 195
+                                           ; SOURCE LINE # 197
+0094 900000      R     MOV     DPTR,#I2C_Pressure_state
+0097 E0                MOVX    A,@DPTR
+0098 FF                MOV     R7,A
+0099 EF                MOV     A,R7
+009A 6445              XRL     A,#045H
+009C 7074              JNZ     ?C0007
+                                           ; SOURCE LINE # 198
+                                           ; SOURCE LINE # 199
+009E 900000      R     MOV     DPTR,#I2C_Pressure_mstrWrBufSize
+00A1 E0                MOVX    A,@DPTR
+00A2 FF                MOV     R7,A
+00A3 EF                MOV     A,R7
+00A4 D3                SETB    C
+00A5 9400              SUBB    A,#00H
+00A7 4024              JC      ?C0008
+                                           ; SOURCE LINE # 200
+                                           ; SOURCE LINE # 202
+00A9 900000      R     MOV     DPTR,#I2C_Pressure_mstrWrBufPtr
+00AC 120000      E     LCALL   ?C?PLDXDATA
+00AF 120000      E     LCALL   ?C?CLDPTR
+00B2 FF                MOV     R7,A
+C51 COMPILER V9.03   I2C_PRESSURE_INT                                                      05/05/2015 16:28:58 PAGE 14  
+
+00B3 9049D8            MOV     DPTR,#049D8H
+00B6 EF                MOV     A,R7
+00B7 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 203
+00B8 9049D7            MOV     DPTR,#049D7H
+00BB 7404              MOV     A,#04H
+00BD F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 204
+00BE 900000      R     MOV     DPTR,#I2C_Pressure_mstrWrBufIndex
+00C1 7401              MOV     A,#01H
+00C3 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 207
+00C4 900000      R     MOV     DPTR,#I2C_Pressure_state
+00C7 7446              MOV     A,#046H
+00C9 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 208
+00CA 020000      R     LJMP    ?C0002
+00CD         ?C0008:
+                                           ; SOURCE LINE # 210
+                                           ; SOURCE LINE # 222
+00CD 900000      R     MOV     DPTR,#I2C_Pressure_mstrControl
+00D0 E0                MOVX    A,@DPTR
+00D1 FF                MOV     R7,A
+00D2 EF                MOV     A,R7
+00D3 5401              ANL     A,#01H
+00D5 FF                MOV     R7,A
+00D6 7E00              MOV     R6,#00H
+00D8 EF                MOV     A,R7
+00D9 4E                ORL     A,R6
+00DA 601C              JZ      ?C0010
+                                           ; SOURCE LINE # 223
+                                           ; SOURCE LINE # 225
+00DC 900000      R     MOV     DPTR,#I2C_Pressure_state
+00DF 7460              MOV     A,#060H
+00E1 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 228
+00E2 900000      R     MOV     DPTR,#I2C_Pressure_mstrStatus
+00E5 E0                MOVX    A,@DPTR
+00E6 FF                MOV     R7,A
+00E7 EF                MOV     A,R7
+00E8 440A              ORL     A,#0AH
+00EA FF                MOV     R7,A
+00EB 900000      R     MOV     DPTR,#I2C_Pressure_mstrStatus
+00EE EF                MOV     A,R7
+00EF F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 231
+00F0 7F0F              MOV     R7,#0FH
+00F2 120000      E     LCALL   _?CyIntDisable
+                                           ; SOURCE LINE # 232
+00F5 020000      R     LJMP    ?C0002
+00F8         ?C0010:
+                                           ; SOURCE LINE # 234
+                                           ; SOURCE LINE # 235
+00F8 9049D6            MOV     DPTR,#049D6H
+00FB E0                MOVX    A,@DPTR
+00FC FF                MOV     R7,A
+00FD EF                MOV     A,R7
+00FE 4410              ORL     A,#010H
+0100 FF                MOV     R7,A
+0101 EF                MOV     A,R7
+0102 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 236
+C51 COMPILER V9.03   I2C_PRESSURE_INT                                                      05/05/2015 16:28:58 PAGE 15  
+
+0103 9049D9            MOV     DPTR,#049D9H
+0106 7410              MOV     A,#010H
+0108 F0                MOVX    @DPTR,A
+0109 9049D7            MOV     DPTR,#049D7H
+010C 7404              MOV     A,#04H
+010E F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 237
+                                           ; SOURCE LINE # 240
+                                           ; SOURCE LINE # 241
+010F 020000      R     LJMP    ?C0002
+0112         ?C0007:
+                                           ; SOURCE LINE # 243
+                                           ; SOURCE LINE # 244
+0112 9049D7            MOV     DPTR,#049D7H
+0115 E4                CLR     A
+0116 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 247
+0117 900000      R     MOV     DPTR,#I2C_Pressure_state
+011A 744A              MOV     A,#04AH
+011C F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 248
+                                           ; SOURCE LINE # 249
+011D 020000      R     LJMP    ?C0002
+0120         ?C0006:
+                                           ; SOURCE LINE # 251
+0120 900000      R     MOV     DPTR,#tmpCsr
+0123 E0                MOVX    A,@DPTR
+0124 FF                MOV     R7,A
+0125 EF                MOV     A,R7
+0126 540A              ANL     A,#0AH
+0128 FF                MOV     R7,A
+0129 7E00              MOV     R6,#00H
+012B EF                MOV     A,R7
+012C 640A              XRL     A,#0AH
+012E 4E                ORL     A,R6
+012F 6003              JZ      $ + 5H
+0131 020000      R     LJMP    ?C0014
+                                           ; SOURCE LINE # 252
+                                           ; SOURCE LINE # 253
+0134 900000      R     MOV     DPTR,#I2C_Pressure_mstrControl
+0137 E0                MOVX    A,@DPTR
+0138 FF                MOV     R7,A
+0139 EF                MOV     A,R7
+013A 5401              ANL     A,#01H
+013C FF                MOV     R7,A
+013D 7E00              MOV     R6,#00H
+013F EF                MOV     A,R7
+0140 4E                ORL     A,R6
+0141 6049              JZ      ?C0015
+                                           ; SOURCE LINE # 254
+                                           ; SOURCE LINE # 256
+0143 900000      R     MOV     DPTR,#I2C_Pressure_state
+0146 E0                MOVX    A,@DPTR
+0147 FF                MOV     R7,A
+0148 EF                MOV     A,R7
+0149 5408              ANL     A,#08H
+014B FF                MOV     R7,A
+014C 7E00              MOV     R6,#00H
+014E EF                MOV     A,R7
+014F 4E                ORL     A,R6
+0150 6010              JZ      ?C0016
+                                           ; SOURCE LINE # 257
+C51 COMPILER V9.03   I2C_PRESSURE_INT                                                      05/05/2015 16:28:58 PAGE 16  
+
+                                           ; SOURCE LINE # 259
+0152 900000      R     MOV     DPTR,#I2C_Pressure_mstrStatus
+0155 E0                MOVX    A,@DPTR
+0156 FF                MOV     R7,A
+0157 EF                MOV     A,R7
+0158 4401              ORL     A,#01H
+015A FF                MOV     R7,A
+015B 900000      R     MOV     DPTR,#I2C_Pressure_mstrStatus
+015E EF                MOV     A,R7
+015F F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 260
+0160 800E              SJMP    ?C0017
+0162         ?C0016:
+                                           ; SOURCE LINE # 262
+                                           ; SOURCE LINE # 264
+0162 900000      R     MOV     DPTR,#I2C_Pressure_mstrStatus
+0165 E0                MOVX    A,@DPTR
+0166 FF                MOV     R7,A
+0167 EF                MOV     A,R7
+0168 4402              ORL     A,#02H
+016A FF                MOV     R7,A
+016B 900000      R     MOV     DPTR,#I2C_Pressure_mstrStatus
+016E EF                MOV     A,R7
+016F F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 265
+0170         ?C0017:
+                                           ; SOURCE LINE # 268
+0170 900000      R     MOV     DPTR,#I2C_Pressure_mstrStatus
+0173 E0                MOVX    A,@DPTR
+0174 FF                MOV     R7,A
+0175 EF                MOV     A,R7
+0176 44A8              ORL     A,#0A8H
+0178 FF                MOV     R7,A
+0179 900000      R     MOV     DPTR,#I2C_Pressure_mstrStatus
+017C EF                MOV     A,R7
+017D F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 273
+017E 900000      R     MOV     DPTR,#I2C_Pressure_state
+0181 7460              MOV     A,#060H
+0183 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 274
+0184 7F0F              MOV     R7,#0FH
+0186 120000      E     LCALL   _?CyIntDisable
+                                           ; SOURCE LINE # 275
+0189 020000      R     LJMP    ?C0002
+018C         ?C0015:
+                                           ; SOURCE LINE # 277
+                                           ; SOURCE LINE # 278
+018C 9049D6            MOV     DPTR,#049D6H
+018F E0                MOVX    A,@DPTR
+0190 FF                MOV     R7,A
+0191 EF                MOV     A,R7
+0192 4410              ORL     A,#010H
+0194 FF                MOV     R7,A
+0195 EF                MOV     A,R7
+0196 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 279
+0197 9049D9            MOV     DPTR,#049D9H
+019A 7410              MOV     A,#010H
+019C F0                MOVX    @DPTR,A
+019D 9049D7            MOV     DPTR,#049D7H
+01A0 7404              MOV     A,#04H
+C51 COMPILER V9.03   I2C_PRESSURE_INT                                                      05/05/2015 16:28:58 PAGE 17  
+
+01A2 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 282
+01A3 900000      R     MOV     DPTR,#I2C_Pressure_mstrStatus
+01A6 E0                MOVX    A,@DPTR
+01A7 FF                MOV     R7,A
+01A8 EF                MOV     A,R7
+01A9 44A0              ORL     A,#0A0H
+01AB FF                MOV     R7,A
+01AC 900000      R     MOV     DPTR,#I2C_Pressure_mstrStatus
+01AF EF                MOV     A,R7
+01B0 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 284
+                                           ; SOURCE LINE # 285
+01B1 020000      R     LJMP    ?C0002
+01B4         ?C0014:
+                                           ; SOURCE LINE # 288
+                                           ; SOURCE LINE # 289
+01B4 7F00              MOV     R7,#00H
+01B6 120000      E     LCALL   _?CyHalt
+                                           ; SOURCE LINE # 290
+                                           ; SOURCE LINE # 291
+01B9 020000      R     LJMP    ?C0002
+                                           ; SOURCE LINE # 293
+01BC         ?C0021:
+                                           ; SOURCE LINE # 295
+01BC 900000      R     MOV     DPTR,#tmpCsr
+01BF E0                MOVX    A,@DPTR
+01C0 FF                MOV     R7,A
+01C1 EF                MOV     A,R7
+01C2 5402              ANL     A,#02H
+01C4 FF                MOV     R7,A
+01C5 7E00              MOV     R6,#00H
+01C7 EF                MOV     A,R7
+01C8 4E                ORL     A,R6
+01C9 6003              JZ      $ + 5H
+01CB 020000      R     LJMP    ?C0022
+                                           ; SOURCE LINE # 296
+                                           ; SOURCE LINE # 298
+01CE 900000      R     MOV     DPTR,#I2C_Pressure_mstrWrBufSize
+01D1 E0                MOVX    A,@DPTR
+01D2 FF                MOV     R7,A
+01D3 900000      R     MOV     DPTR,#I2C_Pressure_mstrWrBufIndex
+01D6 E0                MOVX    A,@DPTR
+01D7 FE                MOV     R6,A
+01D8 EE                MOV     A,R6
+01D9 C3                CLR     C
+01DA 9F                SUBB    A,R7
+01DB 5029              JNC     ?C0023
+                                           ; SOURCE LINE # 299
+                                           ; SOURCE LINE # 301
+01DD 900000      R     MOV     DPTR,#I2C_Pressure_mstrWrBufPtr
+01E0 120000      E     LCALL   ?C?PLDXDATA
+01E3 900000      R     MOV     DPTR,#I2C_Pressure_mstrWrBufIndex
+01E6 E0                MOVX    A,@DPTR
+01E7 FF                MOV     R7,A
+01E8 E9                MOV     A,R1
+01E9 2F                ADD     A,R7
+01EA F9                MOV     R1,A
+01EB E4                CLR     A
+01EC 3A                ADDC    A,R2
+01ED FA                MOV     R2,A
+01EE 120000      E     LCALL   ?C?CLDPTR
+C51 COMPILER V9.03   I2C_PRESSURE_INT                                                      05/05/2015 16:28:58 PAGE 18  
+
+01F1 FF                MOV     R7,A
+01F2 9049D8            MOV     DPTR,#049D8H
+01F5 EF                MOV     A,R7
+01F6 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 302
+01F7 9049D7            MOV     DPTR,#049D7H
+01FA 7404              MOV     A,#04H
+01FC F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 304
+01FD 900000      R     MOV     DPTR,#I2C_Pressure_mstrWrBufIndex
+0200 E0                MOVX    A,@DPTR
+0201 04                INC     A
+0202 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 305
+0203 020000      R     LJMP    ?C0002
+0206         ?C0023:
+                                           ; SOURCE LINE # 307
+                                           ; SOURCE LINE # 308
+0206 900000      R     MOV     DPTR,#I2C_Pressure_mstrControl
+0209 E0                MOVX    A,@DPTR
+020A FF                MOV     R7,A
+020B EF                MOV     A,R7
+020C 5401              ANL     A,#01H
+020E FF                MOV     R7,A
+020F 7E00              MOV     R6,#00H
+0211 EF                MOV     A,R7
+0212 4E                ORL     A,R6
+0213 601C              JZ      ?C0025
+                                           ; SOURCE LINE # 309
+                                           ; SOURCE LINE # 311
+0215 900000      R     MOV     DPTR,#I2C_Pressure_state
+0218 7460              MOV     A,#060H
+021A F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 314
+021B 900000      R     MOV     DPTR,#I2C_Pressure_mstrStatus
+021E E0                MOVX    A,@DPTR
+021F FF                MOV     R7,A
+0220 EF                MOV     A,R7
+0221 440A              ORL     A,#0AH
+0223 FF                MOV     R7,A
+0224 900000      R     MOV     DPTR,#I2C_Pressure_mstrStatus
+0227 EF                MOV     A,R7
+0228 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 317
+0229 7F0F              MOV     R7,#0FH
+022B 120000      E     LCALL   _?CyIntDisable
+                                           ; SOURCE LINE # 318
+022E 020000      R     LJMP    ?C0002
+0231         ?C0025:
+                                           ; SOURCE LINE # 320
+                                           ; SOURCE LINE # 321
+0231 120000      E     LCALL   I2C_Pressure_Workaround
+                                           ; SOURCE LINE # 322
+0234 9049D6            MOV     DPTR,#049D6H
+0237 E0                MOVX    A,@DPTR
+0238 FF                MOV     R7,A
+0239 EF                MOV     A,R7
+023A 4410              ORL     A,#010H
+023C FF                MOV     R7,A
+023D EF                MOV     A,R7
+023E F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 323
+C51 COMPILER V9.03   I2C_PRESSURE_INT                                                      05/05/2015 16:28:58 PAGE 19  
+
+023F 9049D9            MOV     DPTR,#049D9H
+0242 7410              MOV     A,#010H
+0244 F0                MOVX    @DPTR,A
+0245 9049D7            MOV     DPTR,#049D7H
+0248 7404              MOV     A,#04H
+024A F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 324
+                                           ; SOURCE LINE # 325
+                                           ; SOURCE LINE # 326
+024B 020000      R     LJMP    ?C0002
+024E         ?C0022:
+                                           ; SOURCE LINE # 328
+                                           ; SOURCE LINE # 330
+024E 900000      R     MOV     DPTR,#I2C_Pressure_mstrControl
+0251 E0                MOVX    A,@DPTR
+0252 FF                MOV     R7,A
+0253 EF                MOV     A,R7
+0254 5401              ANL     A,#01H
+0256 FF                MOV     R7,A
+0257 7E00              MOV     R6,#00H
+0259 EF                MOV     A,R7
+025A 4E                ORL     A,R6
+025B 601C              JZ      ?C0028
+                                           ; SOURCE LINE # 331
+                                           ; SOURCE LINE # 333
+025D 900000      R     MOV     DPTR,#I2C_Pressure_state
+0260 7460              MOV     A,#060H
+0262 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 336
+0263 900000      R     MOV     DPTR,#I2C_Pressure_mstrStatus
+0266 E0                MOVX    A,@DPTR
+0267 FF                MOV     R7,A
+0268 EF                MOV     A,R7
+0269 449A              ORL     A,#09AH
+026B FF                MOV     R7,A
+026C 900000      R     MOV     DPTR,#I2C_Pressure_mstrStatus
+026F EF                MOV     A,R7
+0270 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 341
+0271 7F0F              MOV     R7,#0FH
+0273 120000      E     LCALL   _?CyIntDisable
+                                           ; SOURCE LINE # 342
+0276 020000      R     LJMP    ?C0002
+0279         ?C0028:
+                                           ; SOURCE LINE # 344
+                                           ; SOURCE LINE # 345
+0279 9049D6            MOV     DPTR,#049D6H
+027C E0                MOVX    A,@DPTR
+027D FF                MOV     R7,A
+027E EF                MOV     A,R7
+027F 4410              ORL     A,#010H
+0281 FF                MOV     R7,A
+0282 EF                MOV     A,R7
+0283 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 346
+0284 9049D9            MOV     DPTR,#049D9H
+0287 7410              MOV     A,#010H
+0289 F0                MOVX    @DPTR,A
+028A 9049D7            MOV     DPTR,#049D7H
+028D 7404              MOV     A,#04H
+028F F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 349
+C51 COMPILER V9.03   I2C_PRESSURE_INT                                                      05/05/2015 16:28:58 PAGE 20  
+
+0290 900000      R     MOV     DPTR,#I2C_Pressure_mstrStatus
+0293 E0                MOVX    A,@DPTR
+0294 FF                MOV     R7,A
+0295 EF                MOV     A,R7
+0296 4490              ORL     A,#090H
+0298 FF                MOV     R7,A
+0299 900000      R     MOV     DPTR,#I2C_Pressure_mstrStatus
+029C EF                MOV     A,R7
+029D F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 351
+                                           ; SOURCE LINE # 352
+                                           ; SOURCE LINE # 353
+029E 8073              SJMP    ?C0002
+                                           ; SOURCE LINE # 355
+02A0         ?C0030:
+                                           ; SOURCE LINE # 357
+02A0 9049D8            MOV     DPTR,#049D8H
+02A3 E0                MOVX    A,@DPTR
+02A4 FF                MOV     R7,A
+02A5 900000      R     MOV     DPTR,#I2C_Pressure_mstrRdBufPtr
+02A8 120000      E     LCALL   ?C?PLDXDATA
+02AB 900000      R     MOV     DPTR,#I2C_Pressure_mstrRdBufIndex
+02AE E0                MOVX    A,@DPTR
+02AF FE                MOV     R6,A
+02B0 E9                MOV     A,R1
+02B1 2E                ADD     A,R6
+02B2 F9                MOV     R1,A
+02B3 E4                CLR     A
+02B4 3A                ADDC    A,R2
+02B5 FA                MOV     R2,A
+02B6 EF                MOV     A,R7
+02B7 120000      E     LCALL   ?C?CSTPTR
+                                           ; SOURCE LINE # 358
+02BA 900000      R     MOV     DPTR,#I2C_Pressure_mstrRdBufIndex
+02BD E0                MOVX    A,@DPTR
+02BE 04                INC     A
+02BF F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 360
+02C0 900000      R     MOV     DPTR,#I2C_Pressure_mstrRdBufSize
+02C3 E0                MOVX    A,@DPTR
+02C4 FF                MOV     R7,A
+02C5 900000      R     MOV     DPTR,#I2C_Pressure_mstrRdBufIndex
+02C8 E0                MOVX    A,@DPTR
+02C9 FE                MOV     R6,A
+02CA EE                MOV     A,R6
+02CB C3                CLR     C
+02CC 9F                SUBB    A,R7
+02CD 5008              JNC     ?C0031
+                                           ; SOURCE LINE # 361
+                                           ; SOURCE LINE # 362
+02CF 9049D7            MOV     DPTR,#049D7H
+02D2 7410              MOV     A,#010H
+02D4 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 363
+02D5 803C              SJMP    ?C0002
+02D7         ?C0031:
+                                           ; SOURCE LINE # 365
+                                           ; SOURCE LINE # 366
+02D7 900000      R     MOV     DPTR,#I2C_Pressure_mstrControl
+02DA E0                MOVX    A,@DPTR
+02DB FF                MOV     R7,A
+02DC EF                MOV     A,R7
+C51 COMPILER V9.03   I2C_PRESSURE_INT                                                      05/05/2015 16:28:58 PAGE 21  
+
+02DD 5401              ANL     A,#01H
+02DF FF                MOV     R7,A
+02E0 7E00              MOV     R6,#00H
+02E2 EF                MOV     A,R7
+02E3 4E                ORL     A,R6
+02E4 6016              JZ      ?C0033
+                                           ; SOURCE LINE # 367
+                                           ; SOURCE LINE # 369
+02E6 900000      R     MOV     DPTR,#I2C_Pressure_state
+02E9 7460              MOV     A,#060H
+02EB F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 372
+02EC 900000      R     MOV     DPTR,#I2C_Pressure_mstrStatus
+02EF E0                MOVX    A,@DPTR
+02F0 FF                MOV     R7,A
+02F1 EF                MOV     A,R7
+02F2 4409              ORL     A,#09H
+02F4 FF                MOV     R7,A
+02F5 900000      R     MOV     DPTR,#I2C_Pressure_mstrStatus
+02F8 EF                MOV     A,R7
+02F9 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 374
+02FA 8017              SJMP    ?C0002
+02FC         ?C0033:
+                                           ; SOURCE LINE # 376
+                                           ; SOURCE LINE # 377
+02FC 9049D6            MOV     DPTR,#049D6H
+02FF E0                MOVX    A,@DPTR
+0300 FF                MOV     R7,A
+0301 EF                MOV     A,R7
+0302 4410              ORL     A,#010H
+0304 FF                MOV     R7,A
+0305 EF                MOV     A,R7
+0306 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 378
+0307 9049D7            MOV     DPTR,#049D7H
+030A E4                CLR     A
+030B F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 379
+                                           ; SOURCE LINE # 380
+                                           ; SOURCE LINE # 381
+030C 8005              SJMP    ?C0002
+                                           ; SOURCE LINE # 383
+030E         ?C0035:
+                                           ; SOURCE LINE # 385
+030E 7F00              MOV     R7,#00H
+0310 120000      E     LCALL   _?CyHalt
+                                           ; SOURCE LINE # 386
+                                           ; SOURCE LINE # 387
+                                           ; SOURCE LINE # 388
+0313         ?C0002:
+                                           ; SOURCE LINE # 391
+0313 900000      R     MOV     DPTR,#tmpCsr
+0316 E0                MOVX    A,@DPTR
+0317 FF                MOV     R7,A
+0318 EF                MOV     A,R7
+0319 5420              ANL     A,#020H
+031B FF                MOV     R7,A
+031C 7E00              MOV     R6,#00H
+031E EF                MOV     A,R7
+031F 4E                ORL     A,R6
+0320 603E              JZ      ?C0041
+C51 COMPILER V9.03   I2C_PRESSURE_INT                                                      05/05/2015 16:28:58 PAGE 22  
+
+                                           ; SOURCE LINE # 392
+                                           ; SOURCE LINE # 394
+0322 900000      R     MOV     DPTR,#I2C_Pressure_state
+0325 E0                MOVX    A,@DPTR
+0326 FF                MOV     R7,A
+0327 EF                MOV     A,R7
+0328 5408              ANL     A,#08H
+032A FF                MOV     R7,A
+032B 7E00              MOV     R6,#00H
+032D EF                MOV     A,R7
+032E 4E                ORL     A,R6
+032F 6010              JZ      ?C0038
+                                           ; SOURCE LINE # 395
+                                           ; SOURCE LINE # 397
+0331 900000      R     MOV     DPTR,#I2C_Pressure_mstrStatus
+0334 E0                MOVX    A,@DPTR
+0335 FF                MOV     R7,A
+0336 EF                MOV     A,R7
+0337 4401              ORL     A,#01H
+0339 FF                MOV     R7,A
+033A 900000      R     MOV     DPTR,#I2C_Pressure_mstrStatus
+033D EF                MOV     A,R7
+033E F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 398
+033F 800E              SJMP    ?C0039
+0341         ?C0038:
+                                           ; SOURCE LINE # 400
+                                           ; SOURCE LINE # 402
+0341 900000      R     MOV     DPTR,#I2C_Pressure_mstrStatus
+0344 E0                MOVX    A,@DPTR
+0345 FF                MOV     R7,A
+0346 EF                MOV     A,R7
+0347 4402              ORL     A,#02H
+0349 FF                MOV     R7,A
+034A 900000      R     MOV     DPTR,#I2C_Pressure_mstrStatus
+034D EF                MOV     A,R7
+034E F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 403
+034F         ?C0039:
+                                           ; SOURCE LINE # 406
+034F 9049D6            MOV     DPTR,#049D6H
+0352 E0                MOVX    A,@DPTR
+0353 FF                MOV     R7,A
+0354 EF                MOV     A,R7
+0355 54EF              ANL     A,#0EFH
+0357 FF                MOV     R7,A
+0358 EF                MOV     A,R7
+0359 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 407
+035A 900000      R     MOV     DPTR,#I2C_Pressure_state
+035D 7410              MOV     A,#010H
+035F F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 408
+                                           ; SOURCE LINE # 410
+                                           ; SOURCE LINE # 412
+                                           ; SOURCE LINE # 610
+                                           ; SOURCE LINE # 611
+0360         ?C0041:
+0360 D007              POP     AR7
+0362 D006              POP     AR6
+0364 D005              POP     AR5
+0366 D004              POP     AR4
+C51 COMPILER V9.03   I2C_PRESSURE_INT                                                      05/05/2015 16:28:58 PAGE 23  
+
+0368 D003              POP     AR3
+036A D002              POP     AR2
+036C D001              POP     AR1
+036E D000              POP     AR0
+0370 D0D0              POP     PSW
+0372 D000        E     POP     ?C?XPAGE1SFR
+0374 D086              POP     DPS
+0376 D084              POP     DPL1
+0378 D085              POP     DPH1
+037A D082              POP     DPL
+037C D083              POP     DPH
+037E D0F0              POP     B
+0380 D0E0              POP     ACC
+0382 32                RETI    
+             ; FUNCTION I2C_Pressure_ISR (END)
+
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    899    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =     14    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

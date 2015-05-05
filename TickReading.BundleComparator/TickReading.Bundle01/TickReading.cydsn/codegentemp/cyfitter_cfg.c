@@ -110,10 +110,13 @@ typedef struct {
 #define CFG_MEMSET_COUNT (sizeof(cfg_memset_list)/sizeof(*cfg_memset_list))
 static const cfg_memset_t CYCODE cfg_memset_list [] = {
 	/* address, size */
-	{(void CYFAR *)(CYREG_TMR0_CFG0), 12},
+	{(void CYFAR *)(CYREG_I2C_XCFG), 21},
+	{(void CYFAR *)(CYREG_TMR0_CFG0), 24},
 	{(void CYFAR *)(CYREG_PRT0_DR), 16},
 	{(void CYFAR *)(CYREG_PRT3_DR), 16},
-	{(void CYFAR *)(CYDEV_UCFG_B0_P0_U0_BASE), 4096},
+	{(void CYFAR *)(CYREG_PRT15_DR), 16},
+	{(void CYFAR *)(CYDEV_UCFG_B0_P0_U0_BASE), 128},
+	{(void CYFAR *)(CYDEV_UCFG_B0_P0_ROUTE_BASE), 3840},
 	{(void CYFAR *)(CYDEV_UCFG_B1_P2_U0_BASE), 2048},
 	{(void CYFAR *)(CYDEV_UCFG_DSI0_BASE), 2560},
 	{(void CYFAR *)(CYDEV_UCFG_DSI12_BASE), 512},
@@ -121,29 +124,39 @@ static const cfg_memset_t CYCODE cfg_memset_list [] = {
 };
 
 #define cfg_byte_table ((const void CYFAR *)0x080000)
+/* IDMUX_IRQ Address: CYREG_IDMUX_IRQ_CTL0 Size (bytes): 8 */
+#define BS_IDMUX_IRQ_VAL ((const uint8 CYFAR *)0x0008075C)
+
+/* UDB_1_5_1_CONFIG Address: CYDEV_UCFG_B0_P0_U1_BASE Size (bytes): 128 */
+#define BS_UDB_1_5_1_CONFIG_VAL ((const uint8 CYFAR *)0x00080764)
+
 /* IOPINS0_1 Address: CYREG_PRT1_DM0 Size (bytes): 8 */
-#define BS_IOPINS0_1_VAL ((const uint8 CYFAR *)0x000807B4)
+#define BS_IOPINS0_1_VAL ((const uint8 CYFAR *)0x000807E4)
 
 /* IOPINS0_7 Address: CYREG_PRT12_DM0 Size (bytes): 8 */
-#define BS_IOPINS0_7_VAL ((const uint8 CYFAR *)0x000807BC)
-
-/* IOPINS0_8 Address: CYREG_PRT15_DM0 Size (bytes): 8 */
-#define BS_IOPINS0_8_VAL ((const uint8 CYFAR *)0x000807C4)
+#define BS_IOPINS0_7_VAL ((const uint8 CYFAR *)0x000807EC)
 
 /* IOPINS0_2 Address: CYREG_PRT2_DM0 Size (bytes): 8 */
-#define BS_IOPINS0_2_VAL ((const uint8 CYFAR *)0x000807CC)
+#define BS_IOPINS0_2_VAL ((const uint8 CYFAR *)0x000807F4)
 
 /* IOPINS0_4 Address: CYREG_PRT4_DM0 Size (bytes): 8 */
-#define BS_IOPINS0_4_VAL ((const uint8 CYFAR *)0x000807D4)
+#define BS_IOPINS0_4_VAL ((const uint8 CYFAR *)0x000807FC)
 
 /* IOPINS0_5 Address: CYREG_PRT5_DM0 Size (bytes): 8 */
-#define BS_IOPINS0_5_VAL ((const uint8 CYFAR *)0x000807DC)
+#define BS_IOPINS0_5_VAL ((const uint8 CYFAR *)0x00080804)
 
 /* IOPINS0_6 Address: CYREG_PRT6_DM0 Size (bytes): 8 */
-#define BS_IOPINS0_6_VAL ((const uint8 CYFAR *)0x000807E4)
+#define BS_IOPINS0_6_VAL ((const uint8 CYFAR *)0x0008080C)
 
 /* CYDEV_CLKDIST_ACFG0_CFG0 Address: CYREG_CLKDIST_ACFG0_CFG0 Size (bytes): 4 */
-#define BS_CYDEV_CLKDIST_ACFG0_CFG0_VAL ((const uint8 CYFAR *)0x000807EC)
+#define BS_CYDEV_CLKDIST_ACFG0_CFG0_VAL ((const uint8 CYFAR *)0x00080814)
+
+#define CFG_MEMCPY_COUNT (sizeof(cfg_memcpy_list)/sizeof(*cfg_memcpy_list))
+static const cfg_memcpy_t CYCODE cfg_memcpy_list [] = {
+	/* dest, src, size */
+	{(void CYFAR *)(CYREG_IDMUX_IRQ_CTL0), BS_IDMUX_IRQ_VAL, 8},
+	{(void CYFAR *)(CYDEV_UCFG_B0_P0_U1_BASE), BS_UDB_1_5_1_CONFIG_VAL, 128},
+};
 
 
 extern void cfg_write_bytes_code(void CYCODE *table);
@@ -177,6 +190,7 @@ static void ClockSetup(void)
 	CY_SET_XTND_REG24((void CYFAR *)(CYREG_CLKDIST_DCFG1_CFG0), 0x19001D);
 	CY_SET_XTND_REG24((void CYFAR *)(CYREG_CLKDIST_DCFG2_CFG0), 0x19001D);
 	CY_SET_XTND_REG24((void CYFAR *)(CYREG_CLKDIST_DCFG3_CFG0), 0x19752F);
+	CY_SET_XTND_REG24((void CYFAR *)(CYREG_CLKDIST_DCFG4_CFG0), 0x19752F);
 
 	/* Configure Analog Clocks based on settings from Clock DWR */
 	CYCONFIGCPY((void CYFAR *)(CYREG_CLKDIST_ACFG0_CFG0), (void CYFAR *)(BS_CYDEV_CLKDIST_ACFG0_CFG0_VAL), 4);
@@ -208,7 +222,7 @@ static void ClockSetup(void)
 	CY_SET_REG8((void CYXDATA *)(CYREG_CLKDIST_LD), 0x02);
 	CY_SET_REG8((void CYXDATA *)(CYREG_CLKDIST_DLY1), 0x04);
 
-	CY_SET_REG8((void CYXDATA *)(CYREG_PM_ACT_CFG2), ((CY_GET_REG8(CYREG_PM_ACT_CFG2) | 0x0F)));
+	CY_SET_REG8((void CYXDATA *)(CYREG_PM_ACT_CFG2), ((CY_GET_REG8(CYREG_PM_ACT_CFG2) | 0x1F)));
 	CY_SET_REG8((void CYXDATA *)(CYREG_PM_ACT_CFG1), ((CY_GET_REG8(CYREG_PM_ACT_CFG1) | 0x01)));
 	CY_SET_REG8((void CYXDATA *)(CYREG_PM_ACT_CFG0), ((CY_GET_REG8(CYREG_PM_ACT_CFG0) | 0x80)));
 }
@@ -238,16 +252,19 @@ void AnalogSetDefault(void)
 	CY_SET_REG8(CYREG_BG_DFT1, (bg_xover_inl_trim >> 4) & 0x0Fu);
 	CY_SET_REG8(CYREG_PRT4_AG, 0x04);
 	CY_SET_REG8(CYREG_PRT5_AG, 0x14);
-	CY_SET_REG8(CYREG_DAC2_SW0, 0x20);
+	CY_SET_REG8(CYREG_PRT6_AG, 0x01);
+	CY_SET_REG8(CYREG_DAC0_SW0, 0x02);
+	CY_SET_REG8(CYREG_DAC2_SW0, 0x10);
 	CY_SET_REG8(CYREG_DAC3_SW0, 0x20);
+	CY_SET_REG8(CYREG_CMP0_SW0, 0x01);
+	CY_SET_REG8(CYREG_CMP0_SW4, 0x10);
 	CY_SET_REG8(CYREG_CMP1_SW0, 0x01);
 	CY_SET_REG8(CYREG_CMP1_SW3, 0x40);
 	CY_SET_REG8(CYREG_CMP2_SW0, 0x40);
-	CY_SET_REG8(CYREG_CMP2_SW4, 0x20);
+	CY_SET_REG8(CYREG_CMP2_SW4, 0x02);
 	CY_SET_REG8(CYREG_CMP3_SW0, 0x04);
 	CY_SET_REG16(CYREG_CMP3_SW3, 0x2040);
 	CY_SET_REG8(CYREG_DSM0_SW0, 0x01);
-	CY_SET_REG8(CYREG_BUS_SW0, 0x01);
 	CY_SET_REG8(CYREG_PUMP_CR0, 0x44);
 }
 
@@ -279,20 +296,20 @@ void SetAnalogRoutingPumps(uint8 enabled)
 }
 
 #define CY_AMUX_UNUSED CYREG_BOOST_SR
-/* Table used to specify registers used to implement ADC_DelSig_AMux */
-uint8 CYXDATA * const CYCODE ADC_DelSig_AMux__addrTable[] = {
+/* Table used to specify registers used to implement ADC_Side_Rangefinder_AMux */
+uint8 CYXDATA * const CYCODE ADC_Side_Rangefinder_AMux__addrTable[] = {
 	(uint8 CYXDATA *)CYREG_DSM0_SW3, 
 	(uint8 CYXDATA *)CYREG_DSM0_SW3, 
 };
 
-/* Table used to define bit masks used to enable inputs for ADC_DelSig_AMux */
-const uint8 CYCODE ADC_DelSig_AMux__maskTable[] = {
+/* Table used to define bit masks used to enable inputs for ADC_Side_Rangefinder_AMux */
+const uint8 CYCODE ADC_Side_Rangefinder_AMux__maskTable[] = {
 	0x40, 
 	0x20, 
 };
 
 /*******************************************************************************
-* Function Name: ADC_DelSig_AMux_Set
+* Function Name: ADC_Side_Rangefinder_AMux_Set
 ********************************************************************************
 * Summary:
 *  This function is used to set a particular channel as active on the AMux.
@@ -304,15 +321,15 @@ const uint8 CYCODE ADC_DelSig_AMux__maskTable[] = {
 *   void
 *
 *******************************************************************************/
-void ADC_DelSig_AMux_Set(uint8 channel)
+void ADC_Side_Rangefinder_AMux_Set(uint8 channel)
 {
 	if (channel >= 2)
 		return;
-	*ADC_DelSig_AMux__addrTable[channel] |= ADC_DelSig_AMux__maskTable[channel];
+	*ADC_Side_Rangefinder_AMux__addrTable[channel] |= ADC_Side_Rangefinder_AMux__maskTable[channel];
 }
 
 /*******************************************************************************
-* Function Name: ADC_DelSig_AMux_Unset
+* Function Name: ADC_Side_Rangefinder_AMux_Unset
 ********************************************************************************
 * Summary:
 *  This function is used to clear a particular channel from being active on the
@@ -325,11 +342,11 @@ void ADC_DelSig_AMux_Set(uint8 channel)
 *   void
 *
 *******************************************************************************/
-void ADC_DelSig_AMux_Unset(uint8 channel)
+void ADC_Side_Rangefinder_AMux_Unset(uint8 channel)
 {
 	if (channel >= 2)
 		return;
-	*ADC_DelSig_AMux__addrTable[channel] &= ~ADC_DelSig_AMux__maskTable[channel];
+	*ADC_Side_Rangefinder_AMux__addrTable[channel] &= ~ADC_Side_Rangefinder_AMux__maskTable[channel];
 }
 
 
@@ -365,9 +382,20 @@ void cyfitter_cfg(void)
 			CYMEMZERO(ms->address, ms->size);
 		}
 
+		/* Copy device configuration data into registers */
+		for (i = 0; i < CFG_MEMCPY_COUNT; i++)
+		{
+			const cfg_memcpy_t CYCODE * CYDATA mc = &cfg_memcpy_list[i];
+			void * CYDATA dest = mc->dest;
+			const void * CYDATA src = mc->src;
+			uint16 CYDATA size = mc->size;
+			CYCONFIGCPY(dest, src, size);
+		}
+
 		cfg_write_bytes(cfg_byte_table);
 
 		/* Perform normal device configuration. Order is not critical for these items. */
+		CY_SET_XTND_REG16((void CYFAR *)(CYREG_LUT0_CR), 0x0003);
 		CY_SET_XTND_REG16((void CYFAR *)(CYREG_LUT1_CR), 0x0103);
 		CY_SET_XTND_REG16((void CYFAR *)(CYREG_LUT2_CR), 0x0203);
 		CY_SET_XTND_REG16((void CYFAR *)(CYREG_LUT3_CR), 0x0303);
@@ -384,13 +412,11 @@ void cyfitter_cfg(void)
 	/* Perform second pass device configuration. These items must be configured in specific order after the regular configuration is done. */
 	CYCONFIGCPY((void CYFAR *)(CYREG_PRT1_DM0), (void CYFAR *)(BS_IOPINS0_1_VAL), 8);
 	CYCONFIGCPY((void CYFAR *)(CYREG_PRT12_DM0), (void CYFAR *)(BS_IOPINS0_7_VAL), 8);
-	CYCONFIGCPY((void CYFAR *)(CYREG_PRT15_DM0), (void CYFAR *)(BS_IOPINS0_8_VAL), 8);
 	CYCONFIGCPY((void CYFAR *)(CYREG_PRT2_DM0), (void CYFAR *)(BS_IOPINS0_2_VAL), 8);
 	CYCONFIGCPY((void CYFAR *)(CYREG_PRT4_DM0), (void CYFAR *)(BS_IOPINS0_4_VAL), 8);
 	CYCONFIGCPY((void CYFAR *)(CYREG_PRT5_DM0), (void CYFAR *)(BS_IOPINS0_5_VAL), 8);
 	CYCONFIGCPY((void CYFAR *)(CYREG_PRT6_DM0), (void CYFAR *)(BS_IOPINS0_6_VAL), 8);
-	CY_SET_XTND_REG8((void CYFAR *)(CYREG_B0_P0_U0_CFG27), 0x44);
-	CY_SET_XTND_REG8((void CYFAR *)(CYREG_B0_P1_U1_CFG27), 0x44);
+	CY_SET_XTND_REG8((void CYFAR *)(CYREG_B0_P1_U1_CFG27), 0x84);
 	CY_SET_REG8((void CYXDATA *)(CYREG_INTC_CSR_EN), 0x01);
 
 	if (CYDEV_CHIP_REV_ACTUAL < 5)

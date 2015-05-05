@@ -1,0 +1,15 @@
+--------------- Clean Started: 05/05/2015 16:21:29 Project: TickReading, Configuration: DP8051 Keil 9.03 Debug ---------------
+Deleting file ".\DP8051_Keil_903\Debug\LCD.obj"
+Deleting file ".\DP8051_Keil_903\Debug\LCD_PM.obj"
+Deleting file ".\DP8051_Keil_903\Debug\LCD_LCDPort.obj"
+Deleting file ".\DP8051_Keil_903\Debug\CyBootAsmKeil.obj"
+Deleting file ".\DP8051_Keil_903\Debug\CyDmac.obj"
+Deleting file ".\DP8051_Keil_903\Debug\CyFlash.obj"
+Deleting file ".\DP8051_Keil_903\Debug\CyLib.obj"
+Deleting file ".\DP8051_Keil_903\Debug\cymem.obj"
+Deleting file ".\DP8051_Keil_903\Debug\cyPm.obj"
+Deleting file ".\DP8051_Keil_903\Debug\CySpc.obj"
+Deleting file ".\DP8051_Keil_903\Debug\cyutils.obj"
+Deleting file ".\DP8051_Keil_903\Debug\KeilStart.obj"
+Deleting file ".\DP8051_Keil_903\Debug\ISR_Hall.obj"
+--------------- Clean Succeeded: 05/05/2015 16:21:30 ---------------

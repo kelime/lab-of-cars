@@ -674,36 +674,6 @@
               <FilePath>.\Generated_Source\PSoC3\ISR_100_Lines.h</FilePath>
             </File>
             <File>
-              <FileName>Pin_1.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Generated_Source\PSoC3\Pin_1.c</FilePath>
-            </File>
-            <File>
-              <FileName>Pin_1.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Generated_Source\PSoC3\Pin_1.h</FilePath>
-            </File>
-            <File>
-              <FileName>Pin_1_aliases.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Generated_Source\PSoC3\Pin_1_aliases.h</FilePath>
-            </File>
-            <File>
-              <FileName>Pin_2.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Generated_Source\PSoC3\Pin_2.c</FilePath>
-            </File>
-            <File>
-              <FileName>Pin_2.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Generated_Source\PSoC3\Pin_2.h</FilePath>
-            </File>
-            <File>
-              <FileName>Pin_2_aliases.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Generated_Source\PSoC3\Pin_2_aliases.h</FilePath>
-            </File>
-            <File>
               <FileName>Line_Timer.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Generated_Source\PSoC3\Line_Timer.c</FilePath>
@@ -747,21 +717,6 @@
               <FileName>Camera_Threshold_PM.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Generated_Source\PSoC3\Camera_Threshold_PM.c</FilePath>
-            </File>
-            <File>
-              <FileName>Pin_3.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Generated_Source\PSoC3\Pin_3.c</FilePath>
-            </File>
-            <File>
-              <FileName>Pin_3.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Generated_Source\PSoC3\Pin_3.h</FilePath>
-            </File>
-            <File>
-              <FileName>Pin_3_aliases.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Generated_Source\PSoC3\Pin_3_aliases.h</FilePath>
             </File>
             <File>
               <FileName>Steering_Output.c</FileName>
@@ -989,69 +944,224 @@
               <FilePath>.\Generated_Source\PSoC3\ISR_Wait.h</FilePath>
             </File>
             <File>
-              <FileName>Pin_4.c</FileName>
+              <FileName>I2C_Pressure.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\Generated_Source\PSoC3\Pin_4.c</FilePath>
+              <FilePath>.\Generated_Source\PSoC3\I2C_Pressure.c</FilePath>
             </File>
             <File>
-              <FileName>Pin_4.h</FileName>
+              <FileName>I2C_Pressure.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\Generated_Source\PSoC3\Pin_4.h</FilePath>
+              <FilePath>.\Generated_Source\PSoC3\I2C_Pressure.h</FilePath>
             </File>
             <File>
-              <FileName>Pin_4_aliases.h</FileName>
+              <FileName>I2C_Pressure_BOOT.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Generated_Source\PSoC3\I2C_Pressure_BOOT.c</FilePath>
+            </File>
+            <File>
+              <FileName>I2C_Pressure_INT.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Generated_Source\PSoC3\I2C_Pressure_INT.c</FilePath>
+            </File>
+            <File>
+              <FileName>I2C_Pressure_PM.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Generated_Source\PSoC3\I2C_Pressure_PM.c</FilePath>
+            </File>
+            <File>
+              <FileName>Pressure_SCL.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Generated_Source\PSoC3\Pressure_SCL.c</FilePath>
+            </File>
+            <File>
+              <FileName>Pressure_SCL.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\Generated_Source\PSoC3\Pin_4_aliases.h</FilePath>
+              <FilePath>.\Generated_Source\PSoC3\Pressure_SCL.h</FilePath>
             </File>
             <File>
-              <FileName>ADC_DelSig.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Generated_Source\PSoC3\ADC_DelSig.c</FilePath>
-            </File>
-            <File>
-              <FileName>ADC_DelSig.h</FileName>
+              <FileName>Pressure_SCL_aliases.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\Generated_Source\PSoC3\ADC_DelSig.h</FilePath>
+              <FilePath>.\Generated_Source\PSoC3\Pressure_SCL_aliases.h</FilePath>
             </File>
             <File>
-              <FileName>ADC_DelSig_PM.c</FileName>
+              <FileName>Pressure_SDA.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\Generated_Source\PSoC3\ADC_DelSig_PM.c</FilePath>
+              <FilePath>.\Generated_Source\PSoC3\Pressure_SDA.c</FilePath>
             </File>
             <File>
-              <FileName>ADC_DelSig_INT.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Generated_Source\PSoC3\ADC_DelSig_INT.c</FilePath>
-            </File>
-            <File>
-              <FileName>ADC_DelSig_theACLK.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Generated_Source\PSoC3\ADC_DelSig_theACLK.c</FilePath>
-            </File>
-            <File>
-              <FileName>ADC_DelSig_theACLK.h</FileName>
+              <FileName>Pressure_SDA.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\Generated_Source\PSoC3\ADC_DelSig_theACLK.h</FilePath>
+              <FilePath>.\Generated_Source\PSoC3\Pressure_SDA.h</FilePath>
             </File>
             <File>
-              <FileName>ADC_DelSig_Ext_CP_Clk.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Generated_Source\PSoC3\ADC_DelSig_Ext_CP_Clk.c</FilePath>
-            </File>
-            <File>
-              <FileName>ADC_DelSig_Ext_CP_Clk.h</FileName>
+              <FileName>Pressure_SDA_aliases.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\Generated_Source\PSoC3\ADC_DelSig_Ext_CP_Clk.h</FilePath>
+              <FilePath>.\Generated_Source\PSoC3\Pressure_SDA_aliases.h</FilePath>
             </File>
             <File>
-              <FileName>ADC_DelSig_AMux.c</FileName>
+              <FileName>Altimeter_Counter.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\Generated_Source\PSoC3\ADC_DelSig_AMux.c</FilePath>
+              <FilePath>.\Generated_Source\PSoC3\Altimeter_Counter.c</FilePath>
             </File>
             <File>
-              <FileName>ADC_DelSig_AMux.h</FileName>
+              <FileName>Altimeter_Counter.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\Generated_Source\PSoC3\ADC_DelSig_AMux.h</FilePath>
+              <FilePath>.\Generated_Source\PSoC3\Altimeter_Counter.h</FilePath>
+            </File>
+            <File>
+              <FileName>Altimeter_Counter_PM.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Generated_Source\PSoC3\Altimeter_Counter_PM.c</FilePath>
+            </File>
+            <File>
+              <FileName>Altimeter_Clock.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Generated_Source\PSoC3\Altimeter_Clock.c</FilePath>
+            </File>
+            <File>
+              <FileName>Altimeter_Clock.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Generated_Source\PSoC3\Altimeter_Clock.h</FilePath>
+            </File>
+            <File>
+              <FileName>ISR_Altimeter.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Generated_Source\PSoC3\ISR_Altimeter.c</FilePath>
+            </File>
+            <File>
+              <FileName>ISR_Altimeter.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Generated_Source\PSoC3\ISR_Altimeter.h</FilePath>
+            </File>
+            <File>
+              <FileName>Pixy_Input.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Generated_Source\PSoC3\Pixy_Input.c</FilePath>
+            </File>
+            <File>
+              <FileName>Pixy_Input.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Generated_Source\PSoC3\Pixy_Input.h</FilePath>
+            </File>
+            <File>
+              <FileName>Pixy_Input_aliases.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Generated_Source\PSoC3\Pixy_Input_aliases.h</FilePath>
+            </File>
+            <File>
+              <FileName>ISR_Pixy.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Generated_Source\PSoC3\ISR_Pixy.c</FilePath>
+            </File>
+            <File>
+              <FileName>ISR_Pixy.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Generated_Source\PSoC3\ISR_Pixy.h</FilePath>
+            </File>
+            <File>
+              <FileName>side_rangefinder.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Generated_Source\PSoC3\side_rangefinder.c</FilePath>
+            </File>
+            <File>
+              <FileName>side_rangefinder.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Generated_Source\PSoC3\side_rangefinder.h</FilePath>
+            </File>
+            <File>
+              <FileName>side_rangefinder_aliases.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Generated_Source\PSoC3\side_rangefinder_aliases.h</FilePath>
+            </File>
+            <File>
+              <FileName>Side_Rangefinder_Comparator.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Generated_Source\PSoC3\Side_Rangefinder_Comparator.c</FilePath>
+            </File>
+            <File>
+              <FileName>Side_Rangefinder_Comparator.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Generated_Source\PSoC3\Side_Rangefinder_Comparator.h</FilePath>
+            </File>
+            <File>
+              <FileName>Side_Rangefinder_Comparator_PM.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Generated_Source\PSoC3\Side_Rangefinder_Comparator_PM.c</FilePath>
+            </File>
+            <File>
+              <FileName>ISR_Side_Rangefinder.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Generated_Source\PSoC3\ISR_Side_Rangefinder.c</FilePath>
+            </File>
+            <File>
+              <FileName>ISR_Side_Rangefinder.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Generated_Source\PSoC3\ISR_Side_Rangefinder.h</FilePath>
+            </File>
+            <File>
+              <FileName>ADC_Side_Rangefinder.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Generated_Source\PSoC3\ADC_Side_Rangefinder.c</FilePath>
+            </File>
+            <File>
+              <FileName>ADC_Side_Rangefinder.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Generated_Source\PSoC3\ADC_Side_Rangefinder.h</FilePath>
+            </File>
+            <File>
+              <FileName>ADC_Side_Rangefinder_PM.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Generated_Source\PSoC3\ADC_Side_Rangefinder_PM.c</FilePath>
+            </File>
+            <File>
+              <FileName>ADC_Side_Rangefinder_INT.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Generated_Source\PSoC3\ADC_Side_Rangefinder_INT.c</FilePath>
+            </File>
+            <File>
+              <FileName>ADC_Side_Rangefinder_theACLK.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Generated_Source\PSoC3\ADC_Side_Rangefinder_theACLK.c</FilePath>
+            </File>
+            <File>
+              <FileName>ADC_Side_Rangefinder_theACLK.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Generated_Source\PSoC3\ADC_Side_Rangefinder_theACLK.h</FilePath>
+            </File>
+            <File>
+              <FileName>ADC_Side_Rangefinder_Ext_CP_Clk.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Generated_Source\PSoC3\ADC_Side_Rangefinder_Ext_CP_Clk.c</FilePath>
+            </File>
+            <File>
+              <FileName>ADC_Side_Rangefinder_Ext_CP_Clk.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Generated_Source\PSoC3\ADC_Side_Rangefinder_Ext_CP_Clk.h</FilePath>
+            </File>
+            <File>
+              <FileName>ADC_Side_Rangefinder_AMux.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Generated_Source\PSoC3\ADC_Side_Rangefinder_AMux.c</FilePath>
+            </File>
+            <File>
+              <FileName>ADC_Side_Rangefinder_AMux.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Generated_Source\PSoC3\ADC_Side_Rangefinder_AMux.h</FilePath>
+            </File>
+            <File>
+              <FileName>Wall_Threshold.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Generated_Source\PSoC3\Wall_Threshold.c</FilePath>
+            </File>
+            <File>
+              <FileName>Wall_Threshold.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Generated_Source\PSoC3\Wall_Threshold.h</FilePath>
+            </File>
+            <File>
+              <FileName>Wall_Threshold_PM.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Generated_Source\PSoC3\Wall_Threshold_PM.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1729,36 +1839,6 @@
               <FilePath>.\Generated_Source\PSoC3\ISR_100_Lines.h</FilePath>
             </File>
             <File>
-              <FileName>Pin_1.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Generated_Source\PSoC3\Pin_1.c</FilePath>
-            </File>
-            <File>
-              <FileName>Pin_1.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Generated_Source\PSoC3\Pin_1.h</FilePath>
-            </File>
-            <File>
-              <FileName>Pin_1_aliases.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Generated_Source\PSoC3\Pin_1_aliases.h</FilePath>
-            </File>
-            <File>
-              <FileName>Pin_2.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Generated_Source\PSoC3\Pin_2.c</FilePath>
-            </File>
-            <File>
-              <FileName>Pin_2.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Generated_Source\PSoC3\Pin_2.h</FilePath>
-            </File>
-            <File>
-              <FileName>Pin_2_aliases.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Generated_Source\PSoC3\Pin_2_aliases.h</FilePath>
-            </File>
-            <File>
               <FileName>Line_Timer.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Generated_Source\PSoC3\Line_Timer.c</FilePath>
@@ -1802,21 +1882,6 @@
               <FileName>Camera_Threshold_PM.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Generated_Source\PSoC3\Camera_Threshold_PM.c</FilePath>
-            </File>
-            <File>
-              <FileName>Pin_3.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Generated_Source\PSoC3\Pin_3.c</FilePath>
-            </File>
-            <File>
-              <FileName>Pin_3.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Generated_Source\PSoC3\Pin_3.h</FilePath>
-            </File>
-            <File>
-              <FileName>Pin_3_aliases.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Generated_Source\PSoC3\Pin_3_aliases.h</FilePath>
             </File>
             <File>
               <FileName>Steering_Output.c</FileName>
@@ -2044,69 +2109,224 @@
               <FilePath>.\Generated_Source\PSoC3\ISR_Wait.h</FilePath>
             </File>
             <File>
-              <FileName>Pin_4.c</FileName>
+              <FileName>I2C_Pressure.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\Generated_Source\PSoC3\Pin_4.c</FilePath>
+              <FilePath>.\Generated_Source\PSoC3\I2C_Pressure.c</FilePath>
             </File>
             <File>
-              <FileName>Pin_4.h</FileName>
+              <FileName>I2C_Pressure.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\Generated_Source\PSoC3\Pin_4.h</FilePath>
+              <FilePath>.\Generated_Source\PSoC3\I2C_Pressure.h</FilePath>
             </File>
             <File>
-              <FileName>Pin_4_aliases.h</FileName>
+              <FileName>I2C_Pressure_BOOT.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Generated_Source\PSoC3\I2C_Pressure_BOOT.c</FilePath>
+            </File>
+            <File>
+              <FileName>I2C_Pressure_INT.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Generated_Source\PSoC3\I2C_Pressure_INT.c</FilePath>
+            </File>
+            <File>
+              <FileName>I2C_Pressure_PM.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Generated_Source\PSoC3\I2C_Pressure_PM.c</FilePath>
+            </File>
+            <File>
+              <FileName>Pressure_SCL.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Generated_Source\PSoC3\Pressure_SCL.c</FilePath>
+            </File>
+            <File>
+              <FileName>Pressure_SCL.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\Generated_Source\PSoC3\Pin_4_aliases.h</FilePath>
+              <FilePath>.\Generated_Source\PSoC3\Pressure_SCL.h</FilePath>
             </File>
             <File>
-              <FileName>ADC_DelSig.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Generated_Source\PSoC3\ADC_DelSig.c</FilePath>
-            </File>
-            <File>
-              <FileName>ADC_DelSig.h</FileName>
+              <FileName>Pressure_SCL_aliases.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\Generated_Source\PSoC3\ADC_DelSig.h</FilePath>
+              <FilePath>.\Generated_Source\PSoC3\Pressure_SCL_aliases.h</FilePath>
             </File>
             <File>
-              <FileName>ADC_DelSig_PM.c</FileName>
+              <FileName>Pressure_SDA.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\Generated_Source\PSoC3\ADC_DelSig_PM.c</FilePath>
+              <FilePath>.\Generated_Source\PSoC3\Pressure_SDA.c</FilePath>
             </File>
             <File>
-              <FileName>ADC_DelSig_INT.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Generated_Source\PSoC3\ADC_DelSig_INT.c</FilePath>
-            </File>
-            <File>
-              <FileName>ADC_DelSig_theACLK.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Generated_Source\PSoC3\ADC_DelSig_theACLK.c</FilePath>
-            </File>
-            <File>
-              <FileName>ADC_DelSig_theACLK.h</FileName>
+              <FileName>Pressure_SDA.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\Generated_Source\PSoC3\ADC_DelSig_theACLK.h</FilePath>
+              <FilePath>.\Generated_Source\PSoC3\Pressure_SDA.h</FilePath>
             </File>
             <File>
-              <FileName>ADC_DelSig_Ext_CP_Clk.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Generated_Source\PSoC3\ADC_DelSig_Ext_CP_Clk.c</FilePath>
-            </File>
-            <File>
-              <FileName>ADC_DelSig_Ext_CP_Clk.h</FileName>
+              <FileName>Pressure_SDA_aliases.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\Generated_Source\PSoC3\ADC_DelSig_Ext_CP_Clk.h</FilePath>
+              <FilePath>.\Generated_Source\PSoC3\Pressure_SDA_aliases.h</FilePath>
             </File>
             <File>
-              <FileName>ADC_DelSig_AMux.c</FileName>
+              <FileName>Altimeter_Counter.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\Generated_Source\PSoC3\ADC_DelSig_AMux.c</FilePath>
+              <FilePath>.\Generated_Source\PSoC3\Altimeter_Counter.c</FilePath>
             </File>
             <File>
-              <FileName>ADC_DelSig_AMux.h</FileName>
+              <FileName>Altimeter_Counter.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\Generated_Source\PSoC3\ADC_DelSig_AMux.h</FilePath>
+              <FilePath>.\Generated_Source\PSoC3\Altimeter_Counter.h</FilePath>
+            </File>
+            <File>
+              <FileName>Altimeter_Counter_PM.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Generated_Source\PSoC3\Altimeter_Counter_PM.c</FilePath>
+            </File>
+            <File>
+              <FileName>Altimeter_Clock.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Generated_Source\PSoC3\Altimeter_Clock.c</FilePath>
+            </File>
+            <File>
+              <FileName>Altimeter_Clock.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Generated_Source\PSoC3\Altimeter_Clock.h</FilePath>
+            </File>
+            <File>
+              <FileName>ISR_Altimeter.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Generated_Source\PSoC3\ISR_Altimeter.c</FilePath>
+            </File>
+            <File>
+              <FileName>ISR_Altimeter.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Generated_Source\PSoC3\ISR_Altimeter.h</FilePath>
+            </File>
+            <File>
+              <FileName>Pixy_Input.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Generated_Source\PSoC3\Pixy_Input.c</FilePath>
+            </File>
+            <File>
+              <FileName>Pixy_Input.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Generated_Source\PSoC3\Pixy_Input.h</FilePath>
+            </File>
+            <File>
+              <FileName>Pixy_Input_aliases.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Generated_Source\PSoC3\Pixy_Input_aliases.h</FilePath>
+            </File>
+            <File>
+              <FileName>ISR_Pixy.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Generated_Source\PSoC3\ISR_Pixy.c</FilePath>
+            </File>
+            <File>
+              <FileName>ISR_Pixy.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Generated_Source\PSoC3\ISR_Pixy.h</FilePath>
+            </File>
+            <File>
+              <FileName>side_rangefinder.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Generated_Source\PSoC3\side_rangefinder.c</FilePath>
+            </File>
+            <File>
+              <FileName>side_rangefinder.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Generated_Source\PSoC3\side_rangefinder.h</FilePath>
+            </File>
+            <File>
+              <FileName>side_rangefinder_aliases.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Generated_Source\PSoC3\side_rangefinder_aliases.h</FilePath>
+            </File>
+            <File>
+              <FileName>Side_Rangefinder_Comparator.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Generated_Source\PSoC3\Side_Rangefinder_Comparator.c</FilePath>
+            </File>
+            <File>
+              <FileName>Side_Rangefinder_Comparator.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Generated_Source\PSoC3\Side_Rangefinder_Comparator.h</FilePath>
+            </File>
+            <File>
+              <FileName>Side_Rangefinder_Comparator_PM.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Generated_Source\PSoC3\Side_Rangefinder_Comparator_PM.c</FilePath>
+            </File>
+            <File>
+              <FileName>ISR_Side_Rangefinder.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Generated_Source\PSoC3\ISR_Side_Rangefinder.c</FilePath>
+            </File>
+            <File>
+              <FileName>ISR_Side_Rangefinder.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Generated_Source\PSoC3\ISR_Side_Rangefinder.h</FilePath>
+            </File>
+            <File>
+              <FileName>ADC_Side_Rangefinder.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Generated_Source\PSoC3\ADC_Side_Rangefinder.c</FilePath>
+            </File>
+            <File>
+              <FileName>ADC_Side_Rangefinder.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Generated_Source\PSoC3\ADC_Side_Rangefinder.h</FilePath>
+            </File>
+            <File>
+              <FileName>ADC_Side_Rangefinder_PM.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Generated_Source\PSoC3\ADC_Side_Rangefinder_PM.c</FilePath>
+            </File>
+            <File>
+              <FileName>ADC_Side_Rangefinder_INT.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Generated_Source\PSoC3\ADC_Side_Rangefinder_INT.c</FilePath>
+            </File>
+            <File>
+              <FileName>ADC_Side_Rangefinder_theACLK.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Generated_Source\PSoC3\ADC_Side_Rangefinder_theACLK.c</FilePath>
+            </File>
+            <File>
+              <FileName>ADC_Side_Rangefinder_theACLK.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Generated_Source\PSoC3\ADC_Side_Rangefinder_theACLK.h</FilePath>
+            </File>
+            <File>
+              <FileName>ADC_Side_Rangefinder_Ext_CP_Clk.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Generated_Source\PSoC3\ADC_Side_Rangefinder_Ext_CP_Clk.c</FilePath>
+            </File>
+            <File>
+              <FileName>ADC_Side_Rangefinder_Ext_CP_Clk.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Generated_Source\PSoC3\ADC_Side_Rangefinder_Ext_CP_Clk.h</FilePath>
+            </File>
+            <File>
+              <FileName>ADC_Side_Rangefinder_AMux.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Generated_Source\PSoC3\ADC_Side_Rangefinder_AMux.c</FilePath>
+            </File>
+            <File>
+              <FileName>ADC_Side_Rangefinder_AMux.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Generated_Source\PSoC3\ADC_Side_Rangefinder_AMux.h</FilePath>
+            </File>
+            <File>
+              <FileName>Wall_Threshold.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Generated_Source\PSoC3\Wall_Threshold.c</FilePath>
+            </File>
+            <File>
+              <FileName>Wall_Threshold.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Generated_Source\PSoC3\Wall_Threshold.h</FilePath>
+            </File>
+            <File>
+              <FileName>Wall_Threshold_PM.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Generated_Source\PSoC3\Wall_Threshold_PM.c</FilePath>
             </File>
           </Files>
         </Group>

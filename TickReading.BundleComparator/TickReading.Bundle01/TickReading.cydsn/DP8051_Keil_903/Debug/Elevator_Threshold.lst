@@ -1,4 +1,4 @@
-C51 COMPILER V9.03   ELEVATOR_THRESHOLD                                                    04/28/2015 16:08:35 PAGE 1   
+C51 COMPILER V9.03   ELEVATOR_THRESHOLD                                                    05/05/2015 16:28:55 PAGE 1   
 
 
 C51 COMPILER V9.03, COMPILATION OF MODULE ELEVATOR_THRESHOLD
@@ -62,7 +62,7 @@ line level    source
   51          * Theory:
   52          *
   53          * Side Effects:
-C51 COMPILER V9.03   ELEVATOR_THRESHOLD                                                    04/28/2015 16:08:35 PAGE 2   
+C51 COMPILER V9.03   ELEVATOR_THRESHOLD                                                    05/05/2015 16:28:55 PAGE 2   
 
   54          *
   55          *******************************************************************************/
@@ -126,7 +126,7 @@ line level    source
                       }
                   #endif /* CY_PSOC5A */
  115   1      }
-C51 COMPILER V9.03   ELEVATOR_THRESHOLD                                                    04/28/2015 16:08:35 PAGE 3   
+C51 COMPILER V9.03   ELEVATOR_THRESHOLD                                                    05/05/2015 16:28:55 PAGE 3   
 
  116          
  117          
@@ -190,7 +190,7 @@ line level    source
  175   1          /* Disble power to DAC */
  176   1          Elevator_Threshold_PWRMGR &= ~Elevator_Threshold_ACT_PWR_EN;
  177   1          Elevator_Threshold_STBY_PWRMGR &= ~Elevator_Threshold_STBY_PWR_EN;
-C51 COMPILER V9.03   ELEVATOR_THRESHOLD                                                    04/28/2015 16:08:35 PAGE 4   
+C51 COMPILER V9.03   ELEVATOR_THRESHOLD                                                    05/05/2015 16:28:55 PAGE 4   
 
  178   1      
  179   1          /* This is a work around for PSoC5A  ,
@@ -254,7 +254,7 @@ line level    source
  237   1          Elevator_Threshold_DacTrim();
  238   1      }
  239          
-C51 COMPILER V9.03   ELEVATOR_THRESHOLD                                                    04/28/2015 16:08:35 PAGE 5   
+C51 COMPILER V9.03   ELEVATOR_THRESHOLD                                                    05/05/2015 16:28:55 PAGE 5   
 
  240          
  241          /*******************************************************************************
@@ -318,12 +318,12 @@ line level    source
              -_RNG_OFFSET;
  299   1          Elevator_Threshold_TR = CY_GET_XTND_REG8((uint8 *)(Elevator_Threshold_DAC_TRIM_BASE + mode));
  300   1      }
-C51 COMPILER V9.03   ELEVATOR_THRESHOLD                                                    04/28/2015 16:08:35 PAGE 6   
+C51 COMPILER V9.03   ELEVATOR_THRESHOLD                                                    05/05/2015 16:28:55 PAGE 6   
 
  301          
  302          
  303          /* [] END OF FILE */
-C51 COMPILER V9.03   ELEVATOR_THRESHOLD                                                    04/28/2015 16:08:35 PAGE 7   
+C51 COMPILER V9.03   ELEVATOR_THRESHOLD                                                    05/05/2015 16:28:55 PAGE 7   
 
 ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
@@ -387,7 +387,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
              ; FUNCTION Elevator_Threshold_Enable (END)
 
              ; FUNCTION Elevator_Threshold_Start (BEGIN)
-C51 COMPILER V9.03   ELEVATOR_THRESHOLD                                                    04/28/2015 16:08:35 PAGE 8   
+C51 COMPILER V9.03   ELEVATOR_THRESHOLD                                                    05/05/2015 16:28:55 PAGE 8   
 
                                            ; SOURCE LINE # 138
                                            ; SOURCE LINE # 139
@@ -451,7 +451,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0008 E0                MOVX    A,@DPTR
 0009 FF                MOV     R7,A
 000A EF                MOV     A,R7
-C51 COMPILER V9.03   ELEVATOR_THRESHOLD                                                    04/28/2015 16:08:35 PAGE 9   
+C51 COMPILER V9.03   ELEVATOR_THRESHOLD                                                    05/05/2015 16:28:55 PAGE 9   
 
 000B 54FD              ANL     A,#0FDH
 000D FF                MOV     R7,A
@@ -515,7 +515,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0029 EF                MOV     A,R7
 002A F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 237
-C51 COMPILER V9.03   ELEVATOR_THRESHOLD                                                    04/28/2015 16:08:35 PAGE 10  
+C51 COMPILER V9.03   ELEVATOR_THRESHOLD                                                    05/05/2015 16:28:55 PAGE 10  
 
 002B 120000      R     LCALL   Elevator_Threshold_DacTrim
                                            ; SOURCE LINE # 238
@@ -579,7 +579,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 002B FF                MOV     R7,A
 002C EE                MOV     A,R6
 002D 3401              ADDC    A,#01H
-C51 COMPILER V9.03   ELEVATOR_THRESHOLD                                                    04/28/2015 16:08:35 PAGE 11  
+C51 COMPILER V9.03   ELEVATOR_THRESHOLD                                                    05/05/2015 16:28:55 PAGE 11  
 
 002F FE                MOV     R6,A
 0030 ED                MOV     A,R5

@@ -1,0 +1,1185 @@
+C51 COMPILER V9.03   BMP085TWO                                                             05/05/2015 15:27:52 PAGE 1   
+
+
+C51 COMPILER V9.03, COMPILATION OF MODULE BMP085TWO
+OBJECT MODULE PLACED IN .\DP8051_Keil_903\Debug\BMP085Two.obj
+COMPILER INVOKED BY: C:\Program Files (x86)\Cypress\PSoC Creator\2.1\PSoC Creator\import\keil\pk51\9.03\C51\BIN\c51.exe 
+                    -.\BMP085Two.c NOIV LARGE MODDP2 OMF2 VB(1) PR(.\DP8051_Keil_903\Debug\BMP085Two.lst) CD DB NOIP OT(2,SIZE) INCDIR(Genera
+                    -ted_Source\PSoC3) OJ(.\DP8051_Keil_903\Debug\BMP085Two.obj)
+
+line level    source
+
+   1          /* ========================================
+   2           *
+   3           * Copyright YOUR COMPANY, THE YEAR
+   4           * All Rights Reserved
+   5           * UNPUBLISHED, LICENSED SOFTWARE.
+   6           *
+   7           * CONFIDENTIAL AND PROPRIETARY INFORMATION
+   8           * WHICH IS THE PROPERTY OF your company.
+   9           *
+  10           * ========================================
+  11          */
+  12          
+  13          #include <device.h>
+  14          #include "BMP085Two.h"
+  15          
+  16          uint8 oss = ULTRALOWPOWER;                // over-sampling ratio
+  17          
+  18          // should be 0x34?? datasheet says 0x34 + (oss<<6)
+  19          uint8 getPressure[2] = {0xF4,0xF4};  // F4 -reg addr  34 - get pressure     // send code to the register F
+             -4 0x34 + (oss<<6);  see. BST-BMP085-DS000-05.pdf  pg. 13
+  20          uint8 getTemp[2] = {0xF4,0x2E};  // F4 -reg addr  2E - get temperature  // send code 2E  to the register F
+             -4 ( measuring the temperature)
+  21          
+  22          // Dummy Calibration Constants. Use to test output before reading
+  23          // the registers of the BMP085
+  24          
+  25          short ac1 = 408;
+  26          short ac2 = -72;
+  27          short ac3 = -14383;
+  28          unsigned short ac4 = 32741;   // These data are taken from BST-BMP085-DS000-05.pdf
+  29          unsigned short ac5 = 32757;   // they can be used to check the calculations
+  30          unsigned short ac6 = 23153;   // if you turn off the GetCoeff()  в main.c
+  31          short b1 = 6190;
+  32          short b2 = 4;
+  33          short mb = -32768;
+  34          short mc = -8711;
+  35          short md = 2868;
+  36          
+  37          long x1;
+  38          long x2;
+  39          long b5;
+  40          long b6;
+  41          
+  42          uint8 ut = 0;
+  43          uint8 up = 0;
+  44          uint8 up1 = 0;
+  45          uint8 up2 = 0;
+  46          uint8 up3 = 0;
+  47          
+  48          long temperature;
+  49          long pressure;
+  50          
+  51          /*========================================
+C51 COMPILER V9.03   BMP085TWO                                                             05/05/2015 15:27:52 PAGE 2   
+
+  52          // Function Definitions
+  53          //=====================================*/
+  54          
+  55          int getParams(void)
+  56          {
+  57   1          // read all calibration data. yay. 
+  58   1          ac1 = 408;
+  59   1          ac2 = -72;
+  60   1          ac3 = -14383;
+  61   1          ac4 = 32741;   // These data are taken from BST-BMP085-DS000-05.pdf
+  62   1          ac5 = 32757;   // they can be used to check the calculations
+  63   1          ac6 = 23153;   // if you turn off the GetCoeff()  в main.c
+  64   1          b1 = 6190;
+  65   1          b2 = 4;
+  66   1          mb = -32768;
+  67   1          mc = -8711;
+  68   1          md = 2868;
+  69   1      
+  70   1          return 1;
+  71   1      }
+  72          
+  73          // debug -- print the temperature value read
+  74          long readTemperature()
+  75          {
+  76   1          //mInterface.i2cWrite((byte) 0x77, (byte) 0xF4, (byte) 0x2E);
+  77   1          I2C_Pressure_MasterWriteBuf(I2C_SLAVE_ADDRESS, getTemp, 2, I2C_Pressure_MODE_COMPLETE_XFER);
+  78   1              //SystemClock.sleep(5);
+  79   1          CyDelay(5);
+  80   1              //ut = mInterface.i2cRead16((byte) 0x77, (byte) 0xF6);
+  81   1          // without calibration data, ut should be 27898
+  82   1          I2C_Pressure_MasterWriteBuf(I2C_SLAVE_ADDRESS, 0xF6, 1, I2C_Pressure_MODE_COMPLETE_XFER);
+*** WARNING C196 IN LINE 82 OF .\BMP085Two.c: mspace probably invalid
+  83   1              I2C_Pressure_MasterReadBuf(I2C_SLAVE_ADDRESS, &ut, 1, I2C_Pressure_MODE_COMPLETE_XFER);
+  84   1                      
+  85   1          // x1 is a long -- cast ut and calibration?     
+  86   1              x1 = ((long) ut - (long)ac6) * (long) ac5 / 32768;
+  87   1              x2 = ((long) mc * 2048) / (x1 + (long) md);
+  88   1              b5 = x1 + x2;
+  89   1              temperature = (b5 + 8) / 16;
+  90   1          // temp will read 150 with this calibration data
+  91   1              return temperature;
+  92   1      
+  93   1      }
+  94          
+  95          long readPressure(oss)
+  96          {
+*** WARNING C235 IN LINE 96 OF .\BMP085Two.c: parameter 1: different types
+  97   1          long x3; 
+  98   1          long b3;
+  99   1          long b4;
+ 100   1          long b7;
+ 101   1          
+ 102   1              //mInterface.i2cWrite((byte) 0x77, (byte) 0xF4, (byte) 0xF4);
+ 103   1          I2C_Pressure_MasterWriteBuf(I2C_SLAVE_ADDRESS, getPressure, 2, I2C_Pressure_MODE_COMPLETE_XFER);
+ 104   1              //SystemClock.sleep(26);
+ 105   1          CyDelay(26);
+ 106   1                  
+ 107   1              /*up1 = mInterface.i2cRead((byte) 0x77, (byte) 0xF6);
+ 108   1              up2 = mInterface.i2cRead((byte) 0x77, (byte) 0xF7);
+ 109   1              up3 = mInterface.i2cRead((byte) 0x77, (byte) 0xF8); */
+ 110   1          
+ 111   1          up1 = I2C_Pressure_MasterReadBuf(I2C_SLAVE_ADDRESS, 0xF6, 1, I2C_Pressure_MODE_COMPLETE_XFER);
+C51 COMPILER V9.03   BMP085TWO                                                             05/05/2015 15:27:52 PAGE 3   
+
+*** WARNING C196 IN LINE 111 OF .\BMP085Two.c: mspace probably invalid
+ 112   1          up2 = I2C_Pressure_MasterReadBuf(I2C_SLAVE_ADDRESS, 0xF7, 1, I2C_Pressure_MODE_COMPLETE_XFER);
+*** WARNING C196 IN LINE 112 OF .\BMP085Two.c: mspace probably invalid
+ 113   1          up3 = I2C_Pressure_MasterReadBuf(I2C_SLAVE_ADDRESS, 0xF8, 1, I2C_Pressure_MODE_COMPLETE_XFER);
+*** WARNING C196 IN LINE 113 OF .\BMP085Two.c: mspace probably invalid
+ 114   1                      
+ 115   1              up = ((up1 << 16) + (up2 << 8) + up3) >> (8 - oss);
+ 116   1                      
+ 117   1              b6 = b5 - 4000;
+ 118   1              x1 = (b2 * (b6 * b6 / 4096)) / 2048;
+ 119   1              x2 = ac2 * b6 / 2048;
+ 120   1              x3 = x1 + x2;
+ 121   1              b3 = (((ac1 * 4 + x3) << oss) + 2) / 4;
+ 122   1              x1 = ac3 * b6 / 8192;
+ 123   1              x2 = (b1 * (b6 * b6 / 4096)) / 65536;
+ 124   1              x3 = (x1 + x2 + 2) / 4;
+ 125   1              b4 = ac4 * (uint32)(x3 + 32768) / 32768;
+ 126   1              b7 = ((uint32)up - b3) * (50000 >> oss);
+ 127   1              if (b7 < 0x80000000) {
+*** WARNING C292 IN LINE 127 OF .\BMP085Two.c: '<': meaningless use of an expression
+ 128   2                      pressure = (b7 * 2) / b4;
+ 129   2              } else {
+ 130   2                      pressure = (b7 / b4) * 2;
+ 131   2              }
+ 132   1              x1 = (pressure / 256) * (pressure / 256);
+ 133   1              x1 = (x1 * 3038) / 65536;
+ 134   1              x2 = (-7357 * pressure) / 65536;
+ 135   1              pressure = pressure + (x1 + x2 + 3791) / 16;
+ 136   1              return pressure;
+ 137   1          // dummy params should yield 69965
+ 138   1      }
+ 139              
+ 140          // sign extension for 16 bits
+ 141          int signExtend16(int a)
+ 142          {
+ 143   1          if (0 != (a&0x8000))
+ 144   1          { return a |= 0xffff0000;}
+ 145   1          
+ 146   1          return a;
+ 147   1      }
+ 148          
+ 149          // sign extension for 8 bits
+ 150          int signExtend8(int a)
+ 151          {
+ 152   1          if (0 != (a&0x80))
+ 153   1          {
+ 154   2              return a |= 0xffffff00;
+ 155   2          }
+ 156   1          
+ 157   1          return a;
+ 158   1       }
+ 159          
+ 160          
+ 161          /* [] END OF FILE */
+*** WARNING C316 IN LINE 161 OF .\BMP085Two.c: unterminated conditionals
+C51 COMPILER V9.03   BMP085TWO                                                             05/05/2015 15:27:52 PAGE 4   
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+
+             ; FUNCTION getParams (BEGIN)
+                                           ; SOURCE LINE # 55
+                                           ; SOURCE LINE # 56
+                                           ; SOURCE LINE # 58
+0000 900000      R     MOV     DPTR,#ac1
+0003 7401              MOV     A,#01H
+0005 F0                MOVX    @DPTR,A
+0006 A3                INC     DPTR
+0007 7498              MOV     A,#098H
+0009 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 59
+000A 900000      R     MOV     DPTR,#ac2
+000D 74FF              MOV     A,#0FFH
+000F F0                MOVX    @DPTR,A
+0010 A3                INC     DPTR
+0011 74B8              MOV     A,#0B8H
+0013 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 60
+0014 900000      R     MOV     DPTR,#ac3
+0017 74C7              MOV     A,#0C7H
+0019 F0                MOVX    @DPTR,A
+001A A3                INC     DPTR
+001B 74D1              MOV     A,#0D1H
+001D F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 61
+001E 900000      R     MOV     DPTR,#ac4
+0021 747F              MOV     A,#07FH
+0023 F0                MOVX    @DPTR,A
+0024 A3                INC     DPTR
+0025 74E5              MOV     A,#0E5H
+0027 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 62
+0028 900000      R     MOV     DPTR,#ac5
+002B 747F              MOV     A,#07FH
+002D F0                MOVX    @DPTR,A
+002E A3                INC     DPTR
+002F 74F5              MOV     A,#0F5H
+0031 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 63
+0032 900000      R     MOV     DPTR,#ac6
+0035 745A              MOV     A,#05AH
+0037 F0                MOVX    @DPTR,A
+0038 A3                INC     DPTR
+0039 7471              MOV     A,#071H
+003B F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 64
+003C 900000      R     MOV     DPTR,#b1
+003F 7418              MOV     A,#018H
+0041 F0                MOVX    @DPTR,A
+0042 A3                INC     DPTR
+0043 742E              MOV     A,#02EH
+0045 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 65
+0046 900000      R     MOV     DPTR,#b2
+0049 E4                CLR     A
+004A F0                MOVX    @DPTR,A
+004B A3                INC     DPTR
+004C 7404              MOV     A,#04H
+004E F0                MOVX    @DPTR,A
+C51 COMPILER V9.03   BMP085TWO                                                             05/05/2015 15:27:52 PAGE 5   
+
+                                           ; SOURCE LINE # 66
+004F 900000      R     MOV     DPTR,#mb
+0052 7480              MOV     A,#080H
+0054 F0                MOVX    @DPTR,A
+0055 A3                INC     DPTR
+0056 E4                CLR     A
+0057 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 67
+0058 900000      R     MOV     DPTR,#mc
+005B 74DD              MOV     A,#0DDH
+005D F0                MOVX    @DPTR,A
+005E A3                INC     DPTR
+005F 74F9              MOV     A,#0F9H
+0061 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 68
+0062 900000      R     MOV     DPTR,#md
+0065 740B              MOV     A,#0BH
+0067 F0                MOVX    @DPTR,A
+0068 A3                INC     DPTR
+0069 7434              MOV     A,#034H
+006B F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 70
+006C 7E00              MOV     R6,#00H
+006E 7F01              MOV     R7,#01H
+                                           ; SOURCE LINE # 71
+0070         ?C0001:
+0070 22                RET     
+             ; FUNCTION getParams (END)
+
+             ; FUNCTION readTemperature (BEGIN)
+                                           ; SOURCE LINE # 74
+                                           ; SOURCE LINE # 75
+                                           ; SOURCE LINE # 77
+0000 7B01              MOV     R3,#01H
+0002 7A00        R     MOV     R2,#HIGH getTemp
+0004 7900        R     MOV     R1,#LOW getTemp
+0006 900000      E     MOV     DPTR,#?_I2C_Pressure_MasterWriteBuf?BYTE+04H
+0009 7402              MOV     A,#02H
+000B F0                MOVX    @DPTR,A
+000C 900000      E     MOV     DPTR,#?_I2C_Pressure_MasterWriteBuf?BYTE+05H
+000F E4                CLR     A
+0010 F0                MOVX    @DPTR,A
+0011 7F77              MOV     R7,#077H
+0013 120000      E     LCALL   _I2C_Pressure_MasterWriteBuf
+                                           ; SOURCE LINE # 79
+0016 7F05              MOV     R7,#05H
+0018 7E00              MOV     R6,#00H
+001A 7D00              MOV     R5,#00H
+001C 7C00              MOV     R4,#00H
+001E 120000      E     LCALL   _?CyDelay
+                                           ; SOURCE LINE # 82
+0021 7B00              MOV     R3,#00H
+0023 7A00              MOV     R2,#00H
+0025 79F6              MOV     R1,#0F6H
+0027 900000      E     MOV     DPTR,#?_I2C_Pressure_MasterWriteBuf?BYTE+04H
+002A 7401              MOV     A,#01H
+002C F0                MOVX    @DPTR,A
+002D 900000      E     MOV     DPTR,#?_I2C_Pressure_MasterWriteBuf?BYTE+05H
+0030 E4                CLR     A
+0031 F0                MOVX    @DPTR,A
+0032 7F77              MOV     R7,#077H
+0034 120000      E     LCALL   _I2C_Pressure_MasterWriteBuf
+C51 COMPILER V9.03   BMP085TWO                                                             05/05/2015 15:27:52 PAGE 6   
+
+                                           ; SOURCE LINE # 83
+0037 7B01              MOV     R3,#01H
+0039 7A00        R     MOV     R2,#HIGH ut
+003B 7900        R     MOV     R1,#LOW ut
+003D 900000      E     MOV     DPTR,#?_I2C_Pressure_MasterReadBuf?BYTE+04H
+0040 7401              MOV     A,#01H
+0042 F0                MOVX    @DPTR,A
+0043 900000      E     MOV     DPTR,#?_I2C_Pressure_MasterReadBuf?BYTE+05H
+0046 E4                CLR     A
+0047 F0                MOVX    @DPTR,A
+0048 7F77              MOV     R7,#077H
+004A 120000      E     LCALL   _I2C_Pressure_MasterReadBuf
+                                           ; SOURCE LINE # 86
+004D 900000      R     MOV     DPTR,#ac6
+0050 E0                MOVX    A,@DPTR
+0051 FE                MOV     R6,A
+0052 A3                INC     DPTR
+0053 E0                MOVX    A,@DPTR
+0054 FF                MOV     R7,A
+0055 AB07              MOV     R3,AR7
+0057 AA06              MOV     R2,AR6
+0059 E4                CLR     A
+005A F9                MOV     R1,A
+005B F8                MOV     R0,A
+005C 900000      R     MOV     DPTR,#ut
+005F E0                MOVX    A,@DPTR
+0060 FF                MOV     R7,A
+0061 E4                CLR     A
+0062 FC                MOV     R4,A
+0063 FD                MOV     R5,A
+0064 FE                MOV     R6,A
+0065 120000      E     LCALL   ?C?LSUB
+0068 A804              MOV     R0,AR4
+006A A905              MOV     R1,AR5
+006C AA06              MOV     R2,AR6
+006E AB07              MOV     R3,AR7
+0070 900000      R     MOV     DPTR,#ac5
+0073 E0                MOVX    A,@DPTR
+0074 FE                MOV     R6,A
+0075 A3                INC     DPTR
+0076 E0                MOVX    A,@DPTR
+0077 FF                MOV     R7,A
+0078 E4                CLR     A
+0079 FC                MOV     R4,A
+007A FD                MOV     R5,A
+007B 120000      E     LCALL   ?C?LMUL
+007E 7B00              MOV     R3,#00H
+0080 7A80              MOV     R2,#080H
+0082 7900              MOV     R1,#00H
+0084 7800              MOV     R0,#00H
+0086 120000      E     LCALL   ?C?SLDIV
+0089 900000      R     MOV     DPTR,#x1
+008C 120000      E     LCALL   ?C?LSTXDATA
+                                           ; SOURCE LINE # 87
+008F 900000      R     MOV     DPTR,#mc
+0092 E0                MOVX    A,@DPTR
+0093 FE                MOV     R6,A
+0094 A3                INC     DPTR
+0095 E0                MOVX    A,@DPTR
+0096 FF                MOV     R7,A
+0097 EE                MOV     A,R6
+0098 33                RLC     A
+C51 COMPILER V9.03   BMP085TWO                                                             05/05/2015 15:27:52 PAGE 7   
+
+0099 95E0              SUBB    A,ACC
+009B FD                MOV     R5,A
+009C FC                MOV     R4,A
+009D 7B00              MOV     R3,#00H
+009F 7A08              MOV     R2,#08H
+00A1 7900              MOV     R1,#00H
+00A3 7800              MOV     R0,#00H
+00A5 120000      E     LCALL   ?C?LMUL
+00A8 C004              PUSH    AR4
+00AA C005              PUSH    AR5
+00AC C006              PUSH    AR6
+00AE C007              PUSH    AR7
+00B0 900000      R     MOV     DPTR,#md
+00B3 E0                MOVX    A,@DPTR
+00B4 FE                MOV     R6,A
+00B5 A3                INC     DPTR
+00B6 E0                MOVX    A,@DPTR
+00B7 FF                MOV     R7,A
+00B8 EE                MOV     A,R6
+00B9 33                RLC     A
+00BA 95E0              SUBB    A,ACC
+00BC FD                MOV     R5,A
+00BD FC                MOV     R4,A
+00BE 900000      R     MOV     DPTR,#x1
+00C1 120000      E     LCALL   ?C?LLDXDATA0
+00C4 120000      E     LCALL   ?C?LADD
+00C7 A804              MOV     R0,AR4
+00C9 A905              MOV     R1,AR5
+00CB AA06              MOV     R2,AR6
+00CD AB07              MOV     R3,AR7
+00CF D007              POP     AR7
+00D1 D006              POP     AR6
+00D3 D005              POP     AR5
+00D5 D004              POP     AR4
+00D7 120000      E     LCALL   ?C?SLDIV
+00DA 900000      R     MOV     DPTR,#x2
+00DD 120000      E     LCALL   ?C?LSTXDATA
+                                           ; SOURCE LINE # 88
+00E0 900000      R     MOV     DPTR,#x2
+00E3 120000      E     LCALL   ?C?LLDXDATA
+00E6 900000      R     MOV     DPTR,#x1
+00E9 120000      E     LCALL   ?C?LLDXDATA0
+00EC 120000      E     LCALL   ?C?LADD
+00EF 900000      R     MOV     DPTR,#b5
+00F2 120000      E     LCALL   ?C?LSTXDATA
+                                           ; SOURCE LINE # 89
+00F5 900000      R     MOV     DPTR,#b5
+00F8 120000      E     LCALL   ?C?LLDXDATA
+00FB EF                MOV     A,R7
+00FC 2408              ADD     A,#08H
+00FE FF                MOV     R7,A
+00FF EE                MOV     A,R6
+0100 3400              ADDC    A,#00H
+0102 FE                MOV     R6,A
+0103 ED                MOV     A,R5
+0104 3400              ADDC    A,#00H
+0106 FD                MOV     R5,A
+0107 EC                MOV     A,R4
+0108 3400              ADDC    A,#00H
+010A FC                MOV     R4,A
+010B 7B10              MOV     R3,#010H
+010D 7A00              MOV     R2,#00H
+C51 COMPILER V9.03   BMP085TWO                                                             05/05/2015 15:27:52 PAGE 8   
+
+010F 7900              MOV     R1,#00H
+0111 7800              MOV     R0,#00H
+0113 120000      E     LCALL   ?C?SLDIV
+0116 900000      R     MOV     DPTR,#temperature
+0119 120000      E     LCALL   ?C?LSTXDATA
+                                           ; SOURCE LINE # 91
+011C 900000      R     MOV     DPTR,#temperature
+011F 120000      E     LCALL   ?C?LLDXDATA
+                                           ; SOURCE LINE # 93
+0122         ?C0002:
+0122 22                RET     
+             ; FUNCTION readTemperature (END)
+
+             ; FUNCTION _readPressure (BEGIN)
+                                           ; SOURCE LINE # 95
+0000 900000      R     MOV     DPTR,#oss
+0003 EE                MOV     A,R6
+0004 F0                MOVX    @DPTR,A
+0005 A3                INC     DPTR
+0006 EF                MOV     A,R7
+0007 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 96
+                                           ; SOURCE LINE # 103
+0008 7B01              MOV     R3,#01H
+000A 7A00        R     MOV     R2,#HIGH getPressure
+000C 7900        R     MOV     R1,#LOW getPressure
+000E 900000      E     MOV     DPTR,#?_I2C_Pressure_MasterWriteBuf?BYTE+04H
+0011 7402              MOV     A,#02H
+0013 F0                MOVX    @DPTR,A
+0014 900000      E     MOV     DPTR,#?_I2C_Pressure_MasterWriteBuf?BYTE+05H
+0017 E4                CLR     A
+0018 F0                MOVX    @DPTR,A
+0019 7F77              MOV     R7,#077H
+001B 120000      E     LCALL   _I2C_Pressure_MasterWriteBuf
+                                           ; SOURCE LINE # 105
+001E 7F1A              MOV     R7,#01AH
+0020 7E00              MOV     R6,#00H
+0022 7D00              MOV     R5,#00H
+0024 7C00              MOV     R4,#00H
+0026 120000      E     LCALL   _?CyDelay
+                                           ; SOURCE LINE # 111
+0029 7B00              MOV     R3,#00H
+002B 7A00              MOV     R2,#00H
+002D 79F6              MOV     R1,#0F6H
+002F 900000      E     MOV     DPTR,#?_I2C_Pressure_MasterReadBuf?BYTE+04H
+0032 7401              MOV     A,#01H
+0034 F0                MOVX    @DPTR,A
+0035 900000      E     MOV     DPTR,#?_I2C_Pressure_MasterReadBuf?BYTE+05H
+0038 E4                CLR     A
+0039 F0                MOVX    @DPTR,A
+003A 7F77              MOV     R7,#077H
+003C 120000      E     LCALL   _I2C_Pressure_MasterReadBuf
+003F 900000      R     MOV     DPTR,#up1
+0042 EF                MOV     A,R7
+0043 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 112
+0044 7B00              MOV     R3,#00H
+0046 7A00              MOV     R2,#00H
+0048 79F7              MOV     R1,#0F7H
+004A 900000      E     MOV     DPTR,#?_I2C_Pressure_MasterReadBuf?BYTE+04H
+004D 7401              MOV     A,#01H
+004F F0                MOVX    @DPTR,A
+C51 COMPILER V9.03   BMP085TWO                                                             05/05/2015 15:27:52 PAGE 9   
+
+0050 900000      E     MOV     DPTR,#?_I2C_Pressure_MasterReadBuf?BYTE+05H
+0053 E4                CLR     A
+0054 F0                MOVX    @DPTR,A
+0055 7F77              MOV     R7,#077H
+0057 120000      E     LCALL   _I2C_Pressure_MasterReadBuf
+005A 900000      R     MOV     DPTR,#up2
+005D EF                MOV     A,R7
+005E F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 113
+005F 7B00              MOV     R3,#00H
+0061 7A00              MOV     R2,#00H
+0063 79F8              MOV     R1,#0F8H
+0065 900000      E     MOV     DPTR,#?_I2C_Pressure_MasterReadBuf?BYTE+04H
+0068 7401              MOV     A,#01H
+006A F0                MOVX    @DPTR,A
+006B 900000      E     MOV     DPTR,#?_I2C_Pressure_MasterReadBuf?BYTE+05H
+006E E4                CLR     A
+006F F0                MOVX    @DPTR,A
+0070 7F77              MOV     R7,#077H
+0072 120000      E     LCALL   _I2C_Pressure_MasterReadBuf
+0075 900000      R     MOV     DPTR,#up3
+0078 EF                MOV     A,R7
+0079 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 115
+007A 900000      R     MOV     DPTR,#up2
+007D E0                MOVX    A,@DPTR
+007E FF                MOV     R7,A
+007F 7F00              MOV     R7,#00H
+0081 900000      R     MOV     DPTR,#up1
+0084 E0                MOVX    A,@DPTR
+0085 FE                MOV     R6,A
+0086 7E00              MOV     R6,#00H
+0088 EE                MOV     A,R6
+0089 2F                ADD     A,R7
+008A FF                MOV     R7,A
+008B 900000      R     MOV     DPTR,#up3
+008E E0                MOVX    A,@DPTR
+008F FE                MOV     R6,A
+0090 EF                MOV     A,R7
+0091 2E                ADD     A,R6
+0092 FF                MOV     R7,A
+0093 900000      R     MOV     DPTR,#oss
+0096 E0                MOVX    A,@DPTR
+0097 FC                MOV     R4,A
+0098 A3                INC     DPTR
+0099 E0                MOVX    A,@DPTR
+009A FD                MOV     R5,A
+009B AE05              MOV     R6,AR5
+009D C3                CLR     C
+009E 7408              MOV     A,#08H
+00A0 9E                SUBB    A,R6
+00A1 FE                MOV     R6,A
+00A2 EF                MOV     A,R7
+00A3 A806              MOV     R0,AR6
+00A5 08                INC     R0
+00A6 8002              SJMP    ?C0011
+00A8         ?C0010:
+00A8 C3                CLR     C
+00A9 13                RRC     A
+00AA         ?C0011:
+00AA D8FC              DJNZ    R0,?C0010
+00AC FF                MOV     R7,A
+C51 COMPILER V9.03   BMP085TWO                                                             05/05/2015 15:27:52 PAGE 10  
+
+00AD 900000      R     MOV     DPTR,#up
+00B0 EF                MOV     A,R7
+00B1 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 117
+00B2 900000      R     MOV     DPTR,#b5
+00B5 120000      E     LCALL   ?C?LLDXDATA
+00B8 EF                MOV     A,R7
+00B9 2460              ADD     A,#060H
+00BB FF                MOV     R7,A
+00BC EE                MOV     A,R6
+00BD 34F0              ADDC    A,#0F0H
+00BF FE                MOV     R6,A
+00C0 ED                MOV     A,R5
+00C1 34FF              ADDC    A,#0FFH
+00C3 FD                MOV     R5,A
+00C4 EC                MOV     A,R4
+00C5 34FF              ADDC    A,#0FFH
+00C7 FC                MOV     R4,A
+00C8 900000      R     MOV     DPTR,#b6
+00CB 120000      E     LCALL   ?C?LSTXDATA
+                                           ; SOURCE LINE # 118
+00CE 900000      R     MOV     DPTR,#b6
+00D1 120000      E     LCALL   ?C?LLDXDATA
+00D4 900000      R     MOV     DPTR,#b6
+00D7 120000      E     LCALL   ?C?LLDXDATA0
+00DA 120000      E     LCALL   ?C?LMUL
+00DD 7B00              MOV     R3,#00H
+00DF 7A10              MOV     R2,#010H
+00E1 7900              MOV     R1,#00H
+00E3 7800              MOV     R0,#00H
+00E5 120000      E     LCALL   ?C?SLDIV
+00E8 A804              MOV     R0,AR4
+00EA A905              MOV     R1,AR5
+00EC AA06              MOV     R2,AR6
+00EE AB07              MOV     R3,AR7
+00F0 900000      R     MOV     DPTR,#b2
+00F3 E0                MOVX    A,@DPTR
+00F4 FE                MOV     R6,A
+00F5 A3                INC     DPTR
+00F6 E0                MOVX    A,@DPTR
+00F7 FF                MOV     R7,A
+00F8 EE                MOV     A,R6
+00F9 33                RLC     A
+00FA 95E0              SUBB    A,ACC
+00FC FD                MOV     R5,A
+00FD FC                MOV     R4,A
+00FE 120000      E     LCALL   ?C?LMUL
+0101 7B00              MOV     R3,#00H
+0103 7A08              MOV     R2,#08H
+0105 7900              MOV     R1,#00H
+0107 7800              MOV     R0,#00H
+0109 120000      E     LCALL   ?C?SLDIV
+010C 900000      R     MOV     DPTR,#x1
+010F 120000      E     LCALL   ?C?LSTXDATA
+                                           ; SOURCE LINE # 119
+0112 900000      R     MOV     DPTR,#ac2
+0115 E0                MOVX    A,@DPTR
+0116 FE                MOV     R6,A
+0117 A3                INC     DPTR
+0118 E0                MOVX    A,@DPTR
+0119 FF                MOV     R7,A
+011A EE                MOV     A,R6
+C51 COMPILER V9.03   BMP085TWO                                                             05/05/2015 15:27:52 PAGE 11  
+
+011B 33                RLC     A
+011C 95E0              SUBB    A,ACC
+011E FD                MOV     R5,A
+011F FC                MOV     R4,A
+0120 900000      R     MOV     DPTR,#b6
+0123 120000      E     LCALL   ?C?LLDXDATA0
+0126 120000      E     LCALL   ?C?LMUL
+0129 7B00              MOV     R3,#00H
+012B 7A08              MOV     R2,#08H
+012D 7900              MOV     R1,#00H
+012F 7800              MOV     R0,#00H
+0131 120000      E     LCALL   ?C?SLDIV
+0134 900000      R     MOV     DPTR,#x2
+0137 120000      E     LCALL   ?C?LSTXDATA
+                                           ; SOURCE LINE # 120
+013A 900000      R     MOV     DPTR,#x2
+013D 120000      E     LCALL   ?C?LLDXDATA
+0140 900000      R     MOV     DPTR,#x1
+0143 120000      E     LCALL   ?C?LLDXDATA0
+0146 120000      E     LCALL   ?C?LADD
+0149 900000      R     MOV     DPTR,#x3
+014C 120000      E     LCALL   ?C?LSTXDATA
+                                           ; SOURCE LINE # 121
+014F 900000      R     MOV     DPTR,#ac1
+0152 E0                MOVX    A,@DPTR
+0153 FE                MOV     R6,A
+0154 A3                INC     DPTR
+0155 E0                MOVX    A,@DPTR
+0156 FF                MOV     R7,A
+0157 EF                MOV     A,R7
+0158 7802              MOV     R0,#02H
+015A         ?C0012:
+015A C3                CLR     C
+015B 33                RLC     A
+015C CE                XCH     A,R6
+015D 33                RLC     A
+015E CE                XCH     A,R6
+015F D8F9              DJNZ    R0,?C0012
+0161 FF                MOV     R7,A
+0162 EE                MOV     A,R6
+0163 33                RLC     A
+0164 95E0              SUBB    A,ACC
+0166 FD                MOV     R5,A
+0167 FC                MOV     R4,A
+0168 900000      R     MOV     DPTR,#x3
+016B 120000      E     LCALL   ?C?LLDXDATA0
+016E 120000      E     LCALL   ?C?LADD
+0171 900000      R     MOV     DPTR,#oss
+0174 E0                MOVX    A,@DPTR
+0175 FA                MOV     R2,A
+0176 A3                INC     DPTR
+0177 E0                MOVX    A,@DPTR
+0178 FB                MOV     R3,A
+0179 A903              MOV     R1,AR3
+017B A801              MOV     R0,AR1
+017D 120000      E     LCALL   ?C?LSHL
+0180 EF                MOV     A,R7
+0181 2402              ADD     A,#02H
+0183 FF                MOV     R7,A
+0184 EE                MOV     A,R6
+0185 3400              ADDC    A,#00H
+0187 FE                MOV     R6,A
+C51 COMPILER V9.03   BMP085TWO                                                             05/05/2015 15:27:52 PAGE 12  
+
+0188 ED                MOV     A,R5
+0189 3400              ADDC    A,#00H
+018B FD                MOV     R5,A
+018C EC                MOV     A,R4
+018D 3400              ADDC    A,#00H
+018F FC                MOV     R4,A
+0190 7B04              MOV     R3,#04H
+0192 7A00              MOV     R2,#00H
+0194 7900              MOV     R1,#00H
+0196 7800              MOV     R0,#00H
+0198 120000      E     LCALL   ?C?SLDIV
+019B 900000      R     MOV     DPTR,#b3
+019E 120000      E     LCALL   ?C?LSTXDATA
+                                           ; SOURCE LINE # 122
+01A1 900000      R     MOV     DPTR,#ac3
+01A4 E0                MOVX    A,@DPTR
+01A5 FE                MOV     R6,A
+01A6 A3                INC     DPTR
+01A7 E0                MOVX    A,@DPTR
+01A8 FF                MOV     R7,A
+01A9 EE                MOV     A,R6
+01AA 33                RLC     A
+01AB 95E0              SUBB    A,ACC
+01AD FD                MOV     R5,A
+01AE FC                MOV     R4,A
+01AF 900000      R     MOV     DPTR,#b6
+01B2 120000      E     LCALL   ?C?LLDXDATA0
+01B5 120000      E     LCALL   ?C?LMUL
+01B8 7B00              MOV     R3,#00H
+01BA 7A20              MOV     R2,#020H
+01BC 7900              MOV     R1,#00H
+01BE 7800              MOV     R0,#00H
+01C0 120000      E     LCALL   ?C?SLDIV
+01C3 900000      R     MOV     DPTR,#x1
+01C6 120000      E     LCALL   ?C?LSTXDATA
+                                           ; SOURCE LINE # 123
+01C9 900000      R     MOV     DPTR,#b6
+01CC 120000      E     LCALL   ?C?LLDXDATA
+01CF 900000      R     MOV     DPTR,#b6
+01D2 120000      E     LCALL   ?C?LLDXDATA0
+01D5 120000      E     LCALL   ?C?LMUL
+01D8 7B00              MOV     R3,#00H
+01DA 7A10              MOV     R2,#010H
+01DC 7900              MOV     R1,#00H
+01DE 7800              MOV     R0,#00H
+01E0 120000      E     LCALL   ?C?SLDIV
+01E3 A804              MOV     R0,AR4
+01E5 A905              MOV     R1,AR5
+01E7 AA06              MOV     R2,AR6
+01E9 AB07              MOV     R3,AR7
+01EB 900000      R     MOV     DPTR,#b1
+01EE E0                MOVX    A,@DPTR
+01EF FE                MOV     R6,A
+01F0 A3                INC     DPTR
+01F1 E0                MOVX    A,@DPTR
+01F2 FF                MOV     R7,A
+01F3 EE                MOV     A,R6
+01F4 33                RLC     A
+01F5 95E0              SUBB    A,ACC
+01F7 FD                MOV     R5,A
+01F8 FC                MOV     R4,A
+01F9 120000      E     LCALL   ?C?LMUL
+C51 COMPILER V9.03   BMP085TWO                                                             05/05/2015 15:27:52 PAGE 13  
+
+01FC 7B00              MOV     R3,#00H
+01FE 7A00              MOV     R2,#00H
+0200 7901              MOV     R1,#01H
+0202 7800              MOV     R0,#00H
+0204 120000      E     LCALL   ?C?SLDIV
+0207 900000      R     MOV     DPTR,#x2
+020A 120000      E     LCALL   ?C?LSTXDATA
+                                           ; SOURCE LINE # 124
+020D 900000      R     MOV     DPTR,#x2
+0210 120000      E     LCALL   ?C?LLDXDATA
+0213 900000      R     MOV     DPTR,#x1
+0216 120000      E     LCALL   ?C?LLDXDATA0
+0219 120000      E     LCALL   ?C?LADD
+021C EF                MOV     A,R7
+021D 2402              ADD     A,#02H
+021F FF                MOV     R7,A
+0220 EE                MOV     A,R6
+0221 3400              ADDC    A,#00H
+0223 FE                MOV     R6,A
+0224 ED                MOV     A,R5
+0225 3400              ADDC    A,#00H
+0227 FD                MOV     R5,A
+0228 EC                MOV     A,R4
+0229 3400              ADDC    A,#00H
+022B FC                MOV     R4,A
+022C 7B04              MOV     R3,#04H
+022E 7A00              MOV     R2,#00H
+0230 7900              MOV     R1,#00H
+0232 7800              MOV     R0,#00H
+0234 120000      E     LCALL   ?C?SLDIV
+0237 900000      R     MOV     DPTR,#x3
+023A 120000      E     LCALL   ?C?LSTXDATA
+                                           ; SOURCE LINE # 125
+023D 900000      R     MOV     DPTR,#x3
+0240 120000      E     LCALL   ?C?LLDXDATA
+0243 EF                MOV     A,R7
+0244 2400              ADD     A,#00H
+0246 FF                MOV     R7,A
+0247 EE                MOV     A,R6
+0248 3480              ADDC    A,#080H
+024A FE                MOV     R6,A
+024B ED                MOV     A,R5
+024C 3400              ADDC    A,#00H
+024E FD                MOV     R5,A
+024F EC                MOV     A,R4
+0250 3400              ADDC    A,#00H
+0252 FC                MOV     R4,A
+0253 AB07              MOV     R3,AR7
+0255 AA06              MOV     R2,AR6
+0257 A905              MOV     R1,AR5
+0259 A804              MOV     R0,AR4
+025B A804              MOV     R0,AR4
+025D A905              MOV     R1,AR5
+025F AA06              MOV     R2,AR6
+0261 AB07              MOV     R3,AR7
+0263 900000      R     MOV     DPTR,#ac4
+0266 E0                MOVX    A,@DPTR
+0267 FE                MOV     R6,A
+0268 A3                INC     DPTR
+0269 E0                MOVX    A,@DPTR
+026A FF                MOV     R7,A
+026B E4                CLR     A
+C51 COMPILER V9.03   BMP085TWO                                                             05/05/2015 15:27:52 PAGE 14  
+
+026C FC                MOV     R4,A
+026D FD                MOV     R5,A
+026E 120000      E     LCALL   ?C?LMUL
+0271 7B00              MOV     R3,#00H
+0273 7A80              MOV     R2,#080H
+0275 7900              MOV     R1,#00H
+0277 7800              MOV     R0,#00H
+0279 120000      E     LCALL   ?C?ULDIV
+027C 900000      R     MOV     DPTR,#b4
+027F 120000      E     LCALL   ?C?LSTXDATA
+                                           ; SOURCE LINE # 126
+0282 900000      R     MOV     DPTR,#up
+0285 E0                MOVX    A,@DPTR
+0286 FF                MOV     R7,A
+0287 E4                CLR     A
+0288 FC                MOV     R4,A
+0289 FD                MOV     R5,A
+028A FE                MOV     R6,A
+028B C004              PUSH    AR4
+028D C005              PUSH    AR5
+028F C006              PUSH    AR6
+0291 C007              PUSH    AR7
+0293 900000      R     MOV     DPTR,#b3
+0296 120000      E     LCALL   ?C?LLDXDATA
+0299 AB07              MOV     R3,AR7
+029B AA06              MOV     R2,AR6
+029D A905              MOV     R1,AR5
+029F A804              MOV     R0,AR4
+02A1 A804              MOV     R0,AR4
+02A3 A905              MOV     R1,AR5
+02A5 AA06              MOV     R2,AR6
+02A7 AB07              MOV     R3,AR7
+02A9 D007              POP     AR7
+02AB D006              POP     AR6
+02AD D005              POP     AR5
+02AF D004              POP     AR4
+02B1 120000      E     LCALL   ?C?LSUB
+02B4 C004              PUSH    AR4
+02B6 C005              PUSH    AR5
+02B8 C006              PUSH    AR6
+02BA C007              PUSH    AR7
+02BC 7F50              MOV     R7,#050H
+02BE 7EC3              MOV     R6,#0C3H
+02C0 7D00              MOV     R5,#00H
+02C2 7C00              MOV     R4,#00H
+02C4 900000      R     MOV     DPTR,#oss
+02C7 E0                MOVX    A,@DPTR
+02C8 FA                MOV     R2,A
+02C9 A3                INC     DPTR
+02CA E0                MOVX    A,@DPTR
+02CB FB                MOV     R3,A
+02CC A903              MOV     R1,AR3
+02CE A801              MOV     R0,AR1
+02D0 120000      E     LCALL   ?C?SLSHR
+02D3 AB07              MOV     R3,AR7
+02D5 AA06              MOV     R2,AR6
+02D7 A905              MOV     R1,AR5
+02D9 A804              MOV     R0,AR4
+02DB A804              MOV     R0,AR4
+02DD A905              MOV     R1,AR5
+02DF AA06              MOV     R2,AR6
+02E1 AB07              MOV     R3,AR7
+C51 COMPILER V9.03   BMP085TWO                                                             05/05/2015 15:27:52 PAGE 15  
+
+02E3 D007              POP     AR7
+02E5 D006              POP     AR6
+02E7 D005              POP     AR5
+02E9 D004              POP     AR4
+02EB 120000      E     LCALL   ?C?LMUL
+02EE 900000      R     MOV     DPTR,#b7
+02F1 120000      E     LCALL   ?C?LSTXDATA
+                                           ; SOURCE LINE # 127
+02F4 900000      R     MOV     DPTR,#b7
+02F7 120000      E     LCALL   ?C?LLDXDATA
+02FA 7B00              MOV     R3,#00H
+02FC 7A00              MOV     R2,#00H
+02FE 7900              MOV     R1,#00H
+0300 7880              MOV     R0,#080H
+0302 D3                SETB    C
+0303 120000      E     LCALL   ?C?ULCMP
+0306 4022              JC      ?C0003
+                                           ; SOURCE LINE # 128
+0308 7F02              MOV     R7,#02H
+030A 7E00              MOV     R6,#00H
+030C 7D00              MOV     R5,#00H
+030E 7C00              MOV     R4,#00H
+0310 900000      R     MOV     DPTR,#b7
+0313 120000      E     LCALL   ?C?LLDXDATA0
+0316 120000      E     LCALL   ?C?LMUL
+0319 900000      R     MOV     DPTR,#b4
+031C 120000      E     LCALL   ?C?LLDXDATA0
+031F 120000      E     LCALL   ?C?SLDIV
+0322 900000      R     MOV     DPTR,#pressure
+0325 120000      E     LCALL   ?C?LSTXDATA
+                                           ; SOURCE LINE # 129
+0328 8020              SJMP    ?C0004
+032A         ?C0003:
+                                           ; SOURCE LINE # 130
+032A 900000      R     MOV     DPTR,#b4
+032D 120000      E     LCALL   ?C?LLDXDATA0
+0330 900000      R     MOV     DPTR,#b7
+0333 120000      E     LCALL   ?C?LLDXDATA
+0336 120000      E     LCALL   ?C?SLDIV
+0339 7B02              MOV     R3,#02H
+033B 7A00              MOV     R2,#00H
+033D 7900              MOV     R1,#00H
+033F 7800              MOV     R0,#00H
+0341 120000      E     LCALL   ?C?LMUL
+0344 900000      R     MOV     DPTR,#pressure
+0347 120000      E     LCALL   ?C?LSTXDATA
+                                           ; SOURCE LINE # 131
+034A         ?C0004:
+                                           ; SOURCE LINE # 132
+034A 7B00              MOV     R3,#00H
+034C 7A01              MOV     R2,#01H
+034E 7900              MOV     R1,#00H
+0350 7800              MOV     R0,#00H
+0352 900000      R     MOV     DPTR,#pressure
+0355 120000      E     LCALL   ?C?LLDXDATA
+0358 120000      E     LCALL   ?C?SLDIV
+035B C004              PUSH    AR4
+035D C005              PUSH    AR5
+035F C006              PUSH    AR6
+0361 C007              PUSH    AR7
+0363 7B00              MOV     R3,#00H
+0365 7A01              MOV     R2,#01H
+C51 COMPILER V9.03   BMP085TWO                                                             05/05/2015 15:27:52 PAGE 16  
+
+0367 7900              MOV     R1,#00H
+0369 7800              MOV     R0,#00H
+036B 900000      R     MOV     DPTR,#pressure
+036E 120000      E     LCALL   ?C?LLDXDATA
+0371 120000      E     LCALL   ?C?SLDIV
+0374 A804              MOV     R0,AR4
+0376 A905              MOV     R1,AR5
+0378 AA06              MOV     R2,AR6
+037A AB07              MOV     R3,AR7
+037C D007              POP     AR7
+037E D006              POP     AR6
+0380 D005              POP     AR5
+0382 D004              POP     AR4
+0384 120000      E     LCALL   ?C?LMUL
+0387 900000      R     MOV     DPTR,#x1
+038A 120000      E     LCALL   ?C?LSTXDATA
+                                           ; SOURCE LINE # 133
+038D 7FDE              MOV     R7,#0DEH
+038F 7E0B              MOV     R6,#0BH
+0391 7D00              MOV     R5,#00H
+0393 7C00              MOV     R4,#00H
+0395 900000      R     MOV     DPTR,#x1
+0398 120000      E     LCALL   ?C?LLDXDATA0
+039B 120000      E     LCALL   ?C?LMUL
+039E 7B00              MOV     R3,#00H
+03A0 7A00              MOV     R2,#00H
+03A2 7901              MOV     R1,#01H
+03A4 7800              MOV     R0,#00H
+03A6 120000      E     LCALL   ?C?SLDIV
+03A9 900000      R     MOV     DPTR,#x1
+03AC 120000      E     LCALL   ?C?LSTXDATA
+                                           ; SOURCE LINE # 134
+03AF 7F43              MOV     R7,#043H
+03B1 7EE3              MOV     R6,#0E3H
+03B3 7DFF              MOV     R5,#0FFH
+03B5 7CFF              MOV     R4,#0FFH
+03B7 900000      R     MOV     DPTR,#pressure
+03BA 120000      E     LCALL   ?C?LLDXDATA0
+03BD 120000      E     LCALL   ?C?LMUL
+03C0 7B00              MOV     R3,#00H
+03C2 7A00              MOV     R2,#00H
+03C4 7901              MOV     R1,#01H
+03C6 7800              MOV     R0,#00H
+03C8 120000      E     LCALL   ?C?SLDIV
+03CB 900000      R     MOV     DPTR,#x2
+03CE 120000      E     LCALL   ?C?LSTXDATA
+                                           ; SOURCE LINE # 135
+03D1 900000      R     MOV     DPTR,#pressure
+03D4 120000      E     LCALL   ?C?LLDXDATA
+03D7 C004              PUSH    AR4
+03D9 C005              PUSH    AR5
+03DB C006              PUSH    AR6
+03DD C007              PUSH    AR7
+03DF 900000      R     MOV     DPTR,#x2
+03E2 120000      E     LCALL   ?C?LLDXDATA
+03E5 900000      R     MOV     DPTR,#x1
+03E8 120000      E     LCALL   ?C?LLDXDATA0
+03EB 120000      E     LCALL   ?C?LADD
+03EE EF                MOV     A,R7
+03EF 24CF              ADD     A,#0CFH
+03F1 FF                MOV     R7,A
+03F2 EE                MOV     A,R6
+C51 COMPILER V9.03   BMP085TWO                                                             05/05/2015 15:27:52 PAGE 17  
+
+03F3 340E              ADDC    A,#0EH
+03F5 FE                MOV     R6,A
+03F6 ED                MOV     A,R5
+03F7 3400              ADDC    A,#00H
+03F9 FD                MOV     R5,A
+03FA EC                MOV     A,R4
+03FB 3400              ADDC    A,#00H
+03FD FC                MOV     R4,A
+03FE 7B10              MOV     R3,#010H
+0400 7A00              MOV     R2,#00H
+0402 7900              MOV     R1,#00H
+0404 7800              MOV     R0,#00H
+0406 120000      E     LCALL   ?C?SLDIV
+0409 A804              MOV     R0,AR4
+040B A905              MOV     R1,AR5
+040D AA06              MOV     R2,AR6
+040F AB07              MOV     R3,AR7
+0411 D007              POP     AR7
+0413 D006              POP     AR6
+0415 D005              POP     AR5
+0417 D004              POP     AR4
+0419 120000      E     LCALL   ?C?LADD
+041C 900000      R     MOV     DPTR,#pressure
+041F 120000      E     LCALL   ?C?LSTXDATA
+                                           ; SOURCE LINE # 136
+0422 900000      R     MOV     DPTR,#pressure
+0425 120000      E     LCALL   ?C?LLDXDATA
+                                           ; SOURCE LINE # 138
+0428         ?C0005:
+0428 22                RET     
+             ; FUNCTION _readPressure (END)
+
+             ; FUNCTION _signExtend16 (BEGIN)
+                                           ; SOURCE LINE # 141
+0000 900000      R     MOV     DPTR,#a
+0003 EE                MOV     A,R6
+0004 F0                MOVX    @DPTR,A
+0005 A3                INC     DPTR
+0006 EF                MOV     A,R7
+0007 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 142
+                                           ; SOURCE LINE # 143
+0008 900000      R     MOV     DPTR,#a
+000B E0                MOVX    A,@DPTR
+000C FE                MOV     R6,A
+000D A3                INC     DPTR
+000E E0                MOVX    A,@DPTR
+000F FF                MOV     R7,A
+0010 EE                MOV     A,R6
+0011 30E71D            JNB     ACC.7,?C0006
+                                           ; SOURCE LINE # 144
+0014 900000      R     MOV     DPTR,#a
+0017 E0                MOVX    A,@DPTR
+0018 FE                MOV     R6,A
+0019 A3                INC     DPTR
+001A E0                MOVX    A,@DPTR
+001B FF                MOV     R7,A
+001C 7C00              MOV     R4,#00H
+001E 7D00              MOV     R5,#00H
+0020 EE                MOV     A,R6
+0021 4C                ORL     A,R4
+0022 FE                MOV     R6,A
+C51 COMPILER V9.03   BMP085TWO                                                             05/05/2015 15:27:52 PAGE 18  
+
+0023 EF                MOV     A,R7
+0024 4D                ORL     A,R5
+0025 FF                MOV     R7,A
+0026 900000      R     MOV     DPTR,#a
+0029 EE                MOV     A,R6
+002A F0                MOVX    @DPTR,A
+002B FE                MOV     R6,A
+002C A3                INC     DPTR
+002D EF                MOV     A,R7
+002E F0                MOVX    @DPTR,A
+002F FF                MOV     R7,A
+0030 22                RET     
+0031         ?C0006:
+                                           ; SOURCE LINE # 146
+0031 900000      R     MOV     DPTR,#a
+0034 E0                MOVX    A,@DPTR
+0035 FE                MOV     R6,A
+0036 A3                INC     DPTR
+0037 E0                MOVX    A,@DPTR
+0038 FF                MOV     R7,A
+                                           ; SOURCE LINE # 147
+0039         ?C0007:
+0039 22                RET     
+             ; FUNCTION _signExtend16 (END)
+
+             ; FUNCTION _signExtend8 (BEGIN)
+                                           ; SOURCE LINE # 150
+0000 900000      R     MOV     DPTR,#a
+0003 EE                MOV     A,R6
+0004 F0                MOVX    @DPTR,A
+0005 A3                INC     DPTR
+0006 EF                MOV     A,R7
+0007 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 151
+                                           ; SOURCE LINE # 152
+0008 900000      R     MOV     DPTR,#a
+000B E0                MOVX    A,@DPTR
+000C FE                MOV     R6,A
+000D A3                INC     DPTR
+000E E0                MOVX    A,@DPTR
+000F FF                MOV     R7,A
+0010 EF                MOV     A,R7
+0011 30E71D            JNB     ACC.7,?C0008
+                                           ; SOURCE LINE # 153
+                                           ; SOURCE LINE # 154
+0014 900000      R     MOV     DPTR,#a
+0017 E0                MOVX    A,@DPTR
+0018 FE                MOV     R6,A
+0019 A3                INC     DPTR
+001A E0                MOVX    A,@DPTR
+001B FF                MOV     R7,A
+001C 7CFF              MOV     R4,#0FFH
+001E 7D00              MOV     R5,#00H
+0020 EE                MOV     A,R6
+0021 4C                ORL     A,R4
+0022 FE                MOV     R6,A
+0023 EF                MOV     A,R7
+0024 4D                ORL     A,R5
+0025 FF                MOV     R7,A
+0026 900000      R     MOV     DPTR,#a
+0029 EE                MOV     A,R6
+002A F0                MOVX    @DPTR,A
+C51 COMPILER V9.03   BMP085TWO                                                             05/05/2015 15:27:52 PAGE 19  
+
+002B FE                MOV     R6,A
+002C A3                INC     DPTR
+002D EF                MOV     A,R7
+002E F0                MOVX    @DPTR,A
+002F FF                MOV     R7,A
+0030 22                RET     
+                                           ; SOURCE LINE # 155
+0031         ?C0008:
+                                           ; SOURCE LINE # 157
+0031 900000      R     MOV     DPTR,#a
+0034 E0                MOVX    A,@DPTR
+0035 FE                MOV     R6,A
+0036 A3                INC     DPTR
+0037 E0                MOVX    A,@DPTR
+0038 FF                MOV     R7,A
+                                           ; SOURCE LINE # 158
+0039         ?C0009:
+0039 22                RET     
+             ; FUNCTION _signExtend8 (END)
+
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1585    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =     56      22
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  7 WARNING(S),  0 ERROR(S)

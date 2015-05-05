@@ -13,10 +13,17 @@
   
 #include <device.h>
 #include <stdio.h>
+// BMP085 header files
+//#include "MyISRs.h"
 
 #define M_PI 3.14159265358979323846 //y u no work, math.h
 
 typedef enum { false = 0u, true = 1u } bool;
+
+/* Constants for the altimeter */
+int temp;                       // temperature data
+long press;                     // pressure data
+char OutputString[12]={0};      // for LCD
 
 /* Constants and variables defined for Hall Effect processing*/
 
@@ -30,7 +37,7 @@ static float prevticks = 0;
 static uint8 overflow = 0; // overflow counter. shouldn't update
 
 /* PID helper variables */
-    static const float target = 1.5;// target speed in ft/sec
+static const float target = 1.5;// target speed in ft/sec
 static float error = 0; // difference between desired speed and actual speed
 static float var = 0; // affects current speed
 static float sum = 0; // integral
@@ -54,11 +61,12 @@ static uint16 in_elevator = 3;
 static uint16 move_backward = 4;
 static uint16 turning = 5;
 static uint16 follow_line = 6;
+static uint16 done = 99;
 
-// static uint16 testing = 33;
+//static uint16 testAltimeter = 33;
 
 // Set initial state
-static uint16 state = 0;
+static uint16 state = 33;
 
 // are you going into the Elevator?
 static bool isGoingElevator = false;
@@ -139,13 +147,13 @@ CY_ISR(tock)
    // LCD_Position(0,5);
    // LCD_PrintNumber(duty);
     
-    LCD_Position(0,10);
+ /*   LCD_Position(0,10);
     if(isGoingElevator) {
         LCD_PrintString("true");
     } else {
         LCD_PrintString("false");
     }
-
+*/
     // meh, you can read the value of the ADC while in the tick interrupt.
     // 1 tick is ~1.545 inches traveled!
     // should use the voltage value of the rangefinder instead of the ticks -- gives you a ~consistent
@@ -192,13 +200,22 @@ if (number_of_ticks >= 105 && state == move_backward) {
     }
     
     if (number_of_ticks >= 31 && state == turning) {
-        uint8 control = 0;
+        uint8 control = 2;
         
         PWM_Steering_WriteCompare(152);
                 
         Drive_Control_Reg_Write(control);
         
+        number_of_ticks = 0;
+        state = follow_line;
+        
         state = 5; // 5 is turning. staying in state.
+    }
+    
+    if (number_of_ticks >= 100 && state == follow_line)
+    {
+        uint8 control = 0;
+        Drive_Control_Reg_Write(control);
     }
     
     // duty cycle is (compare value / period val) * 100. Duty cycle is defined by compare value.
@@ -352,11 +369,19 @@ CY_ISR(elevator_leaving) {
     }
 }
 
+CY_ISR(pixy)
+{
+    if (state == follow_line){
+        uint8 control = 0;
+        Drive_Control_Reg_Write(control);
+        state = done;
+    }
+}
     /*==================================================
     // ADC Testing / Debugging Code. Stay Commented Out
     //==================================================*/
     
-/* CY_ISR(ADC_DelSig_ISR1){
+ CY_ISR(ADC_Side_Rangefinder_ISR1){
 
     int32 result;
     float resultInVolts;    
@@ -365,19 +390,23 @@ CY_ISR(elevator_leaving) {
     LCD_Position(1,14);    
     LCD_PrintString("(:");
        
+    LCD_Position(0,7);    
+    LCD_PrintString("hai");
     if (state == 33) {  
         
     // write value to LCD screen
-        
-    result = ADC_DelSig_GetResult32();  
+    LCD_Position(0,7);    
+    LCD_PrintString("hey");
+    
+    result = ADC_Side_Rangefinder_GetResult32();  
     //LCD_PrintNumber(result);
     
-    resultInVolts = ADC_DelSig_CountsTo_Volts(result);
+    resultInVolts = ADC_Side_Rangefinder_CountsTo_Volts(result);
         
     // Display the lines per frame
    
     LCD_Position(1,0);
-    sprintf(resultstr, "ADC: %1.4f", resultInVolts); // ugly
+    sprintf(resultstr, "ADC: %1.4f", resultInVolts); // uglyy
     LCD_PrintString(resultstr);
        // LCD_Position(1,0);
         //LCD_PrintNumber();
@@ -386,8 +415,27 @@ CY_ISR(elevator_leaving) {
 }
    
   
-*/
+
+      
         
+/*===========================================
+// Defining BMP085 Code
+//==========================================*/
+
+//CY_ISR(isr_altimeter){
+//    if (state == 33){
+        // wait until pressure is read
+        // do nothing for now. test online code first.
+//        }
+// }
+
+//CY_ISR(ISR_ConvDone_Interrupt){
+//    if (state == 33) {
+      //  LCD_Position(1,0);
+      //  LCD_PrintString("yay.");
+  //      }
+//}
+
 void main()
 {
 /* Place your initialization/startup code here (e.g. MyInst_Start()) */
@@ -416,8 +464,8 @@ void main()
           
     // start display LCD screen  
     LCD_Start();
-    LCD_Position(0,0);    
-    LCD_PrintString("State:");
+ //   LCD_Position(0,0);    
+ //   LCD_PrintString("State:");
     
     // start interrupt service routines
     ISR_Hall_Start();
@@ -452,25 +500,69 @@ void main()
     
     // enables h-bridge, forward direction
     Drive_Control_Reg_Write(start_control);
-    // interrupt driven. no code here.
+    
+    // start an interrupt for the pressure to be read at intervals
+    // use a timer -- reads values every 5 seconds
+    
+    ISR_Pixy_Start();
+    ISR_Pixy_SetVector(pixy);
+    
+ //   ISR_Altimeter_Start();
+ //   ISR_Altimeter_SetVector(isr_altimeter);
+//    Altimeter_Clock_Start();
+//    Altimeter_Counter_Start();   
+    
+//    I2C_Pressure_Start();
+    
+    //ISR_ConvDone_StartEx(ConvDone); // data ready flag
+// LCD_Position(0,0);             LCD_PrintString("one");
+//CyWdtStart(CYWDT_128_TICKS    , 0) ;    // Configuring the watchdog to 256 – 384 ms      CyWdtClear() - see MyISRs.h 
+ //LCD_Position(0,0);             LCD_PrintString("two");    
+ //   BMP085GetCoeff();     // read calibration coefficients from memory BMP085
+    
     
     /*===============================
     // ADC Debugging Start Parameters
     //==============================*/
-/*    
+    
       
     LCD_Position(1,0);    
-    LCD_PrintString("A");
+    LCD_PrintNumber(state);
     
     
     // start ADC
-    ADC_DelSig_Start();
-    ADC_DelSig_IRQ_Enable(); 
-    ADC_DelSig_StartConvert(); 
- */   
+    Wall_Threshold_Start();
+  //  ISR_Side_Rangefinder_Start();
+  //  ISR_Side_Rangefinder_SetVector(isr_side_rangefinder);
+    ADC_Side_Rangefinder_Start();
+    ADC_Side_Rangefinder_IRQ_Enable(); 
+    ADC_Side_Rangefinder_StartConvert(); 
+    
+     //  LCD_Position(0,0);             LCD_PrintString("lol");     
        
-    for(;;)
-    {             
+     for(;;)
+     {             
+    
+    
+  /* Display the temperature in degrees Celsius */  
+ //   LCD_Position(0,0);             LCD_PrintString("t(C) = ");      
+    
+    /* read the temperature and pressure with the selected accuracy */ 
+//    BMP085GetResult(&temp,&press,ULTRALOWPOWER); // over-sampling ratio values = ULTRALOWPOWER, STANDARD, HIGHRES, ULTRAHIGHRES   
+//    LCD_Position(0,0); LCD_PrintString("converted");
+ //   sprintf(OutputString, "temp %d", temp); // ugly
+ //   LCD_Position(0,0);  LCD_PrintString(OutputString);
+ //   LCD_PrintNumber(temp/10);      LCD_PrintString(",");  // degrees
+ //   LCD_PrintNumber(temp%10);                                  // tenths of a degree
+   /* Display the pressure in Pascals */ 
+ //   sprintf(OutputString,"%ld",press);
+ //   LCD_Position(1,0);                 LCD_PrintString("P(Pa)= ");  
+    
+    
+ //   LCD_PrintString(OutputString);    
+  
+ //   CyDelay(100u/*ms*/);
+ 
         //counter_print++;
         
         if (counter_print == 10000) {
@@ -488,6 +580,7 @@ void main()
             }*/
             counter_print = 0;
         }
+        
     }
 }
 

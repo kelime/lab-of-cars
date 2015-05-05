@@ -1,7 +1,5 @@
---------------- Rebuild Started: 04/23/2015 15:24:48 Project: main.c, Configuration: DP8051 Keil 9.03 Debug ---------------
-c51.exe .\main.c NOIV LARGE MODDP2 OMF2 VB(1) PR(.\DP8051_Keil_903\Debug\main.lst) CD DB NOIP "OT(2, Size)" INCDIR(Generated_Source\PSoC3) OJ(.\DP8051_Keil_903\Debug\main.obj)
-ERROR: Keil License expired. Obtain a valid Keil license and update the information through your installed version of Keil or in PSoC Creator.
-WARNING: .\main.c:1: INCORRECT LICENSE ID CODE (LIC) IN 'TOOLS.INI'
-WARNING: .\main.c:269: 'lines': unreferenced local variable
-WARNING: .\main.c:270: 'linestr': unreferenced local variable
---------------- Rebuild Succeeded: 04/23/2015 15:24:50 ---------------
+--------------- Rebuild Started: 05/05/2015 14:46:58 Project: BMP085Two.c, Configuration: DP8051 Keil 9.03 Debug ---------------
+c51.exe .\BMP085Two.c NOIV LARGE MODDP2 OMF2 VB(1) PR(.\DP8051_Keil_903\Debug\BMP085Two.lst) CD DB NOIP "OT(2, Size)" INCDIR(Generated_Source\PSoC3) OJ(.\DP8051_Keil_903\Debug\BMP085Two.obj)
+WARNING: .\BMP085Two.c:70: mspace probably invalid
+WARNING: .\BMP085Two.c:101: unterminated conditionals
+--------------- Rebuild Succeeded: 05/05/2015 14:47:00 ---------------

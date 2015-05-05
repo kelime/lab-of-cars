@@ -1,0 +1,432 @@
+C51 COMPILER V9.03   SMD500_BMP085                                                         05/05/2015 12:44:40 PAGE 1   
+
+
+C51 COMPILER V9.03, COMPILATION OF MODULE SMD500_BMP085
+OBJECT MODULE PLACED IN .\DP8051_Keil_903\Debug\SMD500_BMP085.obj
+COMPILER INVOKED BY: C:\Program Files (x86)\Cypress\PSoC Creator\2.1\PSoC Creator\import\keil\pk51\9.03\C51\BIN\c51.exe 
+                    -.\SMD500_BMP085.c NOIV LARGE MODDP2 OMF2 VB(1) PR(.\DP8051_Keil_903\Debug\SMD500_BMP085.lst) CD DB NOIP OT(2,SIZE) INCDI
+                    -R(Generated_Source\PSoC3) OJ(.\DP8051_Keil_903\Debug\SMD500_BMP085.obj)
+
+line level    source
+
+   1          /*  $Date: 2009/10/23 $
+   2           *  $Revision: 1.2 $
+   3           */
+   4          
+   5          /*
+   6          * Copyright (C) 2009 Bosch Sensortec GmbH
+   7          *
+   8          * BMP085 pressure sensor API
+   9          * 
+  10          * Usage:  Application Programming Interface for BMP085 configuration and datum read out
+  11          *
+  12          * 
+  13          * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in 
+  14            compliance with the License and the following stipulations. The Apache License , Version 2.0 is applicab
+             -le unless 
+  15            otherwise stated by the stipulations of the disclaimer below. 
+  16           
+  17          * You may obtain a copy of the License at 
+  18          
+  19             http://www.apache.org/licenses/LICENSE-2.0
+  20            
+  21           
+  22          
+  23          Disclaimer 
+  24          
+  25          * Common:
+  26          * This Work is developed for the consumer goods industry. It may only be used 
+  27          * within the parameters of the respective valid product datum sheet.  The Work 
+  28          * provided with the express understanding that there is no warranty of fitness for a particular purpose. 
+  29          * It is not fit for use in life-sustaining, safety or security sensitive systems or any system or device 
+  30          * that may lead to bodily harm or property damage if the system or device malfunctions. In addition, 
+  31          * the Work is not fit for use in products which interact with motor vehicle systems.  
+  32          * The resale and/or use of the Work are at the purchasers own risk and his own responsibility. The 
+  33          * examination of fitness for the intended use is the sole responsibility of the Purchaser. 
+  34          *
+  35          * The purchaser shall indemnify Bosch Sensortec from all third party claims, including any claims for 
+  36          * incidental, or consequential damages, arising from any Work or Derivative Work use not covered by the pa
+             -rameters of 
+  37          * the respective valid product datum sheet or not approved by Bosch Sensortec and reimburse Bosch 
+  38          * Sensortec for all costs in connection with such claims.
+  39          *
+  40          * The purchaser must monitor the market for the purchased Work and Derivative Works, particularly with reg
+             -ard to 
+  41          * product safety and inform Bosch Sensortec without delay of all security relevant incidents.
+  42          *
+  43          * Engineering Samples are marked with an asterisk (*) or (e). Samples may vary from the valid 
+  44          * technical specifications of the product series. They are therefore not intended or fit for resale to thi
+             -rd 
+  45          * parties or for use in end products. Their sole purpose is internal client testing. The testing of an 
+  46          * engineering sample may in no way replace the testing of a product series. Bosch Sensortec 
+  47          * assumes no liability for the use of engineering samples. By accepting the engineering samples, the 
+  48          * Purchaser agrees to indemnify Bosch Sensortec from all claims arising from the use of engineering 
+  49          * samples.
+C51 COMPILER V9.03   SMD500_BMP085                                                         05/05/2015 12:44:40 PAGE 2   
+
+  50          *
+  51          * Special:
+  52          * This Work and any related information (hereinafter called "Information") is provided free of charge 
+  53          * for the sole purpose to support your application work. The Woek and Information is subject to the 
+  54          * following terms and conditions: 
+  55          *
+  56          * The Work is specifically designed for the exclusive use for Bosch Sensortec products by 
+  57          * personnel who have special experience and training. Do not use this Work or Derivative Works if you do n
+             -ot have the 
+  58          * proper experience or training. Do not use this Work or Derivative Works fot other products than Bosch Se
+             -nsortec products.  
+  59          *
+  60          * The Information provided is believed to be accurate and reliable. Bosch Sensortec assumes no 
+  61          * responsibility for the consequences of use of such Information nor for any infringement of patents or 
+  62          * other rights of third parties which may result from its use. No license is granted by implication or 
+  63          * otherwise under any patent or patent rights of Bosch. Specifications mentioned in the Information are 
+  64          * subject to change without notice.
+  65          *
+  66          */
+  67          
+  68          
+  69          /*! \file bmp085.c
+  70              \brief This file contains all function implementations for the BMP085 API
+  71              
+  72              Details.
+  73          */
+  74          
+  75          
+  76          #include "SMD500_BMP085.h"
+  77          
+  78          
+  79          bmp085_t *p_bmp085 = 0;                      /**< pointer to SMD500 / BMP085 device area */
+  80          
+  81          
+  82          
+  83          /** initialize BMP085 / SMD500 
+  84          
+  85            This function initializes the BMP085 pressure sensor/ the successor SMD500 is also supported.
+  86            The function automatically detects the sensor type and stores this for all future communication and calc
+             -ulation steps
+  87            \param *bmp085_t pointer to bmp085 device datum structure
+  88            \return result of communication routines
+  89          
+  90          */
+  91          
+  92          int bmp085_init(bmp085_t *bmp085) 
+  93          {
+  94   1        char comres=0;
+  95   1        unsigned char datum;
+  96   1        long dummy;
+  97   1      
+  98   1      
+  99   1        p_bmp085 = bmp085;                                      /* assign BMP085 ptr */
+ 100   1        p_bmp085->sensortype = E_SENSOR_NOT_DETECTED;
+ 101   1        p_bmp085->dev_addr = BMP085_I2C_ADDR;                   /* preset BMP085 I2C_addr */
+ 102   1        comres += p_bmp085->BMP085_BUS_READ_FUNC(p_bmp085->dev_addr, BMP085_CHIP_ID__REG, &datum, 1);  /* read C
+             -hip Id */
+*** ERROR C212 IN LINE 102 OF .\SMD500_BMP085.c: indirect call: parameters do not fit within registers
+ 103   1        
+ 104   1        p_bmp085->chip_id = BMP085_GET_BITSLICE(datum, BMP085_CHIP_ID);  
+ 105   1        p_bmp085->number_of_samples = 1;  
+ 106   1        p_bmp085->oversampling_setting=0;
+C51 COMPILER V9.03   SMD500_BMP085                                                         05/05/2015 12:44:40 PAGE 3   
+
+ 107   1      
+ 108   1        if (p_bmp085->chip_id == BMP085_CHIP_ID) {            /* get bitslice */
+ 109   2          p_bmp085->sensortype = BOSCH_PRESSURE_BMP085;
+ 110   2          
+ 111   2          p_bmp085->BMP085_BUS_READ_FUNC(p_bmp085->dev_addr, BMP085_VERSION_REG, &datum, 1); /* read Version reg
+             - */
+*** ERROR C212 IN LINE 111 OF .\SMD500_BMP085.c: indirect call: parameters do not fit within registers
+ 112   2          
+ 113   2          p_bmp085->ml_version = BMP085_GET_BITSLICE(datum, BMP085_ML_VERSION);        /* get ML Version */
+ 114   2          p_bmp085->al_version = BMP085_GET_BITSLICE(datum, BMP085_AL_VERSION);        /* get AL Version */
+ 115   2          bmp085_get_cal_param( ); /* readout bmp085 calibparam structure */
+ 116   2      
+ 117   2        } else {
+ 118   2          
+ 119   2          p_bmp085->sensortype = BOSCH_PRESSURE_SMD500;
+ 120   2          p_bmp085->smd500_t_resolution = SMD500_T_RESOLUTION_16BIT;
+ 121   2          p_bmp085->smd500_masterclock = SMD500_MASTERCLOCK_32768HZ;
+ 122   2          smd500_get_cal_param();
+ 123   2      
+ 124   2          /* calculate B1*/
+ 125   2          dummy =  (p_bmp085->cal_param.ac3 + SMD500_PARAM_M3);
+ 126   2          dummy *= SMD500_PARAM_ME;
+ 127   2          dummy >>= 11;
+ 128   2          dummy += SMD500_PARAM_MF;   
+ 129   2          p_bmp085->cal_param.b1 = dummy;
+ 130   2          
+ 131   2          /* calculate B2*/
+ 132   2                  dummy = (p_bmp085->cal_param.ac2 + SMD500_PARAM_M2);
+ 133   2          dummy *= p_bmp085->cal_param.b1;
+ 134   2          dummy >>= 4;
+ 135   2          dummy /= (p_bmp085->cal_param.ac3 + SMD500_PARAM_M3);   // calculate B2      
+ 136   2          p_bmp085->cal_param.b2 = dummy;
+ 137   2      
+ 138   2          p_bmp085->sensortype = BOSCH_PRESSURE_SMD500;
+ 139   2          
+ 140   2          p_bmp085->cal_param.ac1 += SMD500_PARAM_M1;
+ 141   2          p_bmp085->cal_param.ac1 <<= 1;
+ 142   2      
+ 143   2          p_bmp085->cal_param.ac2 += SMD500_PARAM_M2;
+ 144   2          p_bmp085->cal_param.ac2 <<= 2;
+ 145   2      
+ 146   2          p_bmp085->cal_param.ac3 += SMD500_PARAM_M3;
+ 147   2          p_bmp085->cal_param.ac3 <<= 3;
+ 148   2      
+ 149   2          p_bmp085->cal_param.ac4 += SMD500_PARAM_M4;
+ 150   2          p_bmp085->cal_param.ac4 <<= 1;
+ 151   2      
+ 152   2          p_bmp085->cal_param.ac5 += SMD500_PARAM_M5;
+ 153   2          p_bmp085->cal_param.ac5 <<= 3;
+ 154   2      
+ 155   2          p_bmp085->cal_param.ac6 += SMD500_PARAM_M6;
+ 156   2          p_bmp085->cal_param.ac6 <<= 3;
+ 157   2          
+ 158   2          p_bmp085->cal_param.mb = SMD500_PARAM_MB;
+ 159   2          p_bmp085->cal_param.mc = SMD500_PARAM_MC;
+ 160   2          p_bmp085->cal_param.md = SMD500_PARAM_MD;   
+ 161   2        }
+ 162   1      
+ 163   1        return comres;
+ 164   1      
+ 165   1      }
+ 166          
+C51 COMPILER V9.03   SMD500_BMP085                                                         05/05/2015 12:44:40 PAGE 4   
+
+ 167          /** read out parameters cal_param from BMP085 memory
+ 168             \return result of communication routines
+ 169          */
+ 170          
+ 171          //int bmp085_read_cal_param(void)
+ 172          int bmp085_get_cal_param(void)
+ 173          {
+ 174   1        int comres;
+ 175   1        unsigned char datum[22];
+ 176   1        comres = p_bmp085->BMP085_BUS_READ_FUNC(p_bmp085->dev_addr, BMP085_PROM_START__ADDR, datum, BMP085_PROM_
+             -DATUM__LEN);
+*** ERROR C212 IN LINE 176 OF .\SMD500_BMP085.c: indirect call: parameters do not fit within registers
+ 177   1        
+ 178   1        /*parameters AC1-AC6*/
+ 179   1        p_bmp085->cal_param.ac1 =  (datum[0] <<8) | datum[1];
+ 180   1        p_bmp085->cal_param.ac2 =  (datum[2] <<8) | datum[3];
+ 181   1        p_bmp085->cal_param.ac3 =  (datum[4] <<8) | datum[5];
+ 182   1        p_bmp085->cal_param.ac4 =  (datum[6] <<8) | datum[7];
+ 183   1        p_bmp085->cal_param.ac5 =  (datum[8] <<8) | datum[9];
+ 184   1        p_bmp085->cal_param.ac6 = (datum[10] <<8) | datum[11];
+ 185   1        
+ 186   1        /*parameters B1,B2*/
+ 187   1        p_bmp085->cal_param.b1 =  (datum[12] <<8) | datum[13];
+ 188   1        p_bmp085->cal_param.b2 =  (datum[14] <<8) | datum[15];
+ 189   1        
+ 190   1        /*parameters MB,MC,MD*/
+ 191   1        p_bmp085->cal_param.mb =  (datum[16] <<8) | datum[17];
+ 192   1        p_bmp085->cal_param.mc =  (datum[18] <<8) | datum[19];
+ 193   1        p_bmp085->cal_param.md =  (datum[20] <<8) | datum[21];
+ 194   1        
+ 195   1        return comres;  
+ 196   1        
+ 197   1      }
+ 198          
+ 199          /** read out parameters cal_param from SMD500 memory 
+ 200             This routine generates parameters from bitsliced datum
+ 201             \return result of communication routines
+ 202          */
+ 203          //int smd500_read_cal_param(void) 
+ 204          int smd500_get_cal_param(void) 
+ 205          {
+ 206   1        unsigned char datum[SMD500_PROM_datum__LEN];    
+ 207   1        int comres;
+ 208   1        comres = p_bmp085->BMP085_BUS_READ_FUNC(p_bmp085->dev_addr, SMD500_PROM_START__ADDR, datum, SMD500_PROM_
+             -datum__LEN);
+*** ERROR C212 IN LINE 208 OF .\SMD500_BMP085.c: indirect call: parameters do not fit within registers
+ 209   1      
+ 210   1        p_bmp085->cal_param.ac1 = (unsigned short) ((datum[0] <<8) | datum[1]) & 0x3FFF;
+ 211   1        p_bmp085->cal_param.ac2 = ((datum[0] & 0xC0) >>6) + ((datum[2]& ~0x01)<<1);
+ 212   1        p_bmp085->cal_param.ac3 = ((datum[2] & 0x01)<<8) + datum[3];
+ 213   1        p_bmp085->cal_param.ac4 = ((datum[4] & 0x1f)<<8) + datum[5];
+ 214   1        p_bmp085->cal_param.ac5 = ((datum[4] & ~0x1f)>>5) + ((datum[6] & 0xf0)>>1);
+ 215   1        p_bmp085->cal_param.ac6 = ((datum[6] & 0x0f)<<8) + datum[7];
+ 216   1        return comres;
+ 217   1      }
+ 218          
+ 219          
+ 220          /** calculate temperature from ut
+ 221            ut was read from the device via I2C and fed into the right calc path for either SMD500 or BMP085
+ 222            \param ut parameter ut read from device
+ 223            \return temperature in steps of 0.1 deg celsius
+ 224            \see bmp085_read_ut()
+C51 COMPILER V9.03   SMD500_BMP085                                                         05/05/2015 12:44:40 PAGE 5   
+
+ 225          */
+ 226          
+ 227          //short bmp085_calc_temperature(unsigned long ut) 
+ 228          short bmp085_get_temperature(unsigned long ut) 
+ 229          {
+ 230   1        short temperature;
+ 231   1        long x1,x2,x3,x4,y2,y3,y4;    
+ 232   1      
+ 233   1        if (p_bmp085->sensortype==BOSCH_PRESSURE_BMP085) {
+ 234   2          x1 = (((long) ut - (long) p_bmp085->cal_param.ac6) * (long) p_bmp085->cal_param.ac5) >> 15;
+ 235   2          x2 = ((long) p_bmp085->cal_param.mc << 11) / (x1 + p_bmp085->cal_param.md);
+ 236   2          p_bmp085->param_b5 = x1 + x2;
+ 237   2        }
+ 238   1        else // SMD500
+ 239   1        {
+ 240   2          if(p_bmp085->smd500_t_resolution==SMD500_T_RESOLUTION_16BIT)   // check for SMD500 temp resolution mod
+             -e
+ 241   2            x1 = ((unsigned long) ((( ut * SMD500_PARAM_MJ) >> 16) - p_bmp085->cal_param.ac6));
+ 242   2          else //13BIT
+ 243   2            x1 = ut * 8  - p_bmp085->cal_param.ac6;
+ 244   2          
+ 245   2      
+ 246   2          x2 = (x1 * x1) >> 13;
+ 247   2          y2 = (SMD500_PARAM_MB * x2) >> 13;
+ 248   2          x3 = (x2 * x1) >> 16;
+ 249   2          y3 = (SMD500_PARAM_MC * x3) >> 12;
+ 250   2          x4 = (x2 * x2) >> 16;
+ 251   2          y4 = (SMD500_PARAM_MD * x4) >> 14;
+ 252   2      
+ 253   2          p_bmp085->param_b5 = (((p_bmp085->cal_param.ac5) * ( (2*x1) + y2 + y3 + y4))) >> 13; // temperature in
+             - (1/160)°C
+ 254   2        }
+ 255   1        temperature = ((p_bmp085->param_b5 + 8) >> 4);  // temperature in 0.1°C
+ 256   1      
+ 257   1        return (temperature);
+ 258   1      }
+ 259          
+ 260          /** calculate pressure from up
+ 261            up was read from the device via I2C and fed into the right calc path for either SMD500 or BMP085
+ 262            In case of SMD500 value averaging is done in this function, in case of BMP085 averaging is done through 
+             -oversampling by the sensor IC
+ 263          
+ 264            \param ut parameter ut read from device
+ 265            \return temperature in steps of 1.0 Pa
+ 266            \see bmp085_read_up()
+ 267          */
+ 268          
+ 269          //long bmp085_calc_pressure(unsigned long up)
+ 270          long bmp085_get_pressure(unsigned long up)
+ 271          {
+ 272   1         long pressure,x1,x2,x3,b3,b6;
+ 273   1         unsigned long b4, b7;
+ 274   1         
+ 275   1         b6 = p_bmp085->param_b5 - 4000;
+ 276   1         //*****calculate B3************
+ 277   1         x1 = (b6*b6) >> 12;           
+ 278   1         x1 *= p_bmp085->cal_param.b2;
+ 279   1         x1 >>=11;
+ 280   1      
+ 281   1         x2 = (p_bmp085->cal_param.ac2*b6);
+ 282   1         x2 >>=11;
+ 283   1      
+C51 COMPILER V9.03   SMD500_BMP085                                                         05/05/2015 12:44:40 PAGE 6   
+
+ 284   1         x3 = x1 +x2;
+ 285   1      
+ 286   1              b3 = (((((long)p_bmp085->cal_param.ac1 )*4 + x3) <<p_bmp085->oversampling_setting) + 2) >> 2;
+ 287   1      
+ 288   1         //*****calculate B4************
+ 289   1         x1 = (p_bmp085->cal_param.ac3* b6) >> 13;
+ 290   1         x2 = (p_bmp085->cal_param.b1 * ((b6*b6) >> 12) ) >> 16;
+ 291   1         x3 = ((x1 + x2) + 2) >> 2;
+ 292   1         b4 = (p_bmp085->cal_param.ac4 * (unsigned long) (x3 + 32768)) >> 15;
+ 293   1           
+ 294   1         b7 = ((unsigned long)(up - b3) * (50000>>p_bmp085->oversampling_setting));   
+ 295   1         if (b7 < 0x80000000)
+ 296   1         {
+ 297   2           pressure = (b7 << 1) / b4;
+ 298   2         }
+ 299   1         else
+ 300   1         { 
+ 301   2           pressure = (b7 / b4) << 1;
+ 302   2         }
+ 303   1         
+ 304   1         x1 = pressure >> 8;
+ 305   1         x1 *= x1;
+ 306   1         x1 = (x1 * SMD500_PARAM_MG) >> 16;
+ 307   1         x2 = (pressure * SMD500_PARAM_MH) >> 16;
+ 308   1         pressure += (x1 + x2 + SMD500_PARAM_MI) >> 4;        // pressure in Pa  
+ 309   1      
+ 310   1         return (pressure);
+ 311   1      }
+ 312          
+ 313          
+ 314          /** read out ut for temperature conversion
+ 315             \return ut parameter that represents the uncompensated temperature sensors conversion value
+ 316          */
+ 317          
+ 318          //unsigned short bmp085_read_ut ()
+ 319          unsigned short bmp085_get_ut ()
+ 320          {
+ 321   1        unsigned short ut;
+ 322   1        unsigned char datum[2];    
+ 323   1        unsigned char ctrl_reg_datum;
+ 324   1        int wait_time;
+ 325   1        int comres;
+ 326   1        if (p_bmp085->chip_id == BMP085_CHIP_ID)            /* get bitslice */
+ 327   1        { 
+ 328   2          ctrl_reg_datum = BMP085_T_MEASURE;
+ 329   2          wait_time = BMP085_TEMP_CONVERSION_TIME;
+ 330   2        } else {
+ 331   2        ctrl_reg_datum = SMD500_T_MEASURE + p_bmp085->smd500_t_resolution + p_bmp085->smd500_masterclock;
+ 332   2          // wait_time can be 9 ms for 13 bit smd500_t_resolution
+ 333   2         if (p_bmp085->smd500_t_resolution == SMD500_T_RESOLUTION_13BIT) 
+ 334   2           wait_time = SMD500_TEMP_CONVERSION_TIME_13;
+ 335   2         else
+ 336   2           wait_time = SMD500_TEMP_CONVERSION_TIME_16;
+ 337   2        }
+ 338   1        comres = p_bmp085->BMP085_BUS_WRITE_FUNC(p_bmp085->dev_addr, BMP085_CTRL_MEAS_REG, &ctrl_reg_datum, 1);
+*** ERROR C212 IN LINE 338 OF .\SMD500_BMP085.c: indirect call: parameters do not fit within registers
+ 339   1        
+ 340   1        
+ 341   1        p_bmp085->delay_msec (wait_time);  
+ 342   1        comres += p_bmp085->BMP085_BUS_READ_FUNC(p_bmp085->dev_addr, BMP085_ADC_OUT_MSB_REG, datum, 2);
+*** ERROR C212 IN LINE 342 OF .\SMD500_BMP085.c: indirect call: parameters do not fit within registers
+ 343   1        ut = (datum[0] <<8) | datum[1];
+C51 COMPILER V9.03   SMD500_BMP085                                                         05/05/2015 12:44:40 PAGE 7   
+
+ 344   1        return (ut);
+ 345   1      }
+ 346          
+ 347          
+ 348          /** read out up for pressure conversion
+ 349            depending on the oversampling ratio setting up can be 16 to 19 bit
+ 350             \return up parameter that represents the uncompensated pressure value
+ 351          */
+ 352          
+ 353          //unsigned long bmp085_read_up ()
+ 354          unsigned long bmp085_get_up ()
+ 355          {
+ 356   1        int i;
+ 357   1        unsigned long up=0;
+ 358   1        unsigned char datum[3];    
+ 359   1        unsigned char ctrl_reg_datum;
+ 360   1        int comres=0;
+ 361   1        if (p_bmp085->chip_id == BMP085_CHIP_ID)  { 
+ 362   2              ctrl_reg_datum = BMP085_P_MEASURE + (p_bmp085->oversampling_setting << 6);
+ 363   2              comres = p_bmp085->BMP085_BUS_WRITE_FUNC(p_bmp085->dev_addr, BMP085_CTRL_MEAS_REG, &ctrl_reg_datum
+             -, 1);
+*** ERROR C212 IN LINE 363 OF .\SMD500_BMP085.c: indirect call: parameters do not fit within registers
+ 364   2              p_bmp085->delay_msec ( 2 + (3 << (p_bmp085->oversampling_setting) ) );
+ 365   2              comres += p_bmp085->BMP085_BUS_READ_FUNC(p_bmp085->dev_addr, BMP085_ADC_OUT_MSB_REG, datum, 3);
+*** ERROR C212 IN LINE 365 OF .\SMD500_BMP085.c: indirect call: parameters do not fit within registers
+ 366   2              up = (((unsigned long) datum[0] << 16) | ((unsigned long) datum[1] << 8) | (unsigned long) datum[2
+             -]) >> (8-p_bmp085->oversampling_setting);
+ 367   2          p_bmp085->number_of_samples = 1;
+ 368   2        } else {
+ 369   2                // SMD500 
+ 370   2          ctrl_reg_datum = SMD500_P_MEASURE + p_bmp085->smd500_masterclock;
+ 371   2          p_bmp085->number_of_samples = (1 << (p_bmp085->oversampling_setting));
+ 372   2          for (i=0; i < p_bmp085->number_of_samples; i++)       {
+ 373   3            comres += p_bmp085->BMP085_BUS_WRITE_FUNC(p_bmp085->dev_addr, BMP085_CTRL_MEAS_REG, &ctrl_reg_datum,
+             - 1);
+*** ERROR C212 IN LINE 373 OF .\SMD500_BMP085.c: indirect call: parameters do not fit within registers
+ 374   3            p_bmp085->delay_msec (34);
+ 375   3            comres += p_bmp085->BMP085_BUS_READ_FUNC(p_bmp085->dev_addr, BMP085_ADC_OUT_MSB_REG, datum, 2);
+*** ERROR C212 IN LINE 375 OF .\SMD500_BMP085.c: indirect call: parameters do not fit within registers
+ 376   3            up += (((unsigned long)datum[0] <<8) | (unsigned long)datum[1]);
+ 377   3          }    
+ 378   2        }
+ 379   1        return (up);
+ 380   1      }
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  10 ERROR(S)

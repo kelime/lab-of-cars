@@ -1,4 +1,4 @@
-C51 COMPILER V9.03   CAMERA_COMP                                                           04/28/2015 05:44:48 PAGE 1   
+C51 COMPILER V9.03   CAMERA_COMP                                                           05/05/2015 16:28:53 PAGE 1   
 
 
 C51 COMPILER V9.03, COMPILATION OF MODULE CAMERA_COMP
@@ -62,7 +62,7 @@ line level    source
   51   1          /* Set default speed/power */
   52   1          Camera_Comp_SetSpeed(Camera_Comp_DEFAULT_SPEED);
   53   1      
-C51 COMPILER V9.03   CAMERA_COMP                                                           04/28/2015 05:44:48 PAGE 2   
+C51 COMPILER V9.03   CAMERA_COMP                                                           05/05/2015 16:28:53 PAGE 2   
 
   54   1          /* Set default Hysteresis */
   55   1          if ( Camera_Comp_DEFAULT_HYSTERESIS == 0u )
@@ -126,7 +126,7 @@ line level    source
  113   1          in prior to the modification in stop() API */
  114   1          #if (CY_PSOC5A)
                       if(Camera_Comp_restoreReg == 1u)
-C51 COMPILER V9.03   CAMERA_COMP                                                           04/28/2015 05:44:48 PAGE 3   
+C51 COMPILER V9.03   CAMERA_COMP                                                           05/05/2015 16:28:53 PAGE 3   
 
                       {
                           Camera_Comp_CR = Camera_Comp_lowPowerBackup.compCRReg;
@@ -190,7 +190,7 @@ line level    source
  175   1          /* Disable power to comparator */
  176   1          Camera_Comp_PWRMGR &= ~Camera_Comp_ACT_PWR_EN;
  177   1          Camera_Comp_STBY_PWRMGR &= ~Camera_Comp_STBY_PWR_EN;    
-C51 COMPILER V9.03   CAMERA_COMP                                                           04/28/2015 05:44:48 PAGE 4   
+C51 COMPILER V9.03   CAMERA_COMP                                                           05/05/2015 16:28:53 PAGE 4   
 
  178   1      
  179   1          #if (CY_PSOC5A)
@@ -254,7 +254,7 @@ line level    source
  237   2          }
  238   1      
  239   1      }
-C51 COMPILER V9.03   CAMERA_COMP                                                           04/28/2015 05:44:48 PAGE 5   
+C51 COMPILER V9.03   CAMERA_COMP                                                           05/05/2015 16:28:53 PAGE 5   
 
  240          
  241          
@@ -318,7 +318,7 @@ line level    source
  299   2              if ( cmpState != 0u )
  300   2              {
  301   3                  /* PSoC5A */
-C51 COMPILER V9.03   CAMERA_COMP                                                           04/28/2015 05:44:48 PAGE 6   
+C51 COMPILER V9.03   CAMERA_COMP                                                           05/05/2015 16:28:53 PAGE 6   
 
  302   3                  #if (CY_PSOC5A)
                               Camera_Comp_TR |= Camera_Comp_CMP_TRIM1_DIR;
@@ -382,7 +382,7 @@ line level    source
  361   3              }
  362   2              else
  363   2              {
-C51 COMPILER V9.03   CAMERA_COMP                                                           04/28/2015 05:44:48 PAGE 7   
+C51 COMPILER V9.03   CAMERA_COMP                                                           05/05/2015 16:28:53 PAGE 7   
 
  364   3                  /* PSoC5A */
  365   3                  #if (CY_PSOC5A)
@@ -446,7 +446,7 @@ line level    source
  423          *  first phase
  424          *  - if the first trim value was maxed out without a comparator output 
  425          *    transition, more offset will be added by adjusting the second trim value.
-C51 COMPILER V9.03   CAMERA_COMP                                                           04/28/2015 05:44:48 PAGE 8   
+C51 COMPILER V9.03   CAMERA_COMP                                                           05/05/2015 16:28:53 PAGE 8   
 
  426          *  - if the first trim phase resulted in a comparator output transition, the
  427          *    second trim value will serve as fine trim (in the opposite direction)to
@@ -510,7 +510,7 @@ line level    source
  485   1              Camera_Comp_TR0 = Camera_Comp_DEFAULT_CMP_TRIM;
  486   1              Camera_Comp_TR1 = Camera_Comp_DEFAULT_CMP_TRIM;
  487   1          #endif /* CY_PSOC3 || CY_PSOC5LP */
-C51 COMPILER V9.03   CAMERA_COMP                                                           04/28/2015 05:44:48 PAGE 9   
+C51 COMPILER V9.03   CAMERA_COMP                                                           05/05/2015 16:28:53 PAGE 9   
 
  488   1              
  489   1              /* Two phase trim - slow modes, one phase trim - for fast */ 
@@ -574,7 +574,7 @@ line level    source
  547   1              
  548   1              /* Stores value in the Analog Comparator trim register for N-type load */
  549   1              Camera_Comp_TR1 = (uint8) (trimVal >> 8); 
-C51 COMPILER V9.03   CAMERA_COMP                                                           04/28/2015 05:44:48 PAGE 10  
+C51 COMPILER V9.03   CAMERA_COMP                                                           05/05/2015 16:28:53 PAGE 10  
 
  550   1          #endif /* CY_PSOC3 || CY_PSOC5LP */
  551   1      }
@@ -628,7 +628,7 @@ line level    source
  599          
  600          
  601          /* [] END OF FILE */
-C51 COMPILER V9.03   CAMERA_COMP                                                           04/28/2015 05:44:48 PAGE 11  
+C51 COMPILER V9.03   CAMERA_COMP                                                           05/05/2015 16:28:53 PAGE 11  
 
 ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
@@ -692,7 +692,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 82
                                            ; SOURCE LINE # 83
                                            ; SOURCE LINE # 84
-C51 COMPILER V9.03   CAMERA_COMP                                                           04/28/2015 05:44:48 PAGE 12  
+C51 COMPILER V9.03   CAMERA_COMP                                                           05/05/2015 16:28:53 PAGE 12  
 
 0031 905AD7            MOV     DPTR,#05AD7H
 0034 E0                MOVX    A,@DPTR
@@ -756,7 +756,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0011         ?C0009:
                                            ; SOURCE LINE # 155
 0011 120000      R     LCALL   Camera_Comp_Enable
-C51 COMPILER V9.03   CAMERA_COMP                                                           04/28/2015 05:44:48 PAGE 13  
+C51 COMPILER V9.03   CAMERA_COMP                                                           05/05/2015 16:28:53 PAGE 13  
 
                                            ; SOURCE LINE # 156
 0014 22                RET     
@@ -820,7 +820,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0025 B4011D            CJNE    A,#01H,?C0012
                                            ; SOURCE LINE # 213
                                            ; SOURCE LINE # 221
-C51 COMPILER V9.03   CAMERA_COMP                                                           04/28/2015 05:44:48 PAGE 14  
+C51 COMPILER V9.03   CAMERA_COMP                                                           05/05/2015 16:28:53 PAGE 14  
 
 0028 7B0C              MOV     R3,#0CH
 002A 7A01              MOV     R2,#01H
@@ -884,7 +884,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0003 EF                MOV     A,R7
 0004 F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 289
-C51 COMPILER V9.03   CAMERA_COMP                                                           04/28/2015 05:44:48 PAGE 15  
+C51 COMPILER V9.03   CAMERA_COMP                                                           05/05/2015 16:28:53 PAGE 15  
 
                                            ; SOURCE LINE # 294
 0005 905B96            MOV     DPTR,#05B96H
@@ -948,7 +948,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0046 E0                MOVX    A,@DPTR
 0047 FF                MOV     R7,A
 0048 EF                MOV     A,R7
-C51 COMPILER V9.03   CAMERA_COMP                                                           04/28/2015 05:44:48 PAGE 16  
+C51 COMPILER V9.03   CAMERA_COMP                                                           05/05/2015 16:28:53 PAGE 16  
 
 0049 7008              JNZ     ?C0020
                                            ; SOURCE LINE # 339
@@ -1012,7 +1012,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 378
 008A 905B96            MOV     DPTR,#05B96H
 008D E0                MOVX    A,@DPTR
-C51 COMPILER V9.03   CAMERA_COMP                                                           04/28/2015 05:44:48 PAGE 17  
+C51 COMPILER V9.03   CAMERA_COMP                                                           05/05/2015 16:28:53 PAGE 17  
 
 008E FF                MOV     R7,A
 008F EF                MOV     A,R7
@@ -1076,7 +1076,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0026 E4                CLR     A
 0027 F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 468
-C51 COMPILER V9.03   CAMERA_COMP                                                           04/28/2015 05:44:48 PAGE 18  
+C51 COMPILER V9.03   CAMERA_COMP                                                           05/05/2015 16:28:53 PAGE 18  
 
 0028 900000      R     MOV     DPTR,#tmpSW3
 002B E0                MOVX    A,@DPTR
@@ -1140,7 +1140,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 498
 0077         ?C0030:
                                            ; SOURCE LINE # 501
-C51 COMPILER V9.03   CAMERA_COMP                                                           04/28/2015 05:44:48 PAGE 19  
+C51 COMPILER V9.03   CAMERA_COMP                                                           05/05/2015 16:28:53 PAGE 19  
 
 0077 900000      R     MOV     DPTR,#tmpCR
 007A E0                MOVX    A,@DPTR
@@ -1204,7 +1204,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 546
 0008 900000      R     MOV     DPTR,#trimVal
 000B E0                MOVX    A,@DPTR
-C51 COMPILER V9.03   CAMERA_COMP                                                           04/28/2015 05:44:48 PAGE 20  
+C51 COMPILER V9.03   CAMERA_COMP                                                           05/05/2015 16:28:53 PAGE 20  
 
 000C FE                MOV     R6,A
 000D A3                INC     DPTR
@@ -1268,7 +1268,7 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
    CODE SIZE        =    656    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =      1      11
-C51 COMPILER V9.03   CAMERA_COMP                                                           04/28/2015 05:44:48 PAGE 21  
+C51 COMPILER V9.03   CAMERA_COMP                                                           05/05/2015 16:28:53 PAGE 21  
 
    PDATA SIZE       =   ----    ----
    DATA SIZE        =   ----    ----
