@@ -1,4 +1,4 @@
-C51 COMPILER V9.03   LINE_TIMER                                                            05/05/2015 16:28:52 PAGE 1   
+C51 COMPILER V9.03   LINE_TIMER                                                            05/06/2015 05:27:46 PAGE 1   
 
 
 C51 COMPILER V9.03, COMPILATION OF MODULE LINE_TIMER
@@ -62,7 +62,7 @@ line level    source
                       /* Clear all bits but the enable bit (if it's already set) for Timer operation */
                       Line_Timer_CONTROL &= Line_Timer_CTRL_ENABLE;
               
-C51 COMPILER V9.03   LINE_TIMER                                                            05/05/2015 16:28:52 PAGE 2   
+C51 COMPILER V9.03   LINE_TIMER                                                            05/06/2015 05:27:46 PAGE 2   
 
                       /* Clear the mode bits for continuous run mode */
                       #if (CY_PSOC5A)
@@ -126,7 +126,7 @@ line level    source
                       /* Set the IRQ to use the status register interrupts */
                       Line_Timer_CONTROL2 |= Line_Timer_CTRL2_IRQ_SEL;
                   #endif /* Configuring registers of fixed function implementation */
-C51 COMPILER V9.03   LINE_TIMER                                                            05/05/2015 16:28:52 PAGE 3   
+C51 COMPILER V9.03   LINE_TIMER                                                            05/06/2015 05:27:46 PAGE 3   
 
  116   1      
  117   1          /* Set Initial values from Configuration */
@@ -190,7 +190,7 @@ line level    source
  175          * Return:
  176          *  void
  177          *
-C51 COMPILER V9.03   LINE_TIMER                                                            05/05/2015 16:28:52 PAGE 4   
+C51 COMPILER V9.03   LINE_TIMER                                                            05/06/2015 05:27:46 PAGE 4   
 
  178          *******************************************************************************/
  179          void Line_Timer_Enable(void) 
@@ -254,7 +254,7 @@ line level    source
  237          *  void
  238          *
  239          * Return:
-C51 COMPILER V9.03   LINE_TIMER                                                            05/05/2015 16:28:52 PAGE 5   
+C51 COMPILER V9.03   LINE_TIMER                                                            05/06/2015 05:27:46 PAGE 5   
 
  240          *  void
  241          *
@@ -318,7 +318,7 @@ line level    source
  299          *
  300          *******************************************************************************/
  301          void Line_Timer_SoftwareCapture(void) 
-C51 COMPILER V9.03   LINE_TIMER                                                            05/05/2015 16:28:52 PAGE 6   
+C51 COMPILER V9.03   LINE_TIMER                                                            05/06/2015 05:27:46 PAGE 6   
 
  302          {
  303   1          /* Generate a software capture by reading the counter register */
@@ -382,7 +382,7 @@ line level    source
  361          * Summary:
  362          *  Sets the bit-field of the control register.
  363          *
-C51 COMPILER V9.03   LINE_TIMER                                                            05/05/2015 16:28:52 PAGE 7   
+C51 COMPILER V9.03   LINE_TIMER                                                            05/06/2015 05:27:46 PAGE 7   
 
  364          * Parameters:
  365          *  control: The contents of the control register
@@ -446,7 +446,7 @@ line level    source
  422          
  423          
  424          /*******************************************************************************
-C51 COMPILER V9.03   LINE_TIMER                                                            05/05/2015 16:28:52 PAGE 8   
+C51 COMPILER V9.03   LINE_TIMER                                                            05/06/2015 05:27:46 PAGE 8   
 
  425          * Function Name: Line_Timer_ReadCapture
  426          ********************************************************************************
@@ -510,7 +510,7 @@ line level    source
  483          *  void
  484          *
  485          * Return:
-C51 COMPILER V9.03   LINE_TIMER                                                            05/05/2015 16:28:52 PAGE 9   
+C51 COMPILER V9.03   LINE_TIMER                                                            05/06/2015 05:27:46 PAGE 9   
 
  486          *  Present compare value.
  487          *
@@ -574,7 +574,7 @@ line level    source
                   /* Clear the Current Setting */
                   Line_Timer_CONTROL &= ~Line_Timer_CTRL_CAP_MODE_MASK;
               
-C51 COMPILER V9.03   LINE_TIMER                                                            05/05/2015 16:28:52 PAGE 10  
+C51 COMPILER V9.03   LINE_TIMER                                                            05/06/2015 05:27:46 PAGE 10  
 
                   /* Write The New Setting */
                   Line_Timer_CONTROL |= captureMode;
@@ -638,7 +638,7 @@ line level    source
               void Line_Timer_EnableTrigger(void) 
               {
                   #if (!Line_Timer_ControlRegRemoved)   /* Remove assignment if control register is removed */
-C51 COMPILER V9.03   LINE_TIMER                                                            05/05/2015 16:28:52 PAGE 11  
+C51 COMPILER V9.03   LINE_TIMER                                                            05/06/2015 05:27:46 PAGE 11  
 
                       Line_Timer_CONTROL |= Line_Timer_CTRL_TRIG_EN;
                   #endif /* Remove code section if control register is not used */
@@ -702,7 +702,7 @@ line level    source
  669          #endif /* Remove API if control register is removed */
  670          #endif /* Line_Timer_InterruptOnCaptureCount */
  671          
-C51 COMPILER V9.03   LINE_TIMER                                                            05/05/2015 16:28:52 PAGE 12  
+C51 COMPILER V9.03   LINE_TIMER                                                            05/06/2015 05:27:46 PAGE 12  
 
  672          
  673          #if (Line_Timer_UsingHWCaptureCounter)
@@ -766,7 +766,7 @@ line level    source
  731          *
  732          *******************************************************************************/
  733          void Line_Timer_ClearFIFO(void) 
-C51 COMPILER V9.03   LINE_TIMER                                                            05/05/2015 16:28:52 PAGE 13  
+C51 COMPILER V9.03   LINE_TIMER                                                            05/06/2015 05:27:46 PAGE 13  
 
  734          {
  735   1          while(Line_Timer_ReadStatusRegister() & Line_Timer_STATUS_FIFONEMP)
@@ -779,7 +779,7 @@ line level    source
  742          
  743          
  744          /* [] END OF FILE */
-C51 COMPILER V9.03   LINE_TIMER                                                            05/05/2015 16:28:52 PAGE 14  
+C51 COMPILER V9.03   LINE_TIMER                                                            05/06/2015 05:27:46 PAGE 14  
 
 ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
@@ -843,7 +843,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
              ; FUNCTION Line_Timer_Enable (END)
 
              ; FUNCTION Line_Timer_Start (BEGIN)
-C51 COMPILER V9.03   LINE_TIMER                                                            05/05/2015 16:28:52 PAGE 15  
+C51 COMPILER V9.03   LINE_TIMER                                                            05/06/2015 05:27:46 PAGE 15  
 
                                            ; SOURCE LINE # 214
                                            ; SOURCE LINE # 215
@@ -907,7 +907,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 304
 0000 906400            MOV     DPTR,#06400H
 0003 E0                MOVX    A,@DPTR
-C51 COMPILER V9.03   LINE_TIMER                                                            05/05/2015 16:28:52 PAGE 16  
+C51 COMPILER V9.03   LINE_TIMER                                                            05/06/2015 05:27:46 PAGE 16  
 
 0004 FF                MOV     R7,A
                                            ; SOURCE LINE # 306
@@ -971,7 +971,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
              ; FUNCTION _Line_Timer_WritePeriod (BEGIN)
                                            ; SOURCE LINE # 413
 0000 900000      R     MOV     DPTR,#period
-C51 COMPILER V9.03   LINE_TIMER                                                            05/05/2015 16:28:52 PAGE 17  
+C51 COMPILER V9.03   LINE_TIMER                                                            05/06/2015 05:27:46 PAGE 17  
 
 0003 EE                MOV     A,R6
 0004 F0                MOVX    @DPTR,A
@@ -1035,7 +1035,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 489
                                            ; SOURCE LINE # 490
                                            ; SOURCE LINE # 495
-C51 COMPILER V9.03   LINE_TIMER                                                            05/05/2015 16:28:52 PAGE 18  
+C51 COMPILER V9.03   LINE_TIMER                                                            05/06/2015 05:27:46 PAGE 18  
 
 0000 906400            MOV     DPTR,#06400H
 0003 E0                MOVX    A,@DPTR
@@ -1099,7 +1099,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 733
                                            ; SOURCE LINE # 734
 0000         ?C0017:
-C51 COMPILER V9.03   LINE_TIMER                                                            05/05/2015 16:28:52 PAGE 19  
+C51 COMPILER V9.03   LINE_TIMER                                                            05/06/2015 05:27:46 PAGE 19  
 
                                            ; SOURCE LINE # 735
 0000 120000      R     LCALL   Line_Timer_ReadStatusRegister

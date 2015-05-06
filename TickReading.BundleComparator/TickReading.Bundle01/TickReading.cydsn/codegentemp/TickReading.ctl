@@ -1,6 +1,6 @@
 -- ======================================================================
 -- TickReading.ctl generated from TickReading
--- 05/05/2015 at 16:23
+-- 05/06/2015 at 05:27
 -- This file is auto generated. ANY EDITS YOU MAKE MAY BE LOST WHEN THIS FILE IS REGENERATED!!!
 -- ======================================================================
 

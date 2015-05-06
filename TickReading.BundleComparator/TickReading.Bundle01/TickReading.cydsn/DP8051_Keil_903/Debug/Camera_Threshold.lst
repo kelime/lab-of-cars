@@ -1,4 +1,4 @@
-C51 COMPILER V9.03   CAMERA_THRESHOLD                                                      05/05/2015 16:28:53 PAGE 1   
+C51 COMPILER V9.03   CAMERA_THRESHOLD                                                      05/06/2015 05:27:46 PAGE 1   
 
 
 C51 COMPILER V9.03, COMPILATION OF MODULE CAMERA_THRESHOLD
@@ -62,7 +62,7 @@ line level    source
   51          * Theory:
   52          *
   53          * Side Effects:
-C51 COMPILER V9.03   CAMERA_THRESHOLD                                                      05/05/2015 16:28:53 PAGE 2   
+C51 COMPILER V9.03   CAMERA_THRESHOLD                                                      05/06/2015 05:27:46 PAGE 2   
 
   54          *
   55          *******************************************************************************/
@@ -126,7 +126,7 @@ line level    source
                       }
                   #endif /* CY_PSOC5A */
  115   1      }
-C51 COMPILER V9.03   CAMERA_THRESHOLD                                                      05/05/2015 16:28:53 PAGE 3   
+C51 COMPILER V9.03   CAMERA_THRESHOLD                                                      05/06/2015 05:27:46 PAGE 3   
 
  116          
  117          
@@ -190,7 +190,7 @@ line level    source
  175   1          /* Disble power to DAC */
  176   1          Camera_Threshold_PWRMGR &= ~Camera_Threshold_ACT_PWR_EN;
  177   1          Camera_Threshold_STBY_PWRMGR &= ~Camera_Threshold_STBY_PWR_EN;
-C51 COMPILER V9.03   CAMERA_THRESHOLD                                                      05/05/2015 16:28:53 PAGE 4   
+C51 COMPILER V9.03   CAMERA_THRESHOLD                                                      05/06/2015 05:27:46 PAGE 4   
 
  178   1      
  179   1          /* This is a work around for PSoC5A  ,
@@ -254,7 +254,7 @@ line level    source
  237   1          Camera_Threshold_DacTrim();
  238   1      }
  239          
-C51 COMPILER V9.03   CAMERA_THRESHOLD                                                      05/05/2015 16:28:53 PAGE 5   
+C51 COMPILER V9.03   CAMERA_THRESHOLD                                                      05/06/2015 05:27:46 PAGE 5   
 
  240          
  241          /*******************************************************************************
@@ -318,12 +318,12 @@ line level    source
              -FFSET;
  299   1          Camera_Threshold_TR = CY_GET_XTND_REG8((uint8 *)(Camera_Threshold_DAC_TRIM_BASE + mode));
  300   1      }
-C51 COMPILER V9.03   CAMERA_THRESHOLD                                                      05/05/2015 16:28:53 PAGE 6   
+C51 COMPILER V9.03   CAMERA_THRESHOLD                                                      05/06/2015 05:27:46 PAGE 6   
 
  301          
  302          
  303          /* [] END OF FILE */
-C51 COMPILER V9.03   CAMERA_THRESHOLD                                                      05/05/2015 16:28:53 PAGE 7   
+C51 COMPILER V9.03   CAMERA_THRESHOLD                                                      05/06/2015 05:27:46 PAGE 7   
 
 ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
@@ -332,7 +332,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 56
                                            ; SOURCE LINE # 57
                                            ; SOURCE LINE # 58
-0000 905820            MOV     DPTR,#05820H
+0000 905828            MOV     DPTR,#05828H
 0003 E4                CLR     A
 0004 F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 61
@@ -342,7 +342,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0005         ?C0001:
                                            ; SOURCE LINE # 66
                                            ; SOURCE LINE # 67
-0005 905821            MOV     DPTR,#05821H
+0005 905829            MOV     DPTR,#05829H
 0008 E4                CLR     A
 0009 F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 68
@@ -369,7 +369,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0003 E0                MOVX    A,@DPTR
 0004 FF                MOV     R7,A
 0005 EF                MOV     A,R7
-0006 4401              ORL     A,#01H
+0006 4404              ORL     A,#04H
 0008 FF                MOV     R7,A
 0009 EF                MOV     A,R7
 000A F0                MOVX    @DPTR,A
@@ -378,7 +378,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 000E E0                MOVX    A,@DPTR
 000F FF                MOV     R7,A
 0010 EF                MOV     A,R7
-0011 4401              ORL     A,#01H
+0011 4404              ORL     A,#04H
 0013 FF                MOV     R7,A
 0014 EF                MOV     A,R7
 0015 F0                MOVX    @DPTR,A
@@ -387,7 +387,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
              ; FUNCTION Camera_Threshold_Enable (END)
 
              ; FUNCTION Camera_Threshold_Start (BEGIN)
-C51 COMPILER V9.03   CAMERA_THRESHOLD                                                      05/05/2015 16:28:53 PAGE 8   
+C51 COMPILER V9.03   CAMERA_THRESHOLD                                                      05/06/2015 05:27:46 PAGE 8   
 
                                            ; SOURCE LINE # 138
                                            ; SOURCE LINE # 139
@@ -423,7 +423,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0003 E0                MOVX    A,@DPTR
 0004 FF                MOV     R7,A
 0005 EF                MOV     A,R7
-0006 54FE              ANL     A,#0FEH
+0006 54FB              ANL     A,#0FBH
 0008 FF                MOV     R7,A
 0009 EF                MOV     A,R7
 000A F0                MOVX    @DPTR,A
@@ -432,7 +432,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 000E E0                MOVX    A,@DPTR
 000F FF                MOV     R7,A
 0010 EF                MOV     A,R7
-0011 54FE              ANL     A,#0FEH
+0011 54FB              ANL     A,#0FBH
 0013 FF                MOV     R7,A
 0014 EF                MOV     A,R7
 0015 F0                MOVX    @DPTR,A
@@ -447,18 +447,18 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0004 F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 208
                                            ; SOURCE LINE # 210
-0005 905820            MOV     DPTR,#05820H
+0005 905828            MOV     DPTR,#05828H
 0008 E0                MOVX    A,@DPTR
 0009 FF                MOV     R7,A
 000A EF                MOV     A,R7
-C51 COMPILER V9.03   CAMERA_THRESHOLD                                                      05/05/2015 16:28:53 PAGE 9   
+C51 COMPILER V9.03   CAMERA_THRESHOLD                                                      05/06/2015 05:27:46 PAGE 9   
 
 000B 54FD              ANL     A,#0FDH
 000D FF                MOV     R7,A
 000E EF                MOV     A,R7
 000F F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 211
-0010 905820            MOV     DPTR,#05820H
+0010 905828            MOV     DPTR,#05828H
 0013 C083              PUSH    DPH
 0015 C082              PUSH    DPL
 0017 E0                MOVX    A,@DPTR
@@ -487,7 +487,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0004 F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 234
                                            ; SOURCE LINE # 235
-0005 905820            MOV     DPTR,#05820H
+0005 905828            MOV     DPTR,#05828H
 0008 E0                MOVX    A,@DPTR
 0009 FF                MOV     R7,A
 000A EF                MOV     A,R7
@@ -496,7 +496,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 000E EF                MOV     A,R7
 000F F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 236
-0010 905820            MOV     DPTR,#05820H
+0010 905828            MOV     DPTR,#05828H
 0013 C083              PUSH    DPH
 0015 C082              PUSH    DPL
 0017 E0                MOVX    A,@DPTR
@@ -515,7 +515,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0029 EF                MOV     A,R7
 002A F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 237
-C51 COMPILER V9.03   CAMERA_THRESHOLD                                                      05/05/2015 16:28:53 PAGE 10  
+C51 COMPILER V9.03   CAMERA_THRESHOLD                                                      05/06/2015 05:27:46 PAGE 10  
 
 002B 120000      R     LCALL   Camera_Threshold_DacTrim
                                            ; SOURCE LINE # 238
@@ -532,7 +532,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0005 900000      R     MOV     DPTR,#value
 0008 E0                MOVX    A,@DPTR
 0009 FF                MOV     R7,A
-000A 905B80            MOV     DPTR,#05B80H
+000A 905B82            MOV     DPTR,#05B82H
 000D EF                MOV     A,R7
 000E F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 273
@@ -543,7 +543,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 294
                                            ; SOURCE LINE # 295
                                            ; SOURCE LINE # 298
-0000 905820            MOV     DPTR,#05820H
+0000 905828            MOV     DPTR,#05828H
 0003 E0                MOVX    A,@DPTR
 0004 FF                MOV     R7,A
 0005 EF                MOV     A,R7
@@ -575,11 +575,11 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0026 FD                MOV     R5,A
 0027 FE                MOV     R6,A
 0028 EF                MOV     A,R7
-0029 2420              ADD     A,#020H
+0029 2428              ADD     A,#028H
 002B FF                MOV     R7,A
 002C EE                MOV     A,R6
 002D 3401              ADDC    A,#01H
-C51 COMPILER V9.03   CAMERA_THRESHOLD                                                      05/05/2015 16:28:53 PAGE 11  
+C51 COMPILER V9.03   CAMERA_THRESHOLD                                                      05/06/2015 05:27:46 PAGE 11  
 
 002F FE                MOV     R6,A
 0030 ED                MOV     A,R5
@@ -592,7 +592,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 003A AA06              MOV     R2,AR6
 003C AB05              MOV     R3,AR5
 003E 120000      E     LCALL   _cyread8
-0041 904608            MOV     DPTR,#04608H
+0041 90460A            MOV     DPTR,#0460AH
 0044 EF                MOV     A,R7
 0045 F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 300

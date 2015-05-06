@@ -1,6 +1,6 @@
 // ======================================================================
 // TickReading.v generated from TopDesign.cysch
-// 05/05/2015 at 16:23
+// 05/06/2015 at 05:27
 // This file is auto generated. ANY EDITS YOU MAKE MAY BE LOST WHEN THIS FILE IS REGENERATED!!!
 // ======================================================================
 
@@ -955,7 +955,7 @@ module Counter_v2_20_11 (
 
 endmodule
 
-// VDAC8_v1_80(Data_Source=0, Initial_Value=200, Strobe_Mode=0, VDAC_Range=0, VDAC_Speed=0, Voltage=800, CY_COMPONENT_NAME=VDAC8_v1_80, CY_CONTROL_FILE=<:default:>, CY_FITTER_NAME=Wall_Threshold, CY_INSTANCE_SHORT_NAME=Wall_Threshold, CY_MAJOR_VERSION=1, CY_MINOR_VERSION=80, CY_REMOVE=false, CY_SUPPRESS_API_GEN=false, CY_VERSION=cydsfit No Version Information Found, INSTANCE_NAME=Wall_Threshold, )
+// VDAC8_v1_80(Data_Source=0, Initial_Value=250, Strobe_Mode=0, VDAC_Range=0, VDAC_Speed=0, Voltage=1000, CY_COMPONENT_NAME=VDAC8_v1_80, CY_CONTROL_FILE=<:default:>, CY_FITTER_NAME=Wall_Threshold, CY_INSTANCE_SHORT_NAME=Wall_Threshold, CY_MAJOR_VERSION=1, CY_MINOR_VERSION=80, CY_REMOVE=false, CY_SUPPRESS_API_GEN=false, CY_VERSION=cydsfit No Version Information Found, INSTANCE_NAME=Wall_Threshold, )
 module VDAC8_v1_80_12 (
     strobe,
     data,
@@ -966,7 +966,7 @@ module VDAC8_v1_80_12 (
     electrical  vOut;
 
     parameter Data_Source = 0;
-    parameter Initial_Value = 200;
+    parameter Initial_Value = 250;
     parameter Strobe_Mode = 0;
 
     electrical  Net_77;
@@ -1512,6 +1512,7 @@ module top ;
           wire  Net_2286;
     electrical  Net_2285;
           wire  Net_2280;
+    electrical  Net_2296;
           wire  Net_2253;
           wire  Net_2262;
           wire  Net_2261;
@@ -2473,7 +2474,7 @@ module top ;
         .data(8'b00000000),
         .vOut(Net_2284));
     defparam Wall_Threshold.Data_Source = 0;
-    defparam Wall_Threshold.Initial_Value = 200;
+    defparam Wall_Threshold.Initial_Value = 250;
     defparam Wall_Threshold.Strobe_Mode = 0;
 
     I2C_v3_10_13 I2C_Pressure (
@@ -2706,7 +2707,7 @@ module top ;
 	assign tmpOE__side_rangefinder_net = (`CYDEV_CHIP_MEMBER_USED == `CYDEV_CHIP_MEMBER_3A && `CYDEV_CHIP_REVISION_USED < `CYDEV_CHIP_REVISION_3A_ES3) ? ~{1'b1} : {1'b1};
 
     Comp_v1_90_15 Side_Rangefinder_Comparator (
-        .Vplus(Net_2266),
+        .Vplus(Net_2296),
         .CmpOut(Net_2271),
         .Vminus(Net_2284),
         .clock(Net_2273));

@@ -1,4 +1,4 @@
-C51 COMPILER V9.03   WAIT_COUNTER                                                          05/05/2015 16:28:57 PAGE 1   
+C51 COMPILER V9.03   WAIT_COUNTER                                                          05/06/2015 05:27:50 PAGE 1   
 
 
 C51 COMPILER V9.03, COMPILATION OF MODULE WAIT_COUNTER
@@ -62,7 +62,7 @@ line level    source
   51   1                  
   52   1                  /* Clear the mode bits for continuous run mode */
   53   1                  #if (CY_PSOC5A)
-C51 COMPILER V9.03   WAIT_COUNTER                                                          05/05/2015 16:28:57 PAGE 2   
+C51 COMPILER V9.03   WAIT_COUNTER                                                          05/06/2015 05:27:50 PAGE 2   
 
                               Wait_Counter_CONTROL2 &= ~Wait_Counter_CTRL_MODE_MASK;
                           #endif /* (CY_PSOC5A) */
@@ -126,7 +126,7 @@ line level    source
                           /* Exit Critical Region*/
                           CyExitCriticalSection(Wait_Counter_interruptState);
                           
-C51 COMPILER V9.03   WAIT_COUNTER                                                          05/05/2015 16:28:57 PAGE 3   
+C51 COMPILER V9.03   WAIT_COUNTER                                                          05/06/2015 05:27:50 PAGE 3   
 
                       #endif /* (!Wait_Counter_UsingFixedFunction) */
  117   1      }
@@ -190,7 +190,7 @@ line level    source
  175   1          {
  176   2              Wait_Counter_Init();
  177   2              
-C51 COMPILER V9.03   WAIT_COUNTER                                                          05/05/2015 16:28:57 PAGE 4   
+C51 COMPILER V9.03   WAIT_COUNTER                                                          05/06/2015 05:27:50 PAGE 4   
 
  178   2              Wait_Counter_initVar = 1u; /* Clear this bit for Initialization */        
  179   2          }
@@ -254,7 +254,7 @@ line level    source
  237          /*******************************************************************************
  238          * Function Name: Wait_Counter_ReadStatusRegister
  239          ********************************************************************************
-C51 COMPILER V9.03   WAIT_COUNTER                                                          05/05/2015 16:28:57 PAGE 5   
+C51 COMPILER V9.03   WAIT_COUNTER                                                          05/06/2015 05:27:50 PAGE 5   
 
  240          * Summary:
  241          *   Reads the status register and returns it's state. This function should use
@@ -318,7 +318,7 @@ line level    source
  299          {
  300   1          Wait_Counter_CONTROL = control;
  301   1      }
-C51 COMPILER V9.03   WAIT_COUNTER                                                          05/05/2015 16:28:57 PAGE 6   
+C51 COMPILER V9.03   WAIT_COUNTER                                                          05/06/2015 05:27:50 PAGE 6   
 
  302          
  303          #endif  /* (!Wait_Counter_ControlRegRemoved) */
@@ -382,7 +382,7 @@ line level    source
  361          
  362          
  363          /*******************************************************************************
-C51 COMPILER V9.03   WAIT_COUNTER                                                          05/05/2015 16:28:57 PAGE 7   
+C51 COMPILER V9.03   WAIT_COUNTER                                                          05/06/2015 05:27:50 PAGE 7   
 
  364          * Function Name: Wait_Counter_ReadCapture
  365          ********************************************************************************
@@ -446,7 +446,7 @@ line level    source
  423   1      }
  424          
  425          
-C51 COMPILER V9.03   WAIT_COUNTER                                                          05/05/2015 16:28:57 PAGE 8   
+C51 COMPILER V9.03   WAIT_COUNTER                                                          05/06/2015 05:27:50 PAGE 8   
 
  426          #if (!Wait_Counter_UsingFixedFunction)
               /*******************************************************************************
@@ -510,7 +510,7 @@ line level    source
               *
               *******************************************************************************/
               void Wait_Counter_SetCompareMode(uint8 compareMode) 
-C51 COMPILER V9.03   WAIT_COUNTER                                                          05/05/2015 16:28:57 PAGE 9   
+C51 COMPILER V9.03   WAIT_COUNTER                                                          05/06/2015 05:27:50 PAGE 9   
 
               {
                   /* Clear the compare mode bits in the control register */
@@ -574,7 +574,7 @@ line level    source
  547          
  548          /* [] END OF FILE */
  549          
-C51 COMPILER V9.03   WAIT_COUNTER                                                          05/05/2015 16:28:57 PAGE 10  
+C51 COMPILER V9.03   WAIT_COUNTER                                                          05/06/2015 05:27:50 PAGE 10  
 
 ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
@@ -638,7 +638,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0041 F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 73
 0042 904F17            MOV     DPTR,#04F17H
-C51 COMPILER V9.03   WAIT_COUNTER                                                          05/05/2015 16:28:57 PAGE 11  
+C51 COMPILER V9.03   WAIT_COUNTER                                                          05/06/2015 05:27:50 PAGE 11  
 
 0045 E0                MOVX    A,@DPTR
 0046 FF                MOV     R7,A
@@ -702,7 +702,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 001F EF                MOV     A,R7
 0020 F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 152
-C51 COMPILER V9.03   WAIT_COUNTER                                                          05/05/2015 16:28:57 PAGE 12  
+C51 COMPILER V9.03   WAIT_COUNTER                                                          05/06/2015 05:27:50 PAGE 12  
 
 0021 22                RET     
              ; FUNCTION Wait_Counter_Enable (END)
@@ -766,7 +766,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
              ; FUNCTION Wait_Counter_Stop (END)
 
              ; FUNCTION _Wait_Counter_SetInterruptMode (BEGIN)
-C51 COMPILER V9.03   WAIT_COUNTER                                                          05/05/2015 16:28:57 PAGE 13  
+C51 COMPILER V9.03   WAIT_COUNTER                                                          05/06/2015 05:27:50 PAGE 13  
 
                                            ; SOURCE LINE # 231
 0000 900000      R     MOV     DPTR,#interruptsMask
@@ -830,7 +830,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0000 900000      R     MOV     DPTR,#counter
 0003 EE                MOV     A,R6
 0004 F0                MOVX    @DPTR,A
-C51 COMPILER V9.03   WAIT_COUNTER                                                          05/05/2015 16:28:57 PAGE 14  
+C51 COMPILER V9.03   WAIT_COUNTER                                                          05/06/2015 05:27:50 PAGE 14  
 
 0005 A3                INC     DPTR
 0006 EF                MOV     A,R7
@@ -894,7 +894,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0053 FF                MOV     R7,A
 0054 EF                MOV     A,R7
 0055 54FD              ANL     A,#0FDH
-C51 COMPILER V9.03   WAIT_COUNTER                                                          05/05/2015 16:28:57 PAGE 15  
+C51 COMPILER V9.03   WAIT_COUNTER                                                          05/06/2015 05:27:50 PAGE 15  
 
 0057 FF                MOV     R7,A
 0058 EF                MOV     A,R7
@@ -958,7 +958,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
              ; FUNCTION _Wait_Counter_WritePeriod (END)
 
              ; FUNCTION Wait_Counter_ReadPeriod (BEGIN)
-C51 COMPILER V9.03   WAIT_COUNTER                                                          05/05/2015 16:28:57 PAGE 16  
+C51 COMPILER V9.03   WAIT_COUNTER                                                          05/06/2015 05:27:50 PAGE 16  
 
                                            ; SOURCE LINE # 420
                                            ; SOURCE LINE # 421

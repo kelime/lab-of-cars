@@ -60,13 +60,12 @@ static uint16 waiting = 2;
 static uint16 in_elevator = 3;
 static uint16 move_backward = 4;
 static uint16 turning = 5;
-static uint16 follow_line = 6;
+static uint16 forward_to_wall = 6; // go forward a little bit so it will see the wall
+static uint16 follow_line = 7;
 static uint16 done = 99;
 
-//static uint16 testAltimeter = 33;
-
 // Set initial state
-static uint16 state = 33;
+static uint16 state = 7;
 
 // are you going into the Elevator?
 static bool isGoingElevator = false;
@@ -85,11 +84,6 @@ static bool isGoingElevator = false;
 
 CY_ISR(tock)
 { 
-    /* debugging LCD display strings */
-    // convert values to string for higher precision when displaying speed & ticks per second
-    // char speedstr[16];
-    // char errorstr[16];
-    // char varstr[8];
     float prev;
     
     // counts the number of ticks to determine how far the car has traveled
@@ -118,35 +112,18 @@ CY_ISR(tock)
     }
     // limit the PWM duty cycle to 100%
     else if (open_loop_guess + var > (clock_period - 1.0)) 
-    {
-        duty = (uint16) (clock_period - 1.0);
-    }
+    {   duty = (uint16) (clock_period - 1.0);   }
     
     // limit the PWM duty cycle to 0%
     else if (open_loop_guess + var < 0.0)
-    {
-        duty = 0;
-    }
+    {   duty = 0;   }
     // Adjust the duty cycle by the amount calculated through the PI process
     else 
-    {
-        duty = (uint16) (open_loop_guess + var);
-    }
+    {   duty = (uint16) (open_loop_guess + var);    }
     
-    // Display the error and PI correction value
- //   LCD_Position(0,0);
-//    sprintf(errorstr, "E:%+1.3f D:%1.2f", error, (float) (duty)*100/clock_period); // * 100 to convert to percentage
-//    LCD_PrintString(errorstr);
-//    LCD_Position(1,0);
-//    sprintf(varstr, "V:%+1.1f", var);
-//    LCD_PrintString(varstr);
-
-    LCD_Position(0,6);
+    LCD_Position(1,13);
     LCD_PrintNumber(state);
-        
-   // LCD_Position(0,5);
-   // LCD_PrintNumber(duty);
-    
+           
  /*   LCD_Position(0,10);
     if(isGoingElevator) {
         LCD_PrintString("true");
@@ -154,13 +131,10 @@ CY_ISR(tock)
         LCD_PrintString("false");
     }
 */
-    // meh, you can read the value of the ADC while in the tick interrupt.
     // 1 tick is ~1.545 inches traveled!
-    // should use the voltage value of the rangefinder instead of the ticks -- gives you a ~consistent
-    // stopping point, and can start from closer or further back from the elevator
     if (number_of_ticks >= 28 && state == move_forward) {
+       
         // stop car!
-        
         uint8 control = 0; 
         uint32 wait_milliseconds = 1000;
         
@@ -188,7 +162,7 @@ if (number_of_ticks >= 105 && state == move_backward) {
         LCD_Position(1,1);
         LCD_PrintString("leep"); // this is ridiculous i am sorry
         
-        // turn left [as far as the wheels can go]
+        // turn left 
         PWM_Steering_WriteCompare(100);
         
         // start car again
@@ -207,16 +181,28 @@ if (number_of_ticks >= 105 && state == move_backward) {
         Drive_Control_Reg_Write(control);
         
         number_of_ticks = 0;
-        state = follow_line;
+        state = forward_to_wall;
         
-        state = 5; // 5 is turning. staying in state.
+       // state = 5; // 5 is turning. staying in state.
     }
     
-    if (number_of_ticks >= 100 && state == follow_line)
-    {
-        uint8 control = 0;
-        Drive_Control_Reg_Write(control);
+    if (number_of_ticks >= 15 && state == forward_to_wall){
+        state = follow_line;
     }
+        
+   // transpose reading of ADC data to tick   
+   // if (number_of_ticks >= 100 && state == follow_line)
+   // {
+   //     uint8 control = 0;
+   //     Drive_Control_Reg_Write(control);
+   // }
+   
+   // transpose reading of ADC data to tick  
+      
+  //  if (state == follow_line)
+   // {
+                
+   // }
     
     // duty cycle is (compare value / period val) * 100. Duty cycle is defined by compare value.
     PWM_WriteCompare(duty); // for CMP (LED input) to be true, counted value needs to be less than the compare value
@@ -371,39 +357,67 @@ CY_ISR(elevator_leaving) {
 
 CY_ISR(pixy)
 {
-    if (state == follow_line){
+ /*   if (state == follow_line){
         uint8 control = 0;
         Drive_Control_Reg_Write(control);
         state = done;
     }
-}
+*/}
     /*==================================================
     // ADC Testing / Debugging Code. Stay Commented Out
     //==================================================*/
     
+    float error_sum_range = 0;
+    float prev_error_range = 0;
+    float p_range = 30;
+    float i_range = 0;
+    float d_range = 0;
+    float open_loop_volts = 1.2; // set point voltage. distance of 1.2V
+    
  CY_ISR(ADC_Side_Rangefinder_ISR1){
 
     int32 result;
-    float resultInVolts;    
-    char resultstr[16];
+    float resultInVolts; 
     
+    float error_range;
+    float steering_range;
+    char resultstr[16];
+    char pidstr[16];
+    uint8 control;    
+        
     LCD_Position(1,14);    
     LCD_PrintString("(:");
        
-    LCD_Position(0,7);    
-    LCD_PrintString("hai");
-    if (state == 33) {  
-        
-    // write value to LCD screen
-    LCD_Position(0,7);    
-    LCD_PrintString("hey");
+    if (state == follow_line) {    
+   
+    // do conversion
+    result = ADC_Side_Rangefinder_GetResult32(); 
     
-    result = ADC_Side_Rangefinder_GetResult32();  
-    //LCD_PrintNumber(result);
+    resultInVolts = ADC_Side_Rangefinder_CountsTo_Volts(result); // you've got volts!
     
-    resultInVolts = ADC_Side_Rangefinder_CountsTo_Volts(result);
+    error_range = resultInVolts - open_loop_volts; // difference between what the ADC reads and 1.2V
+    
+    // constantssss
+    
+    error_sum_range = error_sum_range + error_range;
+    d_range = steering_error - prev_error_range;
+    prev_error_range = error_range;
+    
+    steering_range = 152 + p_range * error_range; //+ i_range * error_sum_range + d_range * prev_error_range; 
         
+    // stop spazzing out! limit the values to only what the PWM can write to?  
+    if (steering_range < 100)
+    { steering_range = 100;}
+    
+    if (steering_range > 200)
+    { steering_range = 200;}
     // Display the lines per frame
+    
+    LCD_Position(0,0);
+    sprintf(pidstr, "err: %1.4f     ", steering_range);
+    LCD_PrintString(pidstr);
+    
+    PWM_Steering_WriteCompare(steering_range);
    
     LCD_Position(1,0);
     sprintf(resultstr, "ADC: %1.4f", resultInVolts); // uglyy
@@ -532,8 +546,8 @@ void main()
     
     // start ADC
     Wall_Threshold_Start();
-  //  ISR_Side_Rangefinder_Start();
-  //  ISR_Side_Rangefinder_SetVector(isr_side_rangefinder);
+  //  ISR_Side_Rangefinder_Start();                          // Now thrown within the ADC conversion interrupt. 
+  //  ISR_Side_Rangefinder_SetVector(isr_side_rangefinder); // this is for visual debugging. change once tuned.
     ADC_Side_Rangefinder_Start();
     ADC_Side_Rangefinder_IRQ_Enable(); 
     ADC_Side_Rangefinder_StartConvert(); 

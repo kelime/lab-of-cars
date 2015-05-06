@@ -2,7 +2,7 @@
 --	Conversion of TickReading.v to vh2:
 --
 --	Cypress Semiconductor - WARP Version 6.3 IR 41
---	Tue May 05 16:23:52 2015
+--	Wed May 06 05:27:25 2015
 --
 
 USE cypress.cypress.all;
@@ -1771,6 +1771,7 @@ TERMINAL Net_2266 : bit;
 SIGNAL tmpIO_0__side_rangefinder_net_0 : bit;
 TERMINAL tmpSIOVREF__side_rangefinder_net_0 : bit;
 SIGNAL tmpINTERRUPT_0__side_rangefinder_net_0 : bit;
+TERMINAL Net_2296 : bit;
 SIGNAL Net_2273 : bit;
 SIGNAL \Side_Rangefinder_Comparator:Net_1\ : bit;
 SIGNAL Net_2271 : bit;
@@ -3940,7 +3941,7 @@ side_rangefinder:cy_psoc3_pins_v1_10
 		interrupt=>tmpINTERRUPT_0__side_rangefinder_net_0);
 \Side_Rangefinder_Comparator:ctComp\:cy_psoc3_ctcomp_v1_0
 	GENERIC MAP(cy_registers=>"")
-	PORT MAP(vplus=>Net_2266,
+	PORT MAP(vplus=>Net_2296,
 		vminus=>Net_2284,
 		clock=>Net_2273,
 		clk_udb=>Net_2273,

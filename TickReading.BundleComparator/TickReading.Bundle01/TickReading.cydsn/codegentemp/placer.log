@@ -6,7 +6,7 @@
 
 #Build Date:         Jun 19 2012 09:55:54
 
-#File Generated:     May 5 2015 16:23:59
+#File Generated:     May 6 2015 05:27:29
 
 #Purpose:            
 
@@ -124,7 +124,7 @@ Clock: Wait_Clock           | Frequency: N/A       | Target:   0.0 MHz
 ======================================================================
                      End of Clock Summary
 ######################################################################
-D2088: Phase 7, elapsed time : 1.4 (sec)
+D2088: Phase 7, elapsed time : 0.8 (sec)
 
 Final Design Statistics
     Number of Combinational MCs 	:	20
@@ -179,5 +179,5 @@ D2088: Phase 8, elapsed time : 0.0 (sec)
 
 D2054: Placement of the design completed successfully
 
-I2076: Total run-time: 2.9 sec.
+I2076: Total run-time: 1.7 sec.
 

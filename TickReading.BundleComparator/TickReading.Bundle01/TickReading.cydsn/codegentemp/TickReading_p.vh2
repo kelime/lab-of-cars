@@ -1,5 +1,5 @@
 -- Project:   TickReading
--- Generated: 05/05/2015 16:23:59
+-- Generated: 05/06/2015 05:27:29
 -- 
 
 ENTITY TickReading IS
@@ -324,10 +324,10 @@ ARCHITECTURE __DEFAULT__ OF TickReading IS
     ATTRIBUTE Location OF Vertical_Sync_Frame(0) : LABEL IS "P4[6]";
     ATTRIBUTE Location OF \ADC_Side_Rangefinder:DSM4\ : LABEL IS "F(DSM,0)";
     ATTRIBUTE Location OF \Camera_Comp:ctComp\ : LABEL IS "F(Comparator,2)";
-    ATTRIBUTE Location OF \Camera_Threshold:viDAC8\ : LABEL IS "F(VIDAC,0)";
+    ATTRIBUTE Location OF \Camera_Threshold:viDAC8\ : LABEL IS "F(VIDAC,2)";
     ATTRIBUTE lib_model OF \Drive_Control_Reg:Sync:ctrl_reg\ : LABEL IS "controlcell1";
-    ATTRIBUTE Location OF \Elevator_Comparator:ctComp\ : LABEL IS "F(Comparator,1)";
-    ATTRIBUTE Location OF \Elevator_Comparator_1:ctComp\ : LABEL IS "F(Comparator,3)";
+    ATTRIBUTE Location OF \Elevator_Comparator:ctComp\ : LABEL IS "F(Comparator,3)";
+    ATTRIBUTE Location OF \Elevator_Comparator_1:ctComp\ : LABEL IS "F(Comparator,1)";
     ATTRIBUTE Location OF \Elevator_Threshold:viDAC8\ : LABEL IS "F(VIDAC,3)";
     ATTRIBUTE lib_model OF \Hall_Counter:CounterUDB:count_enable\ : LABEL IS "macrocell12";
     ATTRIBUTE lib_model OF \Hall_Counter:CounterUDB:count_stored_i\ : LABEL IS "macrocell13";
@@ -388,7 +388,7 @@ ARCHITECTURE __DEFAULT__ OF TickReading IS
     ATTRIBUTE lib_model OF \PWM_Steering:PWMUDB:status_0\ : LABEL IS "macrocell40";
     ATTRIBUTE lib_model OF \PWM_Steering:PWMUDB:status_5\ : LABEL IS "macrocell41";
     ATTRIBUTE Location OF \Side_Rangefinder_Comparator:ctComp\ : LABEL IS "F(Comparator,0)";
-    ATTRIBUTE Location OF \Wall_Threshold:viDAC8\ : LABEL IS "F(VIDAC,2)";
+    ATTRIBUTE Location OF \Wall_Threshold:viDAC8\ : LABEL IS "F(VIDAC,0)";
     ATTRIBUTE lib_model OF __ONE__ : LABEL IS "macrocell42";
     ATTRIBUTE Location OF drive_output_1(0) : LABEL IS "P5[6]";
     ATTRIBUTE Location OF drive_output_2(0) : LABEL IS "P5[7]";

@@ -1,4 +1,4 @@
-C51 COMPILER V9.03   ELEVATOR_COMPARATOR_1                                                 05/05/2015 16:28:56 PAGE 1   
+C51 COMPILER V9.03   ELEVATOR_COMPARATOR_1                                                 05/06/2015 05:27:50 PAGE 1   
 
 
 C51 COMPILER V9.03, COMPILATION OF MODULE ELEVATOR_COMPARATOR_1
@@ -62,7 +62,7 @@ line level    source
   51   1          /* Set default speed/power */
   52   1          Elevator_Comparator_1_SetSpeed(Elevator_Comparator_1_DEFAULT_SPEED);
   53   1      
-C51 COMPILER V9.03   ELEVATOR_COMPARATOR_1                                                 05/05/2015 16:28:56 PAGE 2   
+C51 COMPILER V9.03   ELEVATOR_COMPARATOR_1                                                 05/06/2015 05:27:50 PAGE 2   
 
   54   1          /* Set default Hysteresis */
   55   1          if ( Elevator_Comparator_1_DEFAULT_HYSTERESIS == 0u )
@@ -126,7 +126,7 @@ line level    source
  113   1          in prior to the modification in stop() API */
  114   1          #if (CY_PSOC5A)
                       if(Elevator_Comparator_1_restoreReg == 1u)
-C51 COMPILER V9.03   ELEVATOR_COMPARATOR_1                                                 05/05/2015 16:28:56 PAGE 3   
+C51 COMPILER V9.03   ELEVATOR_COMPARATOR_1                                                 05/06/2015 05:27:50 PAGE 3   
 
                       {
                           Elevator_Comparator_1_CR = Elevator_Comparator_1_lowPowerBackup.compCRReg;
@@ -190,7 +190,7 @@ line level    source
  175   1          /* Disable power to comparator */
  176   1          Elevator_Comparator_1_PWRMGR &= ~Elevator_Comparator_1_ACT_PWR_EN;
  177   1          Elevator_Comparator_1_STBY_PWRMGR &= ~Elevator_Comparator_1_STBY_PWR_EN;    
-C51 COMPILER V9.03   ELEVATOR_COMPARATOR_1                                                 05/05/2015 16:28:56 PAGE 4   
+C51 COMPILER V9.03   ELEVATOR_COMPARATOR_1                                                 05/06/2015 05:27:50 PAGE 4   
 
  178   1      
  179   1          #if (CY_PSOC5A)
@@ -254,7 +254,7 @@ line level    source
  237   2          }
  238   1      
  239   1      }
-C51 COMPILER V9.03   ELEVATOR_COMPARATOR_1                                                 05/05/2015 16:28:56 PAGE 5   
+C51 COMPILER V9.03   ELEVATOR_COMPARATOR_1                                                 05/06/2015 05:27:50 PAGE 5   
 
  240          
  241          
@@ -318,7 +318,7 @@ line level    source
  299   2              if ( cmpState != 0u )
  300   2              {
  301   3                  /* PSoC5A */
-C51 COMPILER V9.03   ELEVATOR_COMPARATOR_1                                                 05/05/2015 16:28:56 PAGE 6   
+C51 COMPILER V9.03   ELEVATOR_COMPARATOR_1                                                 05/06/2015 05:27:50 PAGE 6   
 
  302   3                  #if (CY_PSOC5A)
                               Elevator_Comparator_1_TR |= Elevator_Comparator_1_CMP_TRIM1_DIR;
@@ -382,7 +382,7 @@ line level    source
  361   3              }
  362   2              else
  363   2              {
-C51 COMPILER V9.03   ELEVATOR_COMPARATOR_1                                                 05/05/2015 16:28:56 PAGE 7   
+C51 COMPILER V9.03   ELEVATOR_COMPARATOR_1                                                 05/06/2015 05:27:50 PAGE 7   
 
  364   3                  /* PSoC5A */
  365   3                  #if (CY_PSOC5A)
@@ -446,7 +446,7 @@ line level    source
  423          *  first phase
  424          *  - if the first trim value was maxed out without a comparator output 
  425          *    transition, more offset will be added by adjusting the second trim value.
-C51 COMPILER V9.03   ELEVATOR_COMPARATOR_1                                                 05/05/2015 16:28:56 PAGE 8   
+C51 COMPILER V9.03   ELEVATOR_COMPARATOR_1                                                 05/06/2015 05:27:50 PAGE 8   
 
  426          *  - if the first trim phase resulted in a comparator output transition, the
  427          *    second trim value will serve as fine trim (in the opposite direction)to
@@ -510,7 +510,7 @@ line level    source
  485   1              Elevator_Comparator_1_TR0 = Elevator_Comparator_1_DEFAULT_CMP_TRIM;
  486   1              Elevator_Comparator_1_TR1 = Elevator_Comparator_1_DEFAULT_CMP_TRIM;
  487   1          #endif /* CY_PSOC3 || CY_PSOC5LP */
-C51 COMPILER V9.03   ELEVATOR_COMPARATOR_1                                                 05/05/2015 16:28:56 PAGE 9   
+C51 COMPILER V9.03   ELEVATOR_COMPARATOR_1                                                 05/06/2015 05:27:50 PAGE 9   
 
  488   1              
  489   1              /* Two phase trim - slow modes, one phase trim - for fast */ 
@@ -574,7 +574,7 @@ line level    source
  546   1              Elevator_Comparator_1_TR0 = (uint8) trimVal;
  547   1              
  548   1              /* Stores value in the Analog Comparator trim register for N-type load */
-C51 COMPILER V9.03   ELEVATOR_COMPARATOR_1                                                 05/05/2015 16:28:56 PAGE 10  
+C51 COMPILER V9.03   ELEVATOR_COMPARATOR_1                                                 05/06/2015 05:27:50 PAGE 10  
 
  549   1              Elevator_Comparator_1_TR1 = (uint8) (trimVal >> 8); 
  550   1          #endif /* CY_PSOC3 || CY_PSOC5LP */
@@ -629,7 +629,7 @@ line level    source
  599          
  600          
  601          /* [] END OF FILE */
-C51 COMPILER V9.03   ELEVATOR_COMPARATOR_1                                                 05/05/2015 16:28:56 PAGE 11  
+C51 COMPILER V9.03   ELEVATOR_COMPARATOR_1                                                 05/06/2015 05:27:50 PAGE 11  
 
 ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
@@ -643,7 +643,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 55
                                            ; SOURCE LINE # 56
                                            ; SOURCE LINE # 57
-0005 905843            MOV     DPTR,#05843H
+0005 905841            MOV     DPTR,#05841H
 0008 E0                MOVX    A,@DPTR
 0009 FF                MOV     R7,A
 000A EF                MOV     A,R7
@@ -659,7 +659,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 67
                                            ; SOURCE LINE # 68
                                            ; SOURCE LINE # 69
-0010 905843            MOV     DPTR,#05843H
+0010 905841            MOV     DPTR,#05841H
 0013 E0                MOVX    A,@DPTR
 0014 FF                MOV     R7,A
 0015 EF                MOV     A,R7
@@ -673,7 +673,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 74
 001B         ?C0004:
                                            ; SOURCE LINE # 78
-001B 905843            MOV     DPTR,#05843H
+001B 905841            MOV     DPTR,#05841H
 001E E0                MOVX    A,@DPTR
 001F FF                MOV     R7,A
 0020 EF                MOV     A,R7
@@ -682,7 +682,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0024 EF                MOV     A,R7
 0025 F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 81
-0026 905ADF            MOV     DPTR,#05ADFH
+0026 905ACF            MOV     DPTR,#05ACFH
 0029 E0                MOVX    A,@DPTR
 002A FF                MOV     R7,A
 002B EF                MOV     A,R7
@@ -693,9 +693,9 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 82
                                            ; SOURCE LINE # 83
                                            ; SOURCE LINE # 84
-C51 COMPILER V9.03   ELEVATOR_COMPARATOR_1                                                 05/05/2015 16:28:56 PAGE 12  
+C51 COMPILER V9.03   ELEVATOR_COMPARATOR_1                                                 05/06/2015 05:27:50 PAGE 12  
 
-0031 905ADF            MOV     DPTR,#05ADFH
+0031 905ACF            MOV     DPTR,#05ACFH
 0034 E0                MOVX    A,@DPTR
 0035 FF                MOV     R7,A
 0036 EF                MOV     A,R7
@@ -720,7 +720,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0003 E0                MOVX    A,@DPTR
 0004 FF                MOV     R7,A
 0005 EF                MOV     A,R7
-0006 4408              ORL     A,#08H
+0006 4402              ORL     A,#02H
 0008 FF                MOV     R7,A
 0009 EF                MOV     A,R7
 000A F0                MOVX    @DPTR,A
@@ -729,7 +729,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 000E E0                MOVX    A,@DPTR
 000F FF                MOV     R7,A
 0010 EF                MOV     A,R7
-0011 4408              ORL     A,#08H
+0011 4402              ORL     A,#02H
 0013 FF                MOV     R7,A
 0014 EF                MOV     A,R7
 0015 F0                MOVX    @DPTR,A
@@ -757,7 +757,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0011         ?C0009:
                                            ; SOURCE LINE # 155
 0011 120000      R     LCALL   Elevator_Comparator_1_Enable
-C51 COMPILER V9.03   ELEVATOR_COMPARATOR_1                                                 05/05/2015 16:28:56 PAGE 13  
+C51 COMPILER V9.03   ELEVATOR_COMPARATOR_1                                                 05/06/2015 05:27:50 PAGE 13  
 
                                            ; SOURCE LINE # 156
 0014 22                RET     
@@ -771,7 +771,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0003 E0                MOVX    A,@DPTR
 0004 FF                MOV     R7,A
 0005 EF                MOV     A,R7
-0006 54F7              ANL     A,#0F7H
+0006 54FD              ANL     A,#0FDH
 0008 FF                MOV     R7,A
 0009 EF                MOV     A,R7
 000A F0                MOVX    @DPTR,A
@@ -780,7 +780,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 000E E0                MOVX    A,@DPTR
 000F FF                MOV     R7,A
 0010 EF                MOV     A,R7
-0011 54F7              ANL     A,#0F7H
+0011 54FD              ANL     A,#0FDH
 0013 FF                MOV     R7,A
 0014 EF                MOV     A,R7
 0015 F0                MOVX    @DPTR,A
@@ -801,7 +801,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 000A EF                MOV     A,R7
 000B 5403              ANL     A,#03H
 000D FF                MOV     R7,A
-000E 905843            MOV     DPTR,#05843H
+000E 905841            MOV     DPTR,#05841H
 0011 E0                MOVX    A,@DPTR
 0012 FE                MOV     R6,A
 0013 EE                MOV     A,R6
@@ -810,7 +810,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0017 EE                MOV     A,R6
 0018 4F                ORL     A,R7
 0019 FF                MOV     R7,A
-001A 905843            MOV     DPTR,#05843H
+001A 905841            MOV     DPTR,#05841H
 001D EF                MOV     A,R7
 001E F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 212
@@ -821,21 +821,21 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0025 B4011D            CJNE    A,#01H,?C0012
                                            ; SOURCE LINE # 213
                                            ; SOURCE LINE # 221
-C51 COMPILER V9.03   ELEVATOR_COMPARATOR_1                                                 05/05/2015 16:28:56 PAGE 14  
+C51 COMPILER V9.03   ELEVATOR_COMPARATOR_1                                                 05/06/2015 05:27:50 PAGE 14  
 
 0028 7B0C              MOV     R3,#0CH
 002A 7A01              MOV     R2,#01H
-002C 7913              MOV     R1,#013H
+002C 7911              MOV     R1,#011H
 002E 120000      E     LCALL   _cyread8
-0031 904636            MOV     DPTR,#04636H
+0031 904632            MOV     DPTR,#04632H
 0034 EF                MOV     A,R7
 0035 F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 222
 0036 7B0C              MOV     R3,#0CH
 0038 7A01              MOV     R2,#01H
-003A 7917              MOV     R1,#017H
+003A 7915              MOV     R1,#015H
 003C 120000      E     LCALL   _cyread8
-003F 904637            MOV     DPTR,#04637H
+003F 904633            MOV     DPTR,#04633H
 0042 EF                MOV     A,R7
 0043 F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 224
@@ -845,17 +845,17 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 234
 0045 7B0C              MOV     R3,#0CH
 0047 7A01              MOV     R2,#01H
-0049 79B3              MOV     R1,#0B3H
+0049 79AF              MOV     R1,#0AFH
 004B 120000      E     LCALL   _cyread8
-004E 904636            MOV     DPTR,#04636H
+004E 904632            MOV     DPTR,#04632H
 0051 EF                MOV     A,R7
 0052 F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 235
 0053 7B0C              MOV     R3,#0CH
 0055 7A01              MOV     R2,#01H
-0057 79BB              MOV     R1,#0BBH
+0057 79B7              MOV     R1,#0B7H
 0059 120000      E     LCALL   _cyread8
-005C 904637            MOV     DPTR,#04637H
+005C 904633            MOV     DPTR,#04633H
 005F EF                MOV     A,R7
 0060 F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 237
@@ -872,7 +872,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0003 E0                MOVX    A,@DPTR
 0004 FF                MOV     R7,A
 0005 EF                MOV     A,R7
-0006 5408              ANL     A,#08H
+0006 5402              ANL     A,#02H
 0008 FF                MOV     R7,A
                                            ; SOURCE LINE # 260
 0009         ?C0015:
@@ -885,14 +885,14 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0003 EF                MOV     A,R7
 0004 F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 289
-C51 COMPILER V9.03   ELEVATOR_COMPARATOR_1                                                 05/05/2015 16:28:56 PAGE 15  
+C51 COMPILER V9.03   ELEVATOR_COMPARATOR_1                                                 05/06/2015 05:27:50 PAGE 15  
 
                                            ; SOURCE LINE # 294
 0005 905B96            MOV     DPTR,#05B96H
 0008 E0                MOVX    A,@DPTR
 0009 FF                MOV     R7,A
 000A EF                MOV     A,R7
-000B 5408              ANL     A,#08H
+000B 5402              ANL     A,#02H
 000D FF                MOV     R7,A
 000E 900000      R     MOV     DPTR,#cmpState
 0011 EF                MOV     A,R7
@@ -912,7 +912,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0021 6020              JZ      ?C0018
                                            ; SOURCE LINE # 300
                                            ; SOURCE LINE # 308
-0023 904636            MOV     DPTR,#04636H
+0023 904632            MOV     DPTR,#04632H
 0026 E0                MOVX    A,@DPTR
 0027 FF                MOV     R7,A
 0028 EF                MOV     A,R7
@@ -933,7 +933,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0036 700B              JNZ     ?C0018
                                            ; SOURCE LINE # 316
                                            ; SOURCE LINE # 324
-0038 904637            MOV     DPTR,#04637H
+0038 904633            MOV     DPTR,#04633H
 003B E0                MOVX    A,@DPTR
 003C FF                MOV     R7,A
 003D EF                MOV     A,R7
@@ -949,7 +949,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0046 E0                MOVX    A,@DPTR
 0047 FF                MOV     R7,A
 0048 EF                MOV     A,R7
-C51 COMPILER V9.03   ELEVATOR_COMPARATOR_1                                                 05/05/2015 16:28:56 PAGE 16  
+C51 COMPILER V9.03   ELEVATOR_COMPARATOR_1                                                 05/06/2015 05:27:50 PAGE 16  
 
 0049 7008              JNZ     ?C0020
                                            ; SOURCE LINE # 339
@@ -991,7 +991,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0073 7008              JNZ     ?C0025
                                            ; SOURCE LINE # 351
                                            ; SOURCE LINE # 359
-0075 904636            MOV     DPTR,#04636H
+0075 904632            MOV     DPTR,#04632H
 0078 E0                MOVX    A,@DPTR
 0079 04                INC     A
 007A F0                MOVX    @DPTR,A
@@ -1000,7 +1000,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 007D         ?C0025:
                                            ; SOURCE LINE # 363
                                            ; SOURCE LINE # 371
-007D 904637            MOV     DPTR,#04637H
+007D 904633            MOV     DPTR,#04633H
 0080 E0                MOVX    A,@DPTR
 0081 04                INC     A
 0082 F0                MOVX    @DPTR,A
@@ -1013,11 +1013,11 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 378
 008A 905B96            MOV     DPTR,#05B96H
 008D E0                MOVX    A,@DPTR
-C51 COMPILER V9.03   ELEVATOR_COMPARATOR_1                                                 05/05/2015 16:28:56 PAGE 17  
+C51 COMPILER V9.03   ELEVATOR_COMPARATOR_1                                                 05/06/2015 05:27:50 PAGE 17  
 
 008E FF                MOV     R7,A
 008F EF                MOV     A,R7
-0090 5408              ANL     A,#08H
+0090 5402              ANL     A,#02H
 0092 FF                MOV     R7,A
 0093 7E00              MOV     R6,#00H
 0095 900000      R     MOV     DPTR,#cmpState
@@ -1048,36 +1048,36 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 453
                                            ; SOURCE LINE # 454
                                            ; SOURCE LINE # 461
-0000 905AD8            MOV     DPTR,#05AD8H
+0000 905AC8            MOV     DPTR,#05AC8H
 0003 E0                MOVX    A,@DPTR
 0004 FF                MOV     R7,A
 0005 900000      R     MOV     DPTR,#tmpSW0
 0008 EF                MOV     A,R7
 0009 F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 462
-000A 905ADA            MOV     DPTR,#05ADAH
+000A 905ACA            MOV     DPTR,#05ACAH
 000D E0                MOVX    A,@DPTR
 000E FF                MOV     R7,A
 000F 900000      R     MOV     DPTR,#tmpSW2
 0012 EF                MOV     A,R7
 0013 F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 463
-0014 905ADB            MOV     DPTR,#05ADBH
+0014 905ACB            MOV     DPTR,#05ACBH
 0017 E0                MOVX    A,@DPTR
 0018 FF                MOV     R7,A
 0019 900000      R     MOV     DPTR,#tmpSW3
 001C EF                MOV     A,R7
 001D F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 466
-001E 905AD8            MOV     DPTR,#05AD8H
+001E 905AC8            MOV     DPTR,#05AC8H
 0021 E4                CLR     A
 0022 F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 467
-0023 905ADA            MOV     DPTR,#05ADAH
+0023 905ACA            MOV     DPTR,#05ACAH
 0026 E4                CLR     A
 0027 F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 468
-C51 COMPILER V9.03   ELEVATOR_COMPARATOR_1                                                 05/05/2015 16:28:56 PAGE 18  
+C51 COMPILER V9.03   ELEVATOR_COMPARATOR_1                                                 05/06/2015 05:27:50 PAGE 18  
 
 0028 900000      R     MOV     DPTR,#tmpSW3
 002B E0                MOVX    A,@DPTR
@@ -1085,18 +1085,18 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 002D EF                MOV     A,R7
 002E 54F6              ANL     A,#0F6H
 0030 FF                MOV     R7,A
-0031 905ADB            MOV     DPTR,#05ADBH
+0031 905ACB            MOV     DPTR,#05ACBH
 0034 EF                MOV     A,R7
 0035 F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 474
-0036 905843            MOV     DPTR,#05843H
+0036 905841            MOV     DPTR,#05841H
 0039 E0                MOVX    A,@DPTR
 003A FF                MOV     R7,A
 003B 900000      R     MOV     DPTR,#tmpCR
 003E EF                MOV     A,R7
 003F F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 475
-0040 905843            MOV     DPTR,#05843H
+0040 905841            MOV     DPTR,#05841H
 0043 E0                MOVX    A,@DPTR
 0044 FF                MOV     R7,A
 0045 EF                MOV     A,R7
@@ -1105,15 +1105,15 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0049 EF                MOV     A,R7
 004A F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 485
-004B 904636            MOV     DPTR,#04636H
+004B 904632            MOV     DPTR,#04632H
 004E E4                CLR     A
 004F F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 486
-0050 904637            MOV     DPTR,#04637H
+0050 904633            MOV     DPTR,#04633H
 0053 E4                CLR     A
 0054 F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 490
-0055 905843            MOV     DPTR,#05843H
+0055 905841            MOV     DPTR,#05841H
 0058 E0                MOVX    A,@DPTR
 0059 FF                MOV     R7,A
 005A EF                MOV     A,R7
@@ -1141,44 +1141,44 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 498
 0077         ?C0030:
                                            ; SOURCE LINE # 501
-C51 COMPILER V9.03   ELEVATOR_COMPARATOR_1                                                 05/05/2015 16:28:56 PAGE 19  
+C51 COMPILER V9.03   ELEVATOR_COMPARATOR_1                                                 05/06/2015 05:27:50 PAGE 19  
 
 0077 900000      R     MOV     DPTR,#tmpCR
 007A E0                MOVX    A,@DPTR
 007B FF                MOV     R7,A
-007C 905843            MOV     DPTR,#05843H
+007C 905841            MOV     DPTR,#05841H
 007F EF                MOV     A,R7
 0080 F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 504
 0081 900000      R     MOV     DPTR,#tmpSW0
 0084 E0                MOVX    A,@DPTR
 0085 FF                MOV     R7,A
-0086 905AD8            MOV     DPTR,#05AD8H
+0086 905AC8            MOV     DPTR,#05AC8H
 0089 EF                MOV     A,R7
 008A F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 505
 008B 900000      R     MOV     DPTR,#tmpSW2
 008E E0                MOVX    A,@DPTR
 008F FF                MOV     R7,A
-0090 905ADA            MOV     DPTR,#05ADAH
+0090 905ACA            MOV     DPTR,#05ACAH
 0093 EF                MOV     A,R7
 0094 F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 506
 0095 900000      R     MOV     DPTR,#tmpSW3
 0098 E0                MOVX    A,@DPTR
 0099 FF                MOV     R7,A
-009A 905ADB            MOV     DPTR,#05ADBH
+009A 905ACB            MOV     DPTR,#05ACBH
 009D EF                MOV     A,R7
 009E F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 515
-009F 904637            MOV     DPTR,#04637H
+009F 904633            MOV     DPTR,#04633H
 00A2 E0                MOVX    A,@DPTR
 00A3 FF                MOV     R7,A
 00A4 7E00              MOV     R6,#00H
 00A6 EF                MOV     A,R7
 00A7 7F00              MOV     R7,#00H
 00A9 FE                MOV     R6,A
-00AA 904636            MOV     DPTR,#04636H
+00AA 904632            MOV     DPTR,#04632H
 00AD E0                MOVX    A,@DPTR
 00AE FD                MOV     R5,A
 00AF 7C00              MOV     R4,#00H
@@ -1205,13 +1205,13 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 546
 0008 900000      R     MOV     DPTR,#trimVal
 000B E0                MOVX    A,@DPTR
-C51 COMPILER V9.03   ELEVATOR_COMPARATOR_1                                                 05/05/2015 16:28:56 PAGE 20  
+C51 COMPILER V9.03   ELEVATOR_COMPARATOR_1                                                 05/06/2015 05:27:50 PAGE 20  
 
 000C FE                MOV     R6,A
 000D A3                INC     DPTR
 000E E0                MOVX    A,@DPTR
 000F FF                MOV     R7,A
-0010 904636            MOV     DPTR,#04636H
+0010 904632            MOV     DPTR,#04632H
 0013 EF                MOV     A,R7
 0014 F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 549
@@ -1224,7 +1224,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 001D EE                MOV     A,R6
 001E FF                MOV     R7,A
 001F 7E00              MOV     R6,#00H
-0021 904637            MOV     DPTR,#04637H
+0021 904633            MOV     DPTR,#04633H
 0024 EF                MOV     A,R7
 0025 F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 551
@@ -1235,7 +1235,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 571
                                            ; SOURCE LINE # 572
                                            ; SOURCE LINE # 574
-0000 905843            MOV     DPTR,#05843H
+0000 905841            MOV     DPTR,#05841H
 0003 E0                MOVX    A,@DPTR
 0004 FF                MOV     R7,A
 0005 EF                MOV     A,R7
@@ -1251,7 +1251,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 593
                                            ; SOURCE LINE # 594
                                            ; SOURCE LINE # 596
-0000 905843            MOV     DPTR,#05843H
+0000 905841            MOV     DPTR,#05841H
 0003 E0                MOVX    A,@DPTR
 0004 FF                MOV     R7,A
 0005 EF                MOV     A,R7
@@ -1269,7 +1269,7 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
    CODE SIZE        =    656    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =      1      11
-C51 COMPILER V9.03   ELEVATOR_COMPARATOR_1                                                 05/05/2015 16:28:56 PAGE 21  
+C51 COMPILER V9.03   ELEVATOR_COMPARATOR_1                                                 05/06/2015 05:27:50 PAGE 21  
 
    PDATA SIZE       =   ----    ----
    DATA SIZE        =   ----    ----

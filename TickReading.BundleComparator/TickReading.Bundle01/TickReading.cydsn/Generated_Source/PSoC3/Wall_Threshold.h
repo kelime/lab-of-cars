@@ -87,7 +87,7 @@ void Wall_Threshold_Wakeup(void)          ;
 /* Default Strobe mode */
 #define Wall_Threshold_DEFAULT_STRB     0u
  /* Initial DAC value */
-#define Wall_Threshold_DEFAULT_DATA     200u
+#define Wall_Threshold_DEFAULT_DATA     250u
  /* Default Data Source */
 #define Wall_Threshold_DEFAULT_DATA_SRC 0u
 
