@@ -1,5 +1,5 @@
 -- Project:   C:\Users\Emmily\!Spring2015\CarLab\TickReading.BundleComparator\TickReading.BundleComparator\TickReading.Bundle01\TickReading.cydsn\TickReading.cyprj
--- Generated: 05/06/2015 05:27:36
+-- Generated: 05/06/2015 20:00:42
 -- 
 
 ENTITY TickReading IS
@@ -1923,7 +1923,7 @@ BEGIN
     \ADC_Side_Rangefinder:DSM4\:dsmodcell
         GENERIC MAP(
             cy_registers => "",
-            resolution => 14)
+            resolution => 20)
         PORT MAP(
             aclock => \ADC_Side_Rangefinder:Net_40\,
             modbitin_udb => open,

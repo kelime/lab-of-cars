@@ -1,5 +1,5 @@
-Loading plugins phase: Elapsed time ==> 0s.724ms
-Initializing data phase: Elapsed time ==> 3s.546ms
+Loading plugins phase: Elapsed time ==> 1s.525ms
+Initializing data phase: Elapsed time ==> 16s.083ms
 <CYPRESSTAG name="CyDsfit arguments...">
 cydsfit arguments: -.fdsnotice -.fdswarpdepfile=warp_dependencies.txt -.fdselabdepfile=elab_dependencies.txt -.fdsbldfile=generated_files.txt -p C:\Users\Emmily\!Spring2015\CarLab\TickReading.BundleComparator\TickReading.BundleComparator\TickReading.Bundle01\TickReading.cydsn\TickReading.cyprj -d CY8C3866AXI-040 -s C:\Users\Emmily\!Spring2015\CarLab\TickReading.BundleComparator\TickReading.BundleComparator\TickReading.Bundle01\TickReading.cydsn\Generated_Source\PSoC3 -- -yv2 -v3 -ygs -q10 -o2 -.fftcfgtype=BE</CYPRESSTAG>
 <CYPRESSTAG name="Design elaboration results...">
@@ -8,10 +8,10 @@ ADD: sdb.M0065: information: Analog terminal "Side_Rangefinder_Comparator.Vplus"
  * C:\Users\Emmily\!Spring2015\CarLab\TickReading.BundleComparator\TickReading.BundleComparator\TickReading.Bundle01\TickReading.cydsn\TopDesign\TopDesign.cysch (Shape_1104.4)
 
 </CYPRESSTAG>
-Elaboration phase: Elapsed time ==> 7s.049ms
+Elaboration phase: Elapsed time ==> 7s.315ms
 <CYPRESSTAG name="HDL generation results...">
 </CYPRESSTAG>
-HDL generation phase: Elapsed time ==> 0s.319ms
+HDL generation phase: Elapsed time ==> 0s.407ms
 <CYPRESSTAG name="Synthesis results...">
 
      | | | | | | |
@@ -45,7 +45,7 @@ Options  :    -yv2 -v3 -ygs -q10 -o2 -.fftcfgtype=BE -ya -.fftprj=C:\Users\Emmil
 ======================================================================
 
 vlogfe V6.3 IR 41:  Verilog parser
-Wed May 06 05:27:18 2015
+Wed May 06 20:00:22 2015
 
 
 ======================================================================
@@ -55,7 +55,7 @@ Options  :    -yv2 -q10 TickReading.v
 ======================================================================
 
 vpp V6.3 IR 41:  Verilog Pre-Processor
-Wed May 06 05:27:19 2015
+Wed May 06 20:00:22 2015
 
 Flattening file 'C:\Program Files (x86)\Cypress\PSoC Creator\2.1\PSoC Creator\warp\..\psoc\content\cycomponentlibrary\CyComponentLibrary.cylib\B_PWM_v2_20\B_PWM_v2_20.v'
 Flattening file 'C:\Program Files (x86)\Cypress\PSoC Creator\2.1\PSoC Creator\warp\lib\common\cypress.v'
@@ -110,7 +110,7 @@ Options  :    -yv2 -v3 -ygs -q10 -o2 -.fftcfgtype=BE -ya -.fftprj=C:\Users\Emmil
 ======================================================================
 
 tovif V6.3 IR 41:  High-level synthesis
-Wed May 06 05:27:20 2015
+Wed May 06 20:00:24 2015
 
 Linking 'C:\Program Files (x86)\Cypress\PSoC Creator\2.1\PSoC Creator\warp\lib\common\std.vhd'.
 Linking 'C:\Program Files (x86)\Cypress\PSoC Creator\2.1\PSoC Creator\warp\lib\common\cypress.vhd'.
@@ -154,7 +154,7 @@ Options  :    -yv2 -v3 -ygs -q10 -o2 -.fftcfgtype=BE -ya -.fftprj=C:\Users\Emmil
 ======================================================================
 
 topld V6.3 IR 41:  Synthesis and optimization
-Wed May 06 05:27:24 2015
+Wed May 06 20:00:28 2015
 
 Linking 'C:\Program Files (x86)\Cypress\PSoC Creator\2.1\PSoC Creator\warp\lib\common\std.vhd'.
 Linking 'C:\Program Files (x86)\Cypress\PSoC Creator\2.1\PSoC Creator\warp\lib\common\cypress.vhd'.
@@ -1474,14 +1474,14 @@ CYPRESS_DIR    : C:\Program Files (x86)\Cypress\PSoC Creator\2.1\PSoC Creator\wa
 Warp Program   : C:\Program Files (x86)\Cypress\PSoC Creator\2.1\PSoC Creator\warp\bin/warp.exe
 Warp Arguments : -yv2 -v3 -ygs -q10 -o2 -.fftcfgtype=BE -ya -.fftprj=C:\Users\Emmily\!Spring2015\CarLab\TickReading.BundleComparator\TickReading.BundleComparator\TickReading.Bundle01\TickReading.cydsn\TickReading.cyprj -dcpsoc3 TickReading.v -verilog
 </CYPRESSTAG>
-Warp synthesis phase: Elapsed time ==> 7s.154ms
+Warp synthesis phase: Elapsed time ==> 8s.458ms
 <CYPRESSTAG name="Fitter results...">
 <CYPRESSTAG name="Fitter startup details...">
-cyp3fit: V2.1.0.607, Family: PSoC3, Started at: Wednesday, 06 May 2015 05:27:25
+cyp3fit: V2.1.0.607, Family: PSoC3, Started at: Wednesday, 06 May 2015 20:00:30
 Options: -yv2 -v3 -ygs -q10 -o2 -.fftcfgtype=BE -ya -.fftprj=C:\Users\Emmily\!Spring2015\CarLab\TickReading.BundleComparator\TickReading.BundleComparator\TickReading.Bundle01\TickReading.cydsn\TickReading.cyprj -d CY8C3866AXI-040 TickReading.v -verilog
 </CYPRESSTAG>
 <CYPRESSTAG name="Design parsing">
-Design parsing phase: Elapsed time ==> 0s.131ms
+Design parsing phase: Elapsed time ==> 0s.140ms
 </CYPRESSTAG>
 <CYPRESSTAG name="Tech mapping">
 <CYPRESSTAG name="Initial Mapping" icon="FILE_RPT_TECHM">
@@ -3826,9 +3826,9 @@ LCD Fixed Blocks              :    0 :    1 :    1 :   0.00%
 EMIF Fixed Blocks             :    0 :    1 :    1 :   0.00%
 LPF Fixed Blocks              :    0 :    2 :    2 :   0.00%
 </CYPRESSTAG>
-Technology Mapping: Elapsed time ==> 0s.371ms
+Technology Mapping: Elapsed time ==> 0s.388ms
 Info: mpr.M0037: Unused pieces of the design have been optimized out. See the Tech mapping section of the report file for details. (App=cydsfit)
-Tech mapping phase: Elapsed time ==> 0s.516ms
+Tech mapping phase: Elapsed time ==> 0s.590ms
 </CYPRESSTAG>
 <CYPRESSTAG name="Analog Placement">
 Info: apr.M0002: Analog signal "Net_2296" is connected to one terminal only. (App=cydsfit)
@@ -3900,7 +3900,7 @@ VIDAC[3]@[FFB(VIDAC,3)] : \Elevator_Threshold:viDAC8\
 Comparator[0]@[FFB(Comparator,0)] : \Side_Rangefinder_Comparator:ctComp\
 VIDAC[0]@[FFB(VIDAC,0)] : \Wall_Threshold:viDAC8\
 
-Analog Placement phase: Elapsed time ==> 1s.999ms
+Analog Placement phase: Elapsed time ==> 2s.087ms
 </CYPRESSTAG>
 <CYPRESSTAG name="Analog Routing">
 Log: apr.M0017: ============ VeraRouter Improve 1 OverUse=1 ============ (App=cydsfit)
@@ -3996,10 +3996,10 @@ Route#2284:
   (DSM- Sw__6c (565)##) [Vssa Wire Alt2 [651]] 
     (Vssa Wire Alt2 Sw (1076)) [Vssa Wire [708]] 
     (VRef Block Vssa (1074)) 
-Analog Routing phase: Elapsed time ==> 0s.080ms
+Analog Routing phase: Elapsed time ==> 0s.034ms
 </CYPRESSTAG>
 <CYPRESSTAG name="Analog Code Generation">
-Analog Code Generation phase: Elapsed time ==> 0s.540ms
+Analog Code Generation phase: Elapsed time ==> 0s.792ms
 </CYPRESSTAG>
 <CYPRESSTAG name="Digital Placement">
 <CYPRESSTAG name="PLD Packing">
@@ -4023,17 +4023,17 @@ PLD Packing Summary
 <CYPRESSTAG name="Packed PLD Contents">
 Packed PLD Contents not displayed at this verbose level.</CYPRESSTAG>
 </CYPRESSTAG>
-PLD Packing: Elapsed time ==> 0s.040ms
+PLD Packing: Elapsed time ==> 0s.044ms
 </CYPRESSTAG>
 <CYPRESSTAG name="Partitioning">
 <CYPRESSTAG name="Initial Partitioning Summary">
 Initial Partitioning Summary not displayed at this verbose level.</CYPRESSTAG>
 <CYPRESSTAG name="Final Partitioning Summary">
 Final Partitioning Summary not displayed at this verbose level.</CYPRESSTAG>
-Partitioning: Elapsed time ==> 0s.425ms
+Partitioning: Elapsed time ==> 0s.581ms
 </CYPRESSTAG>
 <CYPRESSTAG name="Simulated Annealing">
-Annealing: Elapsed time ==> 0s.044ms
+Annealing: Elapsed time ==> 0s.046ms
 <CYPRESSTAG name="Simulated Annealing Results">
 The seed used for moves was 114161200.
 Inital cost was 493, final cost is 493 (0.00% improvement).</CYPRESSTAG>
@@ -6535,7 +6535,7 @@ Fixed Function block hod @ [FFB(DSM,0)]:
         Properties:
         {
             cy_registers = ""
-            resolution = 14
+            resolution = 20
         }
 Fixed Function block hod @ [FFB(Decimator,0)]: 
     Decimator Block @ [FFB(Decimator,0)]: 
@@ -6711,33 +6711,33 @@ Info: plm.M0037: TickReading.rpt:
      (File=C:\Users\Emmily\!Spring2015\CarLab\TickReading.BundleComparator\TickReading.BundleComparator\TickReading.Bundle01\TickReading.cydsn\TickReading.rpt(1))
 </CYPRESSTAG>
 </CYPRESSTAG>
-Digital component placer commit/Report: Elapsed time ==> 0s.048ms
-Digital Placement phase: Elapsed time ==> 3s.235ms
+Digital component placer commit/Report: Elapsed time ==> 0s.044ms
+Digital Placement phase: Elapsed time ==> 3s.955ms
 </CYPRESSTAG>
 <CYPRESSTAG name="Digital Routing">
 Routing successful.
-Digital Routing phase: Elapsed time ==> 2s.996ms
+Digital Routing phase: Elapsed time ==> 3s.140ms
 </CYPRESSTAG>
 <CYPRESSTAG name="Bitstream and API generation">
-Bitstream and API generation phase: Elapsed time ==> 0s.568ms
+Bitstream and API generation phase: Elapsed time ==> 0s.712ms
 </CYPRESSTAG>
 <CYPRESSTAG name="Bitstream verification">
-Bitstream verification phase: Elapsed time ==> 0s.235ms
+Bitstream verification phase: Elapsed time ==> 0s.250ms
 </CYPRESSTAG>
 <CYPRESSTAG name="Static timing analysis">
 Warning: sta.M0019: TickReading_timing.html: Warning-1350: Path(s) exist between clocks Clock_Hall(routed) and CyBUS_CLK, but the clocks are not synchronous to each other: (ClockBlock/dclk_1, \Hall_Counter:CounterUDB:sC24:counterdp:u2\/ci)  (File=C:\Users\Emmily\!Spring2015\CarLab\TickReading.BundleComparator\TickReading.BundleComparator\TickReading.Bundle01\TickReading.cydsn\codegentemp\TickReading_timing.html)
 Timing report is in TickReading_timing.html.
-Static timing analysis phase: Elapsed time ==> 0s.820ms
+Static timing analysis phase: Elapsed time ==> 0s.994ms
 </CYPRESSTAG>
 <CYPRESSTAG name="Data reporting">
-Data reporting phase: Elapsed time ==> 0s.004ms
+Data reporting phase: Elapsed time ==> 0s.005ms
 </CYPRESSTAG>
 <CYPRESSTAG name="Database update...">
-Design database save phase: Elapsed time ==> 0s.285ms
+Design database save phase: Elapsed time ==> 0s.271ms
 </CYPRESSTAG>
-cydsfit: Elapsed time ==> 11s.461ms
+cydsfit: Elapsed time ==> 13s.050ms
 </CYPRESSTAG>
-Fitter phase: Elapsed time ==> 11s.518ms
-API generation phase: Elapsed time ==> 4s.129ms
-Dependency generation phase: Elapsed time ==> 0s.035ms
-Cleanup phase: Elapsed time ==> 0s.004ms
+Fitter phase: Elapsed time ==> 13s.104ms
+API generation phase: Elapsed time ==> 5s.522ms
+Dependency generation phase: Elapsed time ==> 0s.062ms
+Cleanup phase: Elapsed time ==> 0s.005ms

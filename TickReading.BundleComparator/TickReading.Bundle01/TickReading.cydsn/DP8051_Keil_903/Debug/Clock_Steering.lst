@@ -1,4 +1,4 @@
-C51 COMPILER V9.03   CLOCK_STEERING                                                        05/06/2015 05:27:47 PAGE 1   
+C51 COMPILER V9.03   CLOCK_STEERING                                                        05/06/2015 20:00:54 PAGE 1   
 
 
 C51 COMPILER V9.03, COMPILATION OF MODULE CLOCK_STEERING
@@ -62,7 +62,7 @@ line level    source
   51          /*******************************************************************************
   52          * Function Name: Clock_Steering_Stop
   53          ********************************************************************************
-C51 COMPILER V9.03   CLOCK_STEERING                                                        05/06/2015 05:27:47 PAGE 2   
+C51 COMPILER V9.03   CLOCK_STEERING                                                        05/06/2015 20:00:54 PAGE 2   
 
   54          * Summary:
   55          *  Stops the clock and returns immediately. This API does not require the
@@ -126,7 +126,7 @@ line level    source
  113   2      
  114   2              oldDivider = CY_GET_REG16(Clock_Steering_DIV_PTR);
  115   2              CY_SET_REG16(CYREG_CLKDIST_WRK0, oldDivider);
-C51 COMPILER V9.03   CLOCK_STEERING                                                        05/06/2015 05:27:47 PAGE 3   
+C51 COMPILER V9.03   CLOCK_STEERING                                                        05/06/2015 20:00:54 PAGE 3   
 
  116   2              CLK_DIST_LD = CYCLK_LD_DISABLE | CYCLK_LD_SYNC_EN | CYCLK_LD_LOAD;
  117   2      
@@ -190,7 +190,7 @@ line level    source
  175          *   zero, the new divide value will take effect at the end of the current clock
  176          *   cycle.
  177          *
-C51 COMPILER V9.03   CLOCK_STEERING                                                        05/06/2015 05:27:47 PAGE 4   
+C51 COMPILER V9.03   CLOCK_STEERING                                                        05/06/2015 20:00:54 PAGE 4   
 
  178          * Returns:
  179          *  void
@@ -254,7 +254,7 @@ line level    source
  237   4                      Clock_Steering_CLKEN &= ~Clock_Steering_CLKEN_MASK;
  238   4      
  239   4      #if HAS_CLKDIST_LD_DISABLE
-C51 COMPILER V9.03   CLOCK_STEERING                                                        05/06/2015 05:27:47 PAGE 5   
+C51 COMPILER V9.03   CLOCK_STEERING                                                        05/06/2015 20:00:54 PAGE 5   
 
  240   4                      /* Clear the disable bit */
  241   4                      CLK_DIST_LD = 0x00u;
@@ -318,7 +318,7 @@ line level    source
  299          *                 occur when the divider count reaches half of the divide
  300          *                 value.
  301          *   - CYCLK_DUTY  Enable 50% duty cycle output. When enabled, the output clock
-C51 COMPILER V9.03   CLOCK_STEERING                                                        05/06/2015 05:27:47 PAGE 6   
+C51 COMPILER V9.03   CLOCK_STEERING                                                        05/06/2015 20:00:54 PAGE 6   
 
  302          *                 is asserted for approximately half of its period. When
  303          *                 disabled, the output clock is asserted for one period of the
@@ -382,7 +382,7 @@ line level    source
  361          *  void
  362          *
  363          * Returns:
-C51 COMPILER V9.03   CLOCK_STEERING                                                        05/06/2015 05:27:47 PAGE 7   
+C51 COMPILER V9.03   CLOCK_STEERING                                                        05/06/2015 20:00:54 PAGE 7   
 
  364          *  Bit mask representing the enabled mode bits. See the SetModeRegister and
  365          *  ClearModeRegister descriptions for details about the mode bits.
@@ -446,7 +446,7 @@ line level    source
  423   2          }
  424   1      }
  425          
-C51 COMPILER V9.03   CLOCK_STEERING                                                        05/06/2015 05:27:47 PAGE 8   
+C51 COMPILER V9.03   CLOCK_STEERING                                                        05/06/2015 20:00:54 PAGE 8   
 
  426          
  427          /*******************************************************************************
@@ -510,7 +510,7 @@ line level    source
               *  Phase of the analog clock. See SetPhaseRegister for details.
               *
               *******************************************************************************/
-C51 COMPILER V9.03   CLOCK_STEERING                                                        05/06/2015 05:27:47 PAGE 9   
+C51 COMPILER V9.03   CLOCK_STEERING                                                        05/06/2015 20:00:54 PAGE 9   
 
               uint8 Clock_Steering_GetPhaseRegister(void) 
               {
@@ -521,7 +521,7 @@ line level    source
  494          
  495          
  496          /* [] END OF FILE */
-C51 COMPILER V9.03   CLOCK_STEERING                                                        05/06/2015 05:27:47 PAGE 10  
+C51 COMPILER V9.03   CLOCK_STEERING                                                        05/06/2015 20:00:54 PAGE 10  
 
 ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
@@ -585,7 +585,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 001C E0                MOVX    A,@DPTR
 001D FF                MOV     R7,A
 001E EF                MOV     A,R7
-C51 COMPILER V9.03   CLOCK_STEERING                                                        05/06/2015 05:27:47 PAGE 11  
+C51 COMPILER V9.03   CLOCK_STEERING                                                        05/06/2015 20:00:54 PAGE 11  
 
 001F 547F              ANL     A,#07FH
 0021 FF                MOV     R7,A
@@ -649,7 +649,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0071 E0                MOVX    A,@DPTR
 0072 FD                MOV     R5,A
 0073 120000      E     LCALL   _cywrite16_nodpx
-C51 COMPILER V9.03   CLOCK_STEERING                                                        05/06/2015 05:27:47 PAGE 12  
+C51 COMPILER V9.03   CLOCK_STEERING                                                        05/06/2015 20:00:54 PAGE 12  
 
                                            ; SOURCE LINE # 130
                                            ; SOURCE LINE # 131
@@ -713,7 +713,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 186
 000D 120000      R     LCALL   Clock_Steering_GetSourceRegister
 0010 900000      R     MOV     DPTR,#currSrc
-C51 COMPILER V9.03   CLOCK_STEERING                                                        05/06/2015 05:27:47 PAGE 13  
+C51 COMPILER V9.03   CLOCK_STEERING                                                        05/06/2015 20:00:54 PAGE 13  
 
 0013 EF                MOV     A,R7
 0014 F0                MOVX    @DPTR,A
@@ -777,7 +777,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0061 FE                MOV     R6,A
 0062 A3                INC     DPTR
 0063 E0                MOVX    A,@DPTR
-C51 COMPILER V9.03   CLOCK_STEERING                                                        05/06/2015 05:27:47 PAGE 14  
+C51 COMPILER V9.03   CLOCK_STEERING                                                        05/06/2015 20:00:54 PAGE 14  
 
 0064 FF                MOV     R7,A
 0065 EF                MOV     A,R7
@@ -841,7 +841,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 209
 00A9 7B02              MOV     R3,#02H
 00AB 7A40              MOV     R2,#040H
-C51 COMPILER V9.03   CLOCK_STEERING                                                        05/06/2015 05:27:47 PAGE 15  
+C51 COMPILER V9.03   CLOCK_STEERING                                                        05/06/2015 20:00:54 PAGE 15  
 
 00AD 7988              MOV     R1,#088H
 00AF 900000      R     MOV     DPTR,#clkDivider
@@ -905,7 +905,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 00F8 E0                MOVX    A,@DPTR
 00F9 FF                MOV     R7,A
 00FA EF                MOV     A,R7
-C51 COMPILER V9.03   CLOCK_STEERING                                                        05/06/2015 05:27:47 PAGE 16  
+C51 COMPILER V9.03   CLOCK_STEERING                                                        05/06/2015 20:00:54 PAGE 16  
 
 00FB 20E0F7            JB      ACC.0,?C0017
 00FE         ?C0018:
@@ -969,7 +969,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0148 80F5              SJMP    ?C0022
 014A         ?C0023:
                                            ; SOURCE LINE # 253
-C51 COMPILER V9.03   CLOCK_STEERING                                                        05/06/2015 05:27:47 PAGE 17  
+C51 COMPILER V9.03   CLOCK_STEERING                                                        05/06/2015 20:00:54 PAGE 17  
 
 014A 8011              SJMP    ?C0024
 014C         ?C0019:
@@ -1033,7 +1033,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0005 90408A            MOV     DPTR,#0408AH
 0008 C083              PUSH    DPH
 000A C082              PUSH    DPL
-C51 COMPILER V9.03   CLOCK_STEERING                                                        05/06/2015 05:27:47 PAGE 18  
+C51 COMPILER V9.03   CLOCK_STEERING                                                        05/06/2015 20:00:54 PAGE 18  
 
 000C E0                MOVX    A,@DPTR
 000D FF                MOV     R7,A
@@ -1097,7 +1097,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0006 54F8              ANL     A,#0F8H
 0008 FF                MOV     R7,A
                                            ; SOURCE LINE # 371
-C51 COMPILER V9.03   CLOCK_STEERING                                                        05/06/2015 05:27:47 PAGE 19  
+C51 COMPILER V9.03   CLOCK_STEERING                                                        05/06/2015 20:00:54 PAGE 19  
 
 0009         ?C0029:
 0009 22                RET     
@@ -1161,7 +1161,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0047 FF                MOV     R7,A
 0048 900000      R     MOV     DPTR,#clkSource
 004B E0                MOVX    A,@DPTR
-C51 COMPILER V9.03   CLOCK_STEERING                                                        05/06/2015 05:27:47 PAGE 20  
+C51 COMPILER V9.03   CLOCK_STEERING                                                        05/06/2015 20:00:54 PAGE 20  
 
 004C FE                MOV     R6,A
 004D EF                MOV     A,R7
@@ -1225,7 +1225,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 420
                                            ; SOURCE LINE # 422
 0094 90408A            MOV     DPTR,#0408AH
-C51 COMPILER V9.03   CLOCK_STEERING                                                        05/06/2015 05:27:47 PAGE 21  
+C51 COMPILER V9.03   CLOCK_STEERING                                                        05/06/2015 20:00:54 PAGE 21  
 
 0097 E0                MOVX    A,@DPTR
 0098 FF                MOV     R7,A

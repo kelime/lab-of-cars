@@ -134,9 +134,9 @@ void ADC_Side_Rangefinder_IRQ_Start(void) ;
 
 /* Default config values from user parameters */
 
-#define ADC_Side_Rangefinder_CFG1_RESOLUTION         (14u )
+#define ADC_Side_Rangefinder_CFG1_RESOLUTION         (20u )
 #define ADC_Side_Rangefinder_CFG1_RANGE              (1u)    
-#define ADC_Side_Rangefinder_CFG1_SRATE              (10000u)         
+#define ADC_Side_Rangefinder_CFG1_SRATE              (100u)         
 #define ADC_Side_Rangefinder_CFG1_REFERENCE          (0u)       
 #define ADC_Side_Rangefinder_CFG1_BUF_GAIN           (1u)   
 #define ADC_Side_Rangefinder_CFG1_CONV_MODE          (2u)     
@@ -1363,24 +1363,24 @@ void ADC_Side_Rangefinder_IRQ_Start(void) ;
 
 /* Default register settings for the Config 1 */
 /* Default Config */
-/* ADC_Side_Rangefinder_CFG1 Sample Rate: 10000 Samples per Second */
+/* ADC_Side_Rangefinder_CFG1 Sample Rate: 100 Samples per Second */
 /* ADC_Side_Rangefinder_CFG1 Conversion Mode: 2 */
 /* ADC_Side_Rangefinder_CFG1 Input Buffer Gain: 1   */
 /* ADC_Side_Rangefinder_CFG1 Reference: 0 */
 /* ADC_Side_Rangefinder_CFG1 Input Range: 1  */
-/* ADC_Side_Rangefinder_CFG1 Resolution: 14 bits */
-/* ADC_Side_Rangefinder_CFG1 Clock: 460000 Hz */
+/* ADC_Side_Rangefinder_CFG1 Resolution: 20 bits */
+/* ADC_Side_Rangefinder_CFG1 Clock: 1638400 Hz */
 
-#define ADC_Side_Rangefinder_CFG1_DEC_CR             (0X38u)
+#define ADC_Side_Rangefinder_CFG1_DEC_CR             (0X78u)
 #define ADC_Side_Rangefinder_CFG1_DEC_SR             (0X14u)
-#define ADC_Side_Rangefinder_CFG1_DEC_SHIFT1         (0X05u)
-#define ADC_Side_Rangefinder_CFG1_DEC_SHIFT2         (0X08u)
-#define ADC_Side_Rangefinder_CFG1_DEC_DR2            (0X00u)
+#define ADC_Side_Rangefinder_CFG1_DEC_SHIFT1         (0X00u)
+#define ADC_Side_Rangefinder_CFG1_DEC_SHIFT2         (0X0Au)
+#define ADC_Side_Rangefinder_CFG1_DEC_DR2            (0X7Fu)
 #define ADC_Side_Rangefinder_CFG1_DEC_DR2H           (0X00u)
-#define ADC_Side_Rangefinder_CFG1_DEC_DR1            (0X2Du)
-#define ADC_Side_Rangefinder_CFG1_DEC_OCOR           (0XDAu)
-#define ADC_Side_Rangefinder_CFG1_DEC_OCORM          (0X1Eu)
-#define ADC_Side_Rangefinder_CFG1_DEC_OCORH          (0X00u)
+#define ADC_Side_Rangefinder_CFG1_DEC_DR1            (0X7Fu)
+#define ADC_Side_Rangefinder_CFG1_DEC_OCOR           (0XAEu)
+#define ADC_Side_Rangefinder_CFG1_DEC_OCORM          (0X11u)
+#define ADC_Side_Rangefinder_CFG1_DEC_OCORH          (0X07u)
 #define ADC_Side_Rangefinder_CFG1_DEC_GVAL           (0X0Fu)
 #define ADC_Side_Rangefinder_CFG1_DEC_GCOR           (0X00u)
 #define ADC_Side_Rangefinder_CFG1_DEC_GCORH          (0X00u)
@@ -1389,9 +1389,9 @@ void ADC_Side_Rangefinder_IRQ_Start(void) ;
 #define ADC_Side_Rangefinder_CFG1_DSM_CR1            (0X00u)
 #define ADC_Side_Rangefinder_CFG1_DSM_CR2            (0X7Au)
 #define ADC_Side_Rangefinder_CFG1_DSM_CR3            (0X00u)
-#define ADC_Side_Rangefinder_CFG1_DSM_CR4            (0X14u)
-#define ADC_Side_Rangefinder_CFG1_DSM_CR5            (0X09u)
-#define ADC_Side_Rangefinder_CFG1_DSM_CR6            (0X0Au)
+#define ADC_Side_Rangefinder_CFG1_DSM_CR4            (0X50u)
+#define ADC_Side_Rangefinder_CFG1_DSM_CR5            (0X27u)
+#define ADC_Side_Rangefinder_CFG1_DSM_CR6            (0X2Cu)
 #define ADC_Side_Rangefinder_CFG1_DSM_CR7            (0X00u)
 #define ADC_Side_Rangefinder_CFG1_DSM_CR8            (0X12u)
 #define ADC_Side_Rangefinder_CFG1_DSM_CR9            (0X13u)
@@ -1399,10 +1399,10 @@ void ADC_Side_Rangefinder_IRQ_Start(void) ;
 #define ADC_Side_Rangefinder_CFG1_DSM_CR11           (0X5Au)
 #define ADC_Side_Rangefinder_CFG1_DSM_CR12           (0X05u)
 #define ADC_Side_Rangefinder_CFG1_DSM_CR13           (0X00u)
-#define ADC_Side_Rangefinder_CFG1_DSM_CR14           (0X01u)
-#define ADC_Side_Rangefinder_CFG1_DSM_CR15           (0X11u)
-#define ADC_Side_Rangefinder_CFG1_DSM_CR16           (0X19u)
-#define ADC_Side_Rangefinder_CFG1_DSM_CR17           (0X97u)
+#define ADC_Side_Rangefinder_CFG1_DSM_CR14           (0X02u)
+#define ADC_Side_Rangefinder_CFG1_DSM_CR15           (0X12u)
+#define ADC_Side_Rangefinder_CFG1_DSM_CR16           (0X28u)
+#define ADC_Side_Rangefinder_CFG1_DSM_CR17           (0XEBu)
 #define ADC_Side_Rangefinder_CFG1_DSM_REF0           (0X4Cu)
 #define ADC_Side_Rangefinder_CFG1_DSM_REF1           (0X00u)
 #define ADC_Side_Rangefinder_CFG1_DSM_REF2           (0X58u)
@@ -1413,23 +1413,23 @@ void ADC_Side_Rangefinder_IRQ_Start(void) ;
 #define ADC_Side_Rangefinder_CFG1_DSM_CLK            (0X18u)
 #define ADC_Side_Rangefinder_CFG1_DSM_BUF0           (0X05u)
 #define ADC_Side_Rangefinder_CFG1_DSM_BUF1           (0X01u)
-#define ADC_Side_Rangefinder_CFG1_DSM_BUF2           (0X01u)
+#define ADC_Side_Rangefinder_CFG1_DSM_BUF2           (0X00u)
 #define ADC_Side_Rangefinder_CFG1_DSM_BUF3           (0X0Au)
 #define ADC_Side_Rangefinder_CFG1_DSM_OUT0           (0X00u)
 #define ADC_Side_Rangefinder_CFG1_DSM_OUT1           (0X00u)
 #define ADC_Side_Rangefinder_CFG1_DSM_SW3            (0X00u)
-#define ADC_Side_Rangefinder_CFG1_CLOCKS_PER_SAMPLE  (0X002Eu)
-#define ADC_Side_Rangefinder_CFG1_CLOCK_FREQ         (460000u)
-#define ADC_Side_Rangefinder_CFG1_CP_CLOCK_FREQ      (1840000u)
+#define ADC_Side_Rangefinder_CFG1_CLOCKS_PER_SAMPLE  (0X4000u)
+#define ADC_Side_Rangefinder_CFG1_CLOCK_FREQ         (1638400u)
+#define ADC_Side_Rangefinder_CFG1_CP_CLOCK_FREQ      (6553600u)
 #define ADC_Side_Rangefinder_CFG1_REFERENCE_VOLTAGE  (1.0240)
-#define ADC_Side_Rangefinder_CFG1_COUNTS_PER_VOLT    (8000u)
-#define ADC_Side_Rangefinder_CFG1_IDEAL_DEC_GAIN     (0X8DB6u)
+#define ADC_Side_Rangefinder_CFG1_COUNTS_PER_VOLT    (512000u)
+#define ADC_Side_Rangefinder_CFG1_IDEAL_DEC_GAIN     (0X90DBu)
 
-#define ADC_Side_Rangefinder_CFG1_IDEAL_ODDDEC_GAIN  (0X77E9u)
+#define ADC_Side_Rangefinder_CFG1_IDEAL_ODDDEC_GAIN  (0X8000u)
 
 /* Input and DAC Cap values in pF */
-#define ADC_Side_Rangefinder_CFG1_IPCAP1VALUE        (0X0380u)
-#define ADC_Side_Rangefinder_CFG1_DACAPVALUE         (0X03E0u)
+#define ADC_Side_Rangefinder_CFG1_IPCAP1VALUE        (0X0F30u)
+#define ADC_Side_Rangefinder_CFG1_DACAPVALUE         (0X1130u)
 
 /* Below defines are depricated and should not be used. These are provided 
    just to keep the component backward compatible */

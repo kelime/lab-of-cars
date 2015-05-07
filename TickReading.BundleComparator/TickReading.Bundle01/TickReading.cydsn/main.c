@@ -13,6 +13,8 @@
   
 #include <device.h>
 #include <stdio.h>
+#include <stdlib.h>
+
 // BMP085 header files
 //#include "MyISRs.h"
 
@@ -369,10 +371,11 @@ CY_ISR(pixy)
     
     float error_sum_range = 0;
     float prev_error_range = 0;
-    float p_range = 30;
+    float differential_range = 0;
+    float p_range = 75; // do conversion;
     float i_range = 0;
-    float d_range = 0;
-    float open_loop_volts = 1.2; // set point voltage. distance of 1.2V
+    float d_range = 0; //tim0e scale is 100.
+    float open_loop_volts = 0.8; // set point voltage. distance of 1.2V
     
  CY_ISR(ADC_Side_Rangefinder_ISR1){
 
@@ -388,33 +391,38 @@ CY_ISR(pixy)
     LCD_Position(1,14);    
     LCD_PrintString("(:");
        
-    if (state == follow_line) {    
+    if (state == follow_line) {  
+    
+    // start car again
+    uint8 control = 2;
+    Drive_Control_Reg_Write(control);
    
-    // do conversion
+    // store old value
+    prev_error_range = error_range;
+        
     result = ADC_Side_Rangefinder_GetResult32(); 
     
     resultInVolts = ADC_Side_Rangefinder_CountsTo_Volts(result); // you've got volts!
     
     error_range = resultInVolts - open_loop_volts; // difference between what the ADC reads and 1.2V
     
-    // constantssss
+    differential_range = error_range - prev_error_range;
     
-    error_sum_range = error_sum_range + error_range;
-    d_range = steering_error - prev_error_range;
-    prev_error_range = error_range;
-    
-    steering_range = 152 + p_range * error_range; //+ i_range * error_sum_range + d_range * prev_error_range; 
+    // account for door. if drops down by a lot, throw out.
+   // if ((error_range - prev_error_range) < -0.5)
+   if ((differential_range < -0.5) || (differential_range > 0.8))
+    {   error_range = prev_error_range;
+        LCD_Position(0,14);
+        LCD_PrintString("NO");
+    }     
         
-    // stop spazzing out! limit the values to only what the PWM can write to?  
-    if (steering_range < 100)
-    { steering_range = 100;}
-    
-    if (steering_range > 200)
-    { steering_range = 200;}
-    // Display the lines per frame
-    
+    // constantssss
+    error_sum_range = error_sum_range + error_range;
+         
+    // negative to accommodate for ~2.1V being close, ~0.4V being far. 
+    steering_range = 152 - (p_range * error_range); // - (i_range * error_sum_range); //+ d_range * differential_range;
     LCD_Position(0,0);
-    sprintf(pidstr, "err: %1.4f     ", steering_range);
+    sprintf(pidstr, "err: %1.2f   ", steering_range);
     LCD_PrintString(pidstr);
     
     PWM_Steering_WriteCompare(steering_range);
@@ -424,13 +432,8 @@ CY_ISR(pixy)
     LCD_PrintString(resultstr);
        // LCD_Position(1,0);
         //LCD_PrintNumber();
-      
     }
-}
-   
-  
-
-      
+} 
         
 /*===========================================
 // Defining BMP085 Code
@@ -467,10 +470,10 @@ void main()
     Clock_Hall_Start();    
     
     // start steering control components
-    Clock_Steering_Start();
-    Lines_Per_Frame_Counter_Start(); // monitors how many lines have been traversed per frame
-    Camera_Comp_Start(); // initializes the comparator -- is the camera receiving black or white?
-    Camera_Threshold_Start(); // Voltage that decides whether signal is black or white    
+//    Clock_Steering_Start();
+//    Lines_Per_Frame_Counter_Start(); // monitors how many lines have been traversed per frame
+//    Camera_Comp_Start(); // initializes the comparator -- is the camera receiving black or white?
+//    Camera_Threshold_Start(); // Voltage that decides whether signal is black or white    
     
     // start PWM components  
     PWM_Start(); 

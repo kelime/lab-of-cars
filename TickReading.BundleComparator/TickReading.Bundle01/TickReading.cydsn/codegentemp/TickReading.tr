@@ -25,9 +25,9 @@
                     1::Clock Frequency Summary
 ===================================================================== 
 Number of clocks: 14
-Clock: ADC_Side_Rangefinder_Ext_CP_Clk          | N/A                   | Target: 1.85 MHz   | 
-Clock: ADC_Side_Rangefinder_Ext_CP_Clk(routed)  | N/A                   | Target: 1.85 MHz   | 
-Clock: ADC_Side_Rangefinder_theACLK             | N/A                   | Target: 0.46 MHz   | 
+Clock: ADC_Side_Rangefinder_Ext_CP_Clk          | N/A                   | Target: 6.00 MHz   | 
+Clock: ADC_Side_Rangefinder_Ext_CP_Clk(routed)  | N/A                   | Target: 6.00 MHz   | 
+Clock: ADC_Side_Rangefinder_theACLK             | N/A                   | Target: 1.60 MHz   | 
 Clock: Altimeter_Clock                          | N/A                   | Target: 0.00 MHz   | 
 Clock: Clock_Hall                               | Frequency: 42.40 MHz  | Target: 0.10 MHz   | 
 Clock: Clock_Hall(routed)                       | N/A                   | Target: 0.10 MHz   | 

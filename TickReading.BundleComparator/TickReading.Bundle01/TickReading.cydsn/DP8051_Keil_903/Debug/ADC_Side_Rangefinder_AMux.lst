@@ -1,4 +1,4 @@
-C51 COMPILER V9.03   ADC_SIDE_RANGEFINDER_AMUX                                             05/06/2015 05:27:54 PAGE 1   
+C51 COMPILER V9.03   ADC_SIDE_RANGEFINDER_AMUX                                             05/06/2015 20:01:02 PAGE 1   
 
 
 C51 COMPILER V9.03, COMPILATION OF MODULE ADC_SIDE_RANGEFINDER_AMUX
@@ -62,7 +62,7 @@ line level    source
   50   1              ADC_Side_Rangefinder_AMux_lastChannel = ADC_Side_Rangefinder_AMux_NULL_CHANNEL;
   51   1      }
   52          
-C51 COMPILER V9.03   ADC_SIDE_RANGEFINDER_AMUX                                             05/06/2015 05:27:54 PAGE 2   
+C51 COMPILER V9.03   ADC_SIDE_RANGEFINDER_AMUX                                             05/06/2015 20:01:02 PAGE 2   
 
   53          
   54          #if(!ADC_Side_Rangefinder_AMux_ATMOSTONE)
@@ -126,7 +126,7 @@ line level    source
  112   1      }
  113          
  114          
-C51 COMPILER V9.03   ADC_SIDE_RANGEFINDER_AMUX                                             05/06/2015 05:27:54 PAGE 3   
+C51 COMPILER V9.03   ADC_SIDE_RANGEFINDER_AMUX                                             05/06/2015 20:01:02 PAGE 3   
 
  115          #if(ADC_Side_Rangefinder_AMux_MUXTYPE == ADC_Side_Rangefinder_AMux_MUX_DIFF)
               #if(!ADC_Side_Rangefinder_AMux_ATMOSTONE)
@@ -190,7 +190,7 @@ line level    source
                   if(ADC_Side_Rangefinder_AMux_lastChannel != ADC_Side_Rangefinder_AMux_NULL_CHANNEL) 
                   {
                       ADC_Side_Rangefinder_AMux_Disconnect(ADC_Side_Rangefinder_AMux_lastChannel);
-C51 COMPILER V9.03   ADC_SIDE_RANGEFINDER_AMUX                                             05/06/2015 05:27:54 PAGE 4   
+C51 COMPILER V9.03   ADC_SIDE_RANGEFINDER_AMUX                                             05/06/2015 20:01:02 PAGE 4   
 
                               ADC_Side_Rangefinder_AMux_lastChannel = ADC_Side_Rangefinder_AMux_NULL_CHANNEL;
                   }
@@ -198,7 +198,7 @@ line level    source
               #endif
  181          
  182          /* [] END OF FILE */
-C51 COMPILER V9.03   ADC_SIDE_RANGEFINDER_AMUX                                             05/06/2015 05:27:54 PAGE 5   
+C51 COMPILER V9.03   ADC_SIDE_RANGEFINDER_AMUX                                             05/06/2015 20:01:02 PAGE 5   
 
 ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
@@ -262,7 +262,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 74
 001A 22                RET     
              ; FUNCTION _ADC_Side_Rangefinder_AMux_Select (END)
-C51 COMPILER V9.03   ADC_SIDE_RANGEFINDER_AMUX                                             05/06/2015 05:27:54 PAGE 6   
+C51 COMPILER V9.03   ADC_SIDE_RANGEFINDER_AMUX                                             05/06/2015 20:01:02 PAGE 6   
 
 
              ; FUNCTION _ADC_Side_Rangefinder_AMux_FastSelect (BEGIN)
